@@ -3,28 +3,31 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { auth } from "../_util/initApp";
-import { getRegistrationData } from "../_util/data";
+import { reverseDistrictCode } from "../_util/maps";
+import { getDistrcitData } from "../_util/data";
 
 export default function AdminDashboard() {
     const router = useRouter();
     const [user, setUser] = useState(null);
+    const [district, setDistrict] = useState(null);
     const [data, setData] = useState(null);
-    
+
     useEffect(() => {
         if (!auth.currentUser) {
             router.push('/');
         } else {
             const user = JSON.parse(localStorage.getItem('user'));
-            if (user.role !== 'admin') {
+            if (Object.keys(reverseDistrictCode).indexOf(user.role.toString().toUpperCase()) === -1) {
                 router.push('/');
             } else {
+                setDistrict(reverseDistrictCode[user.role.toString().toUpperCase()]);
                 setUser(user);
-                getRegistrationData().then((_data) => {
+                getDistrcitData(reverseDistrictCode[user.role.toString().toUpperCase()]).then((_data) => {
                     // Handle Logout.
                     if (_data == null) {
                         router.push('/');
                     }
-                    console.log(Object.keys(_data[0]));
+
                     setData(_data);
                 });
             }
@@ -33,9 +36,10 @@ export default function AdminDashboard() {
 
     return user && data ? (
         <>
-            <div className="rounded-lg shadow-lg p-6 bg-white">
+            <div className="rounded-lg shadow-lg p-6 bg-white sticky">
                 <h1 className="text-2xl font-bold mb-4">Welcome, {user.name}</h1>
                 <p className="text-gray-700 mb-2">{user.email}</p>
+                <p className="text-gray-700">{district}</p>
             </div>
             <div className="overflow-x-auto">
                 <table className="table-auto w-full mt-6">

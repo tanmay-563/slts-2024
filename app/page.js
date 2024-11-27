@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./_util/initApp";
 import { getUserData } from "./_util/data";
 import { useRouter } from "next/navigation";
+import { reverseDistrictCode } from "./_util/maps";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -19,7 +20,7 @@ export default function Home() {
   //     });
   //   }
   // }, []);
-  
+
   const router = useRouter();
 
   const handleLogin = async (e) => {
@@ -34,8 +35,9 @@ export default function Home() {
         if (data.role == 'admin') {
           localStorage.setItem('user', JSON.stringify(data));
           router.push('/admin');
-        } else if (data.role == 'district') {
-          console.log(data);
+        } else if (Object.keys(reverseDistrictCode).indexOf(data.role.toString().toUpperCase()) != -1) {
+          localStorage.setItem('user', JSON.stringify(data));
+          router.push('/district');
         }
       });
     })
@@ -43,7 +45,7 @@ export default function Home() {
 
   return (
     <main className="flex h-screen flex-col justify-center items-center">
-      <div className="flex flex-col border border-gray-200 rounded-lg w-full md:w-[480px]">
+      <div className="flex flex-col border border-gray-200 rounded-lg w-full md:w-[480px] bg-white">
         <h1 className="text-2xl font-semibold text-center pt-2">Sign In</h1>
         <p className="text-center text-gray-500 pb-2">SLBTS 2024, Tamil Nadu</p>
         <hr />
