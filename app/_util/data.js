@@ -28,6 +28,14 @@ export const getRegistrationData = async () => {
         data.push(doc.data());
     });
 
+    data.forEach((row) => {
+        for (const key in row) {
+            if (typeof row[key] === 'number' && isNaN(row[key])) {
+                row[key] = null;
+            }
+        }
+    });
+
     return data;
 }
 
@@ -41,6 +49,14 @@ export const getDistrcitData = async (district) => {
     const data = [];
     querySnapshot.forEach((doc) => {
         data.push(doc.data());
+    });
+
+    data.forEach((row) => {
+        for (const key in row) {
+            if (typeof row[key] === 'number' && isNaN(row[key])) {
+                row[key] = null;
+            }
+        }
     });
 
     return data;
