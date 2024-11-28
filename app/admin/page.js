@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { auth } from "../_util/initApp";
 import { getRegistrationData } from "../_util/data";
+import secureLocalStorage from "react-secure-storage";
 
 export default function AdminDashboard() {
     const router = useRouter();
@@ -24,27 +25,24 @@ export default function AdminDashboard() {
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
-        if (!auth.currentUser) {
+        if (!secureLocalStorage.getItem('user')) {
             router.push('/');
-        } else {
-            const user = JSON.parse(localStorage.getItem('user'));
-            if (user.role !== 'admin') {
-                router.push('/');
-            } else {
-                setUser(user);
-                getRegistrationData().then((_data) => {
-                    // Handle Logout.
-                    if (_data == null || _data.length != 4) {
-                        router.push('/');
-                    }
-                    setData(_data[0]);
-                    setFilteredData(_data[0]);
-                    setDistricts(_data[1]);
-                    setEvents(_data[2]);
-                    setGroups(_data[3]);
-                });
-            }
         }
+
+        const user = JSON.parse(secureLocalStorage.getItem('user'));
+        setUser(user);
+        getRegistrationData().then((_data) => {
+            // Handle Logout.
+            if (_data == null || _data.length != 4) {
+                router.push('/');
+            }
+            
+            setData(_data[0]);
+            setFilteredData(_data[0]);
+            setDistricts(_data[1]);
+            setEvents(_data[2]);
+            setGroups(_data[3]);
+        });
     }, [router]);
 
 
@@ -74,6 +72,7 @@ export default function AdminDashboard() {
                             className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
                             onClick={() => {
                                 auth.signOut();
+                                secureLocalStorage.clear();
                                 router.push('/');
                             }}
                         >

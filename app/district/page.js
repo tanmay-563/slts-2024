@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { auth } from "../_util/initApp";
 import { reverseDistrictCode } from "../_util/maps";
 import { getDistrcitData } from "../_util/data";
+import secureLocalStorage from "react-secure-storage";
 
 export default function AdminDashboard() {
     const router = useRouter();
@@ -23,27 +24,27 @@ export default function AdminDashboard() {
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
-        if (!auth.currentUser) {
+        if (!secureLocalStorage.getItem('user')) {
+            router.push('/');
+        }
+
+        const user = JSON.parse(secureLocalStorage.getItem('user'));
+        if (Object.keys(reverseDistrictCode).indexOf(user.role.toString().toUpperCase()) === -1) {
             router.push('/');
         } else {
-            const user = JSON.parse(localStorage.getItem('user'));
-            if (Object.keys(reverseDistrictCode).indexOf(user.role.toString().toUpperCase()) === -1) {
-                router.push('/');
-            } else {
-                setDistrict(reverseDistrictCode[user.role.toString().toUpperCase()]);
-                setUser(user);
-                getDistrcitData(reverseDistrictCode[user.role.toString().toUpperCase()]).then((_data) => {
-                    // Handle Logout.
-                    if (_data == null || _data.length != 3) {
-                        router.push('/');
-                    }
+            setDistrict(reverseDistrictCode[user.role.toString().toUpperCase()]);
+            setUser(user);
+            getDistrcitData(reverseDistrictCode[user.role.toString().toUpperCase()]).then((_data) => {
+                // Handle Logout.
+                if (_data == null || _data.length != 3) {
+                    router.push('/');
+                }
 
-                    setData(_data[0]);
-                    setFilteredData(_data[0]);
-                    setEvents(_data[1]);
-                    setGroups(_data[2]);
-                });
-            }
+                setData(_data[0]);
+                setFilteredData(_data[0]);
+                setEvents(_data[1]);
+                setGroups(_data[2]);
+            });
         }
     }, [router]);
 
@@ -60,7 +61,7 @@ export default function AdminDashboard() {
     return user && filteredData ? (
         <>
             <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
-            <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-row">
+                <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-row">
                     <div>
                         <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
                         <p className="text-gray-700">{user.email}</p>
@@ -70,6 +71,7 @@ export default function AdminDashboard() {
                             className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
                             onClick={() => {
                                 auth.signOut();
+                                secureLocalStorage.clear();
                                 router.push('/');
                             }}
                         >
@@ -80,7 +82,7 @@ export default function AdminDashboard() {
 
                 <div className="flex flex-row flex-wrap gap-4 m-4 justify-center overflow-x-auto">
                     <div className="bg-white p-4 rounded-2xl border">
-                    <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-4">
                             <div>
                                 <input
                                     id="search"

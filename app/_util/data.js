@@ -17,9 +17,9 @@ export const getUserData = async () => {
 }
 
 export const getRegistrationData = async () => {
-    if (!auth.currentUser) {
-        return null;
-    }
+    // if (!auth.currentUser) {
+    //     return null;
+    // }
 
     const registrationDataCollectionRef = collection(db, "registrationData");
     const querySnapshot = await getDocs(registrationDataCollectionRef);
@@ -63,9 +63,9 @@ export const getRegistrationData = async () => {
 }
 
 export const getDistrcitData = async (district) => {
-    if (!auth.currentUser) {
-        return null;
-    }
+    // if (!auth.currentUser) {
+    //     return null;
+    // }
 
     const registrationDataCollectionRef = query(collection(db, "registrationData"), where("district", "==", district));
     const querySnapshot = await getDocs(registrationDataCollectionRef);
