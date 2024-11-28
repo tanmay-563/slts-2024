@@ -20,6 +20,8 @@ export default function AdminDashboard() {
     const [groups, setGroups] = useState([]);
     const [filterGroup, setFilterGroup] = useState("");
 
+    const [searchQuery, setSearchQuery] = useState("");
+
     useEffect(() => {
         if (!auth.currentUser) {
             router.push('/');
@@ -49,10 +51,11 @@ export default function AdminDashboard() {
         if (data) {
             setFilteredData(data.filter((row) => {
                 return (filterEvent === "" || row.registeredEvents.includes(filterEvent)) &&
-                    (filterGroup === "" || row.studentGroup === filterGroup);
+                    (filterGroup === "" || row.studentGroup === filterGroup) &&
+                    (searchQuery === "" || row.studentFullName.toLowerCase().includes(searchQuery.toLowerCase()) || row.studentId.toLowerCase().includes(searchQuery.toLowerCase()));
             }));
         }
-    }, [data, filterEvent, filterGroup]);
+    }, [data, filterEvent, filterGroup, searchQuery]);
 
     return user && filteredData ? (
         <>
@@ -77,35 +80,46 @@ export default function AdminDashboard() {
 
                 <div className="flex flex-row flex-wrap gap-4 m-4 justify-center overflow-x-auto">
                     <div className="bg-white p-4 rounded-2xl border">
-                        <p className="text-lg font-bold">Filters</p>
-                        <div className="flex flex-row flex-wrap gap-4">
-                            <div className="flex flex-col gap-2">
-                                <label htmlFor="event">Event</label>
-                                <select
-                                    id="event"
-                                    className="border p-2 rounded-2xl"
-                                    value={filterEvent}
-                                    onChange={(e) => setFilterEvent(e.target.value)}
-                                >
-                                    <option value="">All</option>
-                                    {events.map((event, index) => (
-                                        <option key={index} value={event}>{event}</option>
-                                    ))}
-                                </select>
+                    <div className="flex flex-col gap-4">
+                            <div>
+                                <input
+                                    id="search"
+                                    className="border p-2 rounded-2xl w-full"
+                                    placeholder="Search by name or student ID"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
                             </div>
-                            <div className="flex flex-col gap-2">
-                                <label htmlFor="group">Group</label>
-                                <select
-                                    id="group"
-                                    className="border p-2 rounded-2xl"
-                                    value={filterGroup}
-                                    onChange={(e) => setFilterGroup(e.target.value)}
-                                >
-                                    <option value="">All</option>
-                                    {groups.map((group, index) => (
-                                        <option key={index} value={group}>{group}</option>
-                                    ))}
-                                </select>
+
+                            <div className="flex flex-row flex-wrap gap-4">
+                                <div className="flex flex-col gap-2">
+                                    <label htmlFor="event">Event</label>
+                                    <select
+                                        id="event"
+                                        className="border p-2 rounded-2xl"
+                                        value={filterEvent}
+                                        onChange={(e) => setFilterEvent(e.target.value)}
+                                    >
+                                        <option value="">All</option>
+                                        {events.map((event, index) => (
+                                            <option key={index} value={event}>{event}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label htmlFor="group">Group</label>
+                                    <select
+                                        id="group"
+                                        className="border p-2 rounded-2xl"
+                                        value={filterGroup}
+                                        onChange={(e) => setFilterGroup(e.target.value)}
+                                    >
+                                        <option value="">All</option>
+                                        {groups.map((group, index) => (
+                                            <option key={index} value={group}>{group}</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
