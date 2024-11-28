@@ -11,6 +11,16 @@ export default function AdminDashboard() {
     const [data, setData] = useState(null);
     const [filteredData, setFilteredData] = useState(null);
 
+    // filters.
+    const [districts, setDistricts] = useState([]);
+    const [filterDistrict, setFilterDistrict] = useState("");
+
+    const [events, setEvents] = useState([]);
+    const [filterEvent, setFilterEvent] = useState("");
+
+    const [groups, setGroups] = useState([]);
+    const [filterGroup, setFilterGroup] = useState("");
+
     useEffect(() => {
         if (!auth.currentUser) {
             router.push('/');
@@ -22,16 +32,29 @@ export default function AdminDashboard() {
                 setUser(user);
                 getRegistrationData().then((_data) => {
                     // Handle Logout.
-                    if (_data == null) {
+                    if (_data == null || _data.length != 4) {
                         router.push('/');
                     }
-                    console.log(Object.keys(_data[0]));
-                    setData(_data);
-                    setFilteredData(_data);
+                    setData(_data[0]);
+                    setFilteredData(_data[0]);
+                    setDistricts(_data[1]);
+                    setEvents(_data[2]);
+                    setGroups(_data[3]);
                 });
             }
         }
     }, [router]);
+
+
+    useEffect(() => {
+        if (data) {
+            setFilteredData(data.filter((row) => {
+                return (filterDistrict === "" || row.district === filterDistrict) &&
+                    (filterEvent === "" || row.registeredEvents.includes(filterEvent)) &&
+                    (filterGroup === "" || row.studentGroup === filterGroup);
+            }));
+        }
+    }, [data, filterDistrict, filterEvent, filterGroup]);
 
 
 
@@ -53,6 +76,56 @@ export default function AdminDashboard() {
                         >
                             Logout
                         </button>
+                    </div>
+                </div>
+
+                <div className="flex flex-row flex-wrap gap-4 m-4 justify-center overflow-x-auto">
+                    <div className="bg-white p-4 rounded-2xl border">
+                        <p className="text-lg font-bold">Filters</p>
+                        <div className="flex flex-row flex-wrap gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="district">District</label>
+                                <select
+                                    id="district"
+                                    className="border p-2 rounded-2xl"
+                                    value={filterDistrict}
+                                    onChange={(e) => setFilterDistrict(e.target.value)}
+                                >
+                                    <option value="">All</option>
+                                    {districts.map((district, index) => (
+                                        <option key={index} value={district}>{district}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="event">Event</label>
+                                <select
+                                    id="event"
+                                    className="border p-2 rounded-2xl"
+                                    value={filterEvent}
+                                    onChange={(e) => setFilterEvent(e.target.value)}
+                                >
+                                    <option value="">All</option>
+                                    {events.map((event, index) => (
+                                        <option key={index} value={event}>{event}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="group">Group</label>
+                                <select
+                                    id="group"
+                                    className="border p-2 rounded-2xl"
+                                    value={filterGroup}
+                                    onChange={(e) => setFilterGroup(e.target.value)}
+                                >
+                                    <option value="">All</option>
+                                    {groups.map((group, index) => (
+                                        <option key={index} value={group}>{group}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

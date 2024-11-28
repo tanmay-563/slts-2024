@@ -46,7 +46,20 @@ export const getRegistrationData = async () => {
         return 0;
     });
 
-    return data;
+    // Collect unique district names, event names, group names.
+    const districtSet = new Set();
+    const eventNameSet = new Set();
+    const groupNameSet = new Set();
+
+    data.forEach((row) => {
+        districtSet.add(row.district);
+        row.registeredEvents.forEach((event) => {
+            eventNameSet.add(event);
+        });
+        groupNameSet.add(row.studentGroup);
+    });
+
+    return [data, Array.from(districtSet), Array.from(eventNameSet), Array.from(groupNameSet)];
 }
 
 export const getDistrcitData = async (district) => {
@@ -79,5 +92,16 @@ export const getDistrcitData = async (district) => {
         return 0;
     });
 
-    return data;
+    // Collect unique event names, group names.
+    const eventNameSet = new Set();
+    const groupNameSet = new Set();
+
+    data.forEach((row) => {
+        row.registeredEvents.forEach((event) => {
+            eventNameSet.add(event);
+        });
+        groupNameSet.add(row.studentGroup);
+    });
+
+    return [data, Array.from(eventNameSet), Array.from(groupNameSet)];
 }
