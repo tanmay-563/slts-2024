@@ -22,7 +22,6 @@ export default function Home() {
   // }, []);
 
   const router = useRouter();
-
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) {

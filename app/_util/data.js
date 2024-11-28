@@ -36,6 +36,16 @@ export const getRegistrationData = async () => {
         }
     });
 
+    data.sort((a, b) => {
+        if (a.district < b.district) {
+            return -1;
+        }
+        if (a.district > b.district) {
+            return 1;
+        }
+        return 0;
+    });
+
     return data;
 }
 
@@ -57,6 +67,16 @@ export const getDistrcitData = async (district) => {
                 row[key] = null;
             }
         }
+    });
+
+    data.sort((a, b) => {
+        if (a.district < b.district) {
+            return -1;
+        }
+        if (a.district > b.district) {
+            return 1;
+        }
+        return 0;
     });
 
     return data;
