@@ -12,9 +12,20 @@ export default function JudgePage() {
     const [user, setUser] = useState(null);
     const [eventMetadata, setEventMetadata] = useState(null);
     const [participants, setParticipants] = useState(null);
+    const [filteredParticipants, setFilteredParticipants] = useState(null);
 
     const [scoreBuffer, setScoreBuffer] = useState([]);
     const [scoreMode, setScoreMode] = useState({});
+
+    const [searchQuery, setSearchQuery] = useState("");
+
+    useEffect(() => {
+        if (participants) {
+            setFilteredParticipants(participants.filter((participant) => {
+                return searchQuery == "" || participant.studentId.toLowerCase().includes(searchQuery.toLowerCase());
+            }));
+        }
+    }, [searchQuery, participants])
 
     useEffect(() => {
         if (!secureLocalStorage.getItem('user')) {
@@ -38,11 +49,12 @@ export default function JudgePage() {
                 setScoreMode(_scoreMode);
                 setEventMetadata(_data[1]);
                 setParticipants(_data[0]);
+                setFilteredParticipants(_data[0]);
             });
         }
     }, [router]);
 
-    return user && eventMetadata && participants ? (
+    return user && eventMetadata && participants && filteredParticipants ? (
         <>
             <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
                 <div className="rounded-2xl p-4 m-2 bg-white border overflow-x-auto justify-between flex flex-row">
@@ -68,9 +80,9 @@ export default function JudgePage() {
                 {/* Design mobile-friendly */}
                 <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
                     <div className="rounded-2xl p-4 bg-white border overflow-x-auto">
-                        <h1 className="text-2xl font-bold">Event Details</h1>
-                        <p className="text-gray-700">Event: {eventMetadata.name}</p>
-                        <div className="flex flex-row flex-wrap gap-1 mt-2">
+                        <h1 className="text-2xl font-bold">{eventMetadata.name}</h1>
+                        <p className="text-md">{participants.length} Participants</p>
+                        <div className="flex flex-row flex-wrap gap-1 mt-1">
                             {eventMetadata.group.map((group, index) => (
                                 <p key={index} className="bg-gray-200 text-gray-800 font-semibold px-2 py-1 rounded-xl w-fit">
                                     {group}
@@ -79,7 +91,7 @@ export default function JudgePage() {
                         </div>
 
                         {/* Evaluation Criteria */}
-                        <h2 className="text-xl font-bold mt-4">Evaluation Criteria</h2>
+                        <h2 className="text-xl font-bold mt-6">Evaluation Criteria</h2>
                         <table className="table-auto w-full">
                             <thead>
                                 <tr>
@@ -102,9 +114,23 @@ export default function JudgePage() {
                 {/* Participants as cards */}
                 <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
                     <div className="rounded-2xl p-4 my-4 bg-white border overflow-x-auto">
-                        <h1 className="text-2xl font-bold">Participants</h1>
+                        <div className="flex flex-row justify-between">
+                            <h1 className="text-2xl font-bold">Participants</h1>
+                        </div>
+
+                        {/* Search bar */}
+                        <div className="flex flex-row justify-between items-center mt-4">
+                            <input
+                                type="text"
+                                placeholder="Search by Student ID"
+                                className="border p-2 rounded-lg w-full"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
                         <div className="grid grid-cols-1 gap-4 mt-4">
-                            {participants.map((participant, index) => (
+                            {filteredParticipants.map((participant, index) => (
                                 <div key={index} className="rounded-2xl p-4 bg-gray-100 border">
                                     <div className="flex flex-row justify-between">
                                         <div>
@@ -203,11 +229,12 @@ export default function JudgePage() {
                                                                     setScoreMode(_scoreMode);
 
                                                                     let _participants = [...participants];
-                                                                    _participants[index].score = _participants[index].score ?? {};
-                                                                    _participants[index].score[eventMetadata.name] = _participants[index].score[eventMetadata.name] ?? {};
-                                                                    _participants[index].score[eventMetadata.name][user.id] = {};
+                                                                    const i = _participants.findIndex((p) => p.studentId == participant.studentId);
+                                                                    _participants[i].score = _participants[i].score ?? {};
+                                                                    _participants[i].score[eventMetadata.name] = _participants[i].score[eventMetadata.name] ?? {};
+                                                                    _participants[i].score[eventMetadata.name][user.id] = {};
                                                                     scoreBuffer.forEach(([key, val]) => {
-                                                                        _participants[index].score[eventMetadata.name][user.id][key] = val;
+                                                                        _participants[i].score[eventMetadata.name][user.id][key] = val;
                                                                     });
                                                                     setParticipants(_participants);
                                                                 }
