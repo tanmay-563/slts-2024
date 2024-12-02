@@ -24,7 +24,7 @@ export default function Home() {
       if (data.role == 'admin') {
         router.push('/admin');
       } else if (data.role == 'judge') {
-        router.push('/judge');
+        data.event.includes("GROUP") ? router.push('/judge/group') : router.push('/judge/individual');
       } else if (Object.keys(reverseDistrictCode).indexOf(data.role.toString().toUpperCase()) != -1) {
         router.push('/district');
       }
@@ -47,7 +47,7 @@ export default function Home() {
           router.push('/admin');
         } else if (data.role == 'judge') {
           secureLocalStorage.setItem('user', JSON.stringify(data));
-          router.push('/judge');
+          data.event.includes("GROUP") ? router.push('/judge/group') : router.push('/judge/individual');
         } else if (Object.keys(reverseDistrictCode).indexOf(data.role.toString().toUpperCase()) != -1) {
           secureLocalStorage.setItem('user', JSON.stringify(data));
           router.push('/district');

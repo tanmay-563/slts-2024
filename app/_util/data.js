@@ -138,6 +138,41 @@ export const updateCrieria = async (eventName, criteria) => {
     return true;
 }
 
+export const getJudgeGroupEventData = async (eventName) => {
+    // if (!auth.currentUser) {
+    //     return null;
+    // }
+
+    const eventDoc = await getDoc(doc(db, "eventData", eventName))
+    const eventMetaData = eventDoc.data();
+
+    const participantRef = query(collection(db, "registrationData"), where("registeredEvents", "array-contains", eventMetaData.name));
+    const participantSnapshot = await getDocs(participantRef);
+
+    const participants = [];
+    participantSnapshot.forEach((doc) => {
+        participants.push(doc.data());
+    });
+
+    participants.forEach((row) => {
+        for (const key in row) {
+            if (typeof row[key] === 'number' && isNaN(row[key])) {
+                row[key] = null;
+            }
+        }
+    });
+
+    const districtData = {};
+    participants.forEach((row) => {
+        if (!districtData[row.district]) {
+            districtData[row.district] = [];
+        }
+        districtData[row.district].push(row);
+    });
+
+    return [participants, eventMetaData];
+}
+
 export const getJudgeEventData = async (eventName) => {
     // if (!auth.currentUser) {
     //     return null;

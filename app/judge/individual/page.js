@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
-import { getJudgeEventData, markScore } from "../_util/data";
-import { auth } from "../_util/initApp";
+import { getJudgeEventData, markScore } from "../../_util/data";
+import { auth } from "../../_util/initApp";
 
 export default function JudgePage() {
     const router = useRouter();
@@ -122,7 +122,7 @@ export default function JudgePage() {
                         <div className="flex flex-row justify-between items-center mt-4">
                             <input
                                 type="text"
-                                placeholder="Search by Student ID"
+                                placeholder="Enter Participant ID"
                                 className="border p-2 rounded-lg w-full"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -142,7 +142,7 @@ export default function JudgePage() {
                                             {participant.score && participant.score[eventMetadata.name] && participant.score[eventMetadata.name][user.id] ? (
                                                 <div className="mt-2 flex flex-col">
                                                     <button
-                                                        className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mt-2"
+                                                        className="bg-[#ffcece] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2"
                                                         onClick={() => {
 
                                                             let _scoreMode = {};
@@ -204,7 +204,7 @@ export default function JudgePage() {
 
                                                 <div className="flex flex-row justify-between gap-1">
                                                     <button
-                                                        className="bg-[#ffe0e0] text-[#350b0b] font-bold px-4 py-1 rounded-xl mt-2 w-full"
+                                                        className="bg-[#ffe0e0] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2 w-full"
                                                         onClick={() => {
                                                             setScoreBuffer([]);
 
@@ -218,7 +218,7 @@ export default function JudgePage() {
                                                         Cancel
                                                     </button>
                                                     <button
-                                                        className="bg-[#c2fca2] text-[#0b350d] font-bold px-4 py-1 rounded-xl mt-2 w-full"
+                                                        className="bg-[#c2fca2] text-[#0b350d] font-semibold px-4 py-1 rounded-xl mt-2 w-full"
                                                         onClick={() => {
                                                             markScore(participant.studentId, eventMetadata.name, user.id, Object.fromEntries(scoreBuffer)).then((res) => {
                                                                 if (res) {
@@ -264,8 +264,6 @@ export default function JudgePage() {
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </>
     ) : (
