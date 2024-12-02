@@ -137,3 +137,40 @@ export const updateCrieria = async (eventName, criteria) => {
 
     return true;
 }
+
+export const getJudgeEventData = async (eventName) => {
+    // if (!auth.currentUser) {
+    //     return null;
+    // }
+
+    const eventDoc = await getDoc(doc(db, "eventData", eventName))
+    const eventMetaData = eventDoc.data();
+
+    const participantRef = query(collection(db, "registrationData"), where("registeredEvents", "array-contains", eventMetaData.name));
+    const participantSnapshot = await getDocs(participantRef);
+
+    const participants = [];
+    participantSnapshot.forEach((doc) => {
+        participants.push(doc.data());
+    });
+
+    participants.forEach((row) => {
+        for (const key in row) {
+            if (typeof row[key] === 'number' && isNaN(row[key])) {
+                row[key] = null;
+            }
+        }
+    });
+
+    participants.sort((a, b) => {
+        if (a.district < b.district) {
+            return -1;
+        }
+        if (a.district > b.district) {
+            return 1;
+        }
+        return 0;
+    });
+
+    return [participants, eventMetaData];
+}

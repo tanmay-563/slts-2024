@@ -23,6 +23,8 @@ export default function Home() {
       const data = JSON.parse(user);
       if (data.role == 'admin') {
         router.push('/admin');
+      } else if (data.role == 'judge') {
+        router.push('/judge');
       } else if (Object.keys(reverseDistrictCode).indexOf(data.role.toString().toUpperCase()) != -1) {
         router.push('/district');
       }
@@ -43,6 +45,9 @@ export default function Home() {
         if (data.role == 'admin') {
           secureLocalStorage.setItem('user', JSON.stringify(data));
           router.push('/admin');
+        } else if (data.role == 'judge') {
+          secureLocalStorage.setItem('user', JSON.stringify(data));
+          router.push('/judge');
         } else if (Object.keys(reverseDistrictCode).indexOf(data.role.toString().toUpperCase()) != -1) {
           secureLocalStorage.setItem('user', JSON.stringify(data));
           router.push('/district');
@@ -52,35 +57,38 @@ export default function Home() {
   }
 
   return (
-    <main className="flex h-screen flex-col justify-center items-center m-8">
-      {isLoading ? (<p>Loading...</p>) : (<div className="flex flex-col border border-gray-200 rounded-lg w-full md:w-[480px] bg-white">
-        <h1 className="text-2xl font-semibold text-center pt-2">Sign In</h1>
-        <p className="text-center text-gray-500 pb-2">SLBTS 2024, Tamil Nadu</p>
-        <hr />
-        <form className="flex flex-col gap-4 p-8" onSubmit={handleLogin}>
-          <input
-            type="email"
-            placeholder="Email"
-            className="border border-gray-200 p-2 rounded-lg"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="border border-gray-200 p-2 rounded-lg"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            type="submit"
-            disabled={!email || !password}
-            className="w-full text-lg rounded-lg bg-black text-white p-2 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            Sign in
-          </button>
-        </form>
-      </div>)}
+    <main className="flex h-screen flex-col justify-center items-center m-4">
+      {isLoading ?
+        <p>Loading...</p> :
+        <div className="flex flex-col border border-gray-200 rounded-3xl w-full md:w-[480px] bg-white">
+          <h1 className="text-2xl font-semibold text-center pt-2">Sign In</h1>
+          <p className="text-center text-gray-500 pb-2">SLBTS 2024, Tamil Nadu</p>
+          <hr />
+          <form className="flex flex-col gap-4 p-8" onSubmit={handleLogin}>
+            <input
+              type="email"
+              placeholder="Email"
+              className="border border-gray-200 p-2 rounded-lg"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="border border-gray-200 p-2 rounded-lg"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="submit"
+              disabled={!email || !password}
+              className="w-full text-lg rounded-lg bg-black text-white p-2 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              Sign in
+            </button>
+          </form>
+        </div>
+      }
     </main>
   );
 }

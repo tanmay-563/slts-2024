@@ -339,6 +339,8 @@ export default function AdminDashboard() {
             </div>
         </>
     ) : (
-        <div className="flex h-screen items-center justify-center">Loading...</div>
+        <div className="flex h-screen items-center justify-center">
+            <p className="text-2xl font-semibold">Loading...</p>
+        </div>
     )
 }
