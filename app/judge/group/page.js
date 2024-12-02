@@ -95,6 +95,37 @@ export default function JudgeGroupPage() {
                         </table>
                     </div>
                 </div>
+
+                <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
+                    <div className="rounded-2xl p-4 my-4 bg-white border overflow-x-auto">
+                        <div className="flex flex-row justify-between">
+                            <h1 className="text-2xl font-bold">Participants</h1>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4 mt-4">
+                            {Object.entries(participants).map(([_, val], index) => (
+                                <div key={index} className="rounded-2xl px-4 bg-gray-100 border">
+                                    <div className="flex flex-col">
+                                        {val.map((participant, index) => (
+                                            <div className="mt-4" key={index}>
+                                                <div className="flex flex-row justify-between">
+                                                    <div>
+                                                        <h2 className="text-xl font-bold">{participant.studentId}</h2>
+                                                        <p className="text-xs">{participant.gender ?? "-"} - {participant.dateOfBirth ?? "-"}</p>
+                                                        <p className="text-xs rounded-2xl w-fit">{participant.studentGroup ?? "-"}</p>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="mt-4">
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
     ) : (

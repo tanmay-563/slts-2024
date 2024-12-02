@@ -170,7 +170,7 @@ export const getJudgeGroupEventData = async (eventName) => {
         districtData[row.district].push(row);
     });
 
-    return [participants, eventMetaData];
+    return [districtData, eventMetaData];
 }
 
 export const getJudgeEventData = async (eventName) => {
