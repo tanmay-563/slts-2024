@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
-import { getJudgeEventData } from "../_util/data";
+import { getJudgeEventData, markScore } from "../_util/data";
 import { auth } from "../_util/initApp";
 
 export default function JudgePage() {
@@ -12,6 +12,9 @@ export default function JudgePage() {
     const [user, setUser] = useState(null);
     const [eventMetadata, setEventMetadata] = useState(null);
     const [participants, setParticipants] = useState(null);
+
+    const [scoreBuffer, setScoreBuffer] = useState([]);
+    const [scoreMode, setScoreMode] = useState({});
 
     useEffect(() => {
         if (!secureLocalStorage.getItem('user')) {
@@ -28,6 +31,11 @@ export default function JudgePage() {
                     router.push('/');
                 }
 
+                let _scoreMode = {};
+                _data[0].forEach((participant) => {
+                    _scoreMode[participant.studentId] = false;
+                })
+                setScoreMode(_scoreMode);
                 setEventMetadata(_data[1]);
                 setParticipants(_data[0]);
             });
@@ -76,7 +84,7 @@ export default function JudgePage() {
                             <thead>
                                 <tr>
                                     <th className="border px-4 py-2">Criteria</th>
-                                    <th className="border px-4 py-2">Marks</th>
+                                    <th className="border px-4 py-2">Max Marks</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -93,14 +101,137 @@ export default function JudgePage() {
 
                 {/* Participants as cards */}
                 <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
-                    <div className="rounded-2xl p-4 mt-4 bg-white border overflow-x-auto">
+                    <div className="rounded-2xl p-4 my-4 bg-white border overflow-x-auto">
                         <h1 className="text-2xl font-bold">Participants</h1>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                        <div className="grid grid-cols-1 gap-4 mt-4">
                             {participants.map((participant, index) => (
                                 <div key={index} className="rounded-2xl p-4 bg-gray-100 border">
-                                    <h2 className="text-xl font-bold">{participant.studentId}</h2>
-                                    <p className="text-xs">{participant.gender ?? "-"} - {participant.dateOfBirth ?? "-"}</p>
-                                    <p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">{participant.studentGroup ?? "-"}</p>
+                                    <div className="flex flex-row justify-between">
+                                        <div>
+                                            <h2 className="text-xl font-bold">{participant.studentId}</h2>
+                                            <p className="text-xs">{participant.gender ?? "-"} - {participant.dateOfBirth ?? "-"}</p>
+                                            <p className="text-xs mt-2 font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">{participant.studentGroup ?? "-"}</p>
+                                        </div>
+                                        <div>
+                                            {participant.score && participant.score[eventMetadata.name] && participant.score[eventMetadata.name][user.id] ? (
+                                                <div className="mt-2 flex flex-col">
+                                                    <button
+                                                        className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mt-2"
+                                                        onClick={() => {
+
+                                                            let _scoreMode = {};
+                                                            participants.forEach((p) => {
+                                                                _scoreMode[p.studentId] = false;
+                                                            });
+                                                            _scoreMode[participant.studentId] = true;
+
+                                                            setScoreBuffer(Object.entries(participant.score[eventMetadata.name][user.id]).map(([key, val]) => [key, val]));
+
+                                                            setScoreMode(_scoreMode);
+                                                        }}
+                                                    >
+                                                        Edit Score
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                scoreMode[participant.studentId] == false ? (
+                                                    <button
+                                                        className="bg-[#ffd8a1] text-[#35250b] font-semibold px-4 py-1 rounded-xl mt-2"
+                                                        onClick={() => {
+                                                            let _scoreMode = {};
+                                                            participants.forEach((p) => {
+                                                                _scoreMode[p.studentId] = false;
+                                                            });
+                                                            _scoreMode[participant.studentId] = true;
+                                                            setScoreBuffer(Object.entries(eventMetadata.evalCriteria).map(([key, _]) => [key, 0]));
+                                                            setScoreMode(_scoreMode);
+                                                        }}
+                                                    >
+                                                        Evaluate
+                                                    </button>
+                                                ) : (
+                                                    <p className="bg-[#a1fffd] text-[#0b3533] font-semibold px-4 py-1 rounded-xl mt-2">Evaluating</p>
+                                                )
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {scoreMode[participant.studentId] && eventMetadata.evalCriteria ? (
+                                        <>
+                                            <hr className="my-4" />
+                                            <div className="flex flex-col gap-2 justify-center items-stretch align-middle">
+                                                {scoreBuffer.map(([key, val], index) => (
+                                                    <div key={index} className="flex flex-row justify-between items-center">
+                                                        <label className="text-sm">{key}</label>
+                                                        <input
+                                                            type="number"
+                                                            className="border p-2 rounded-lg text-md"
+                                                            value={val}
+                                                            onChange={(e) => {
+                                                                const newBuffer = [...scoreBuffer];
+                                                                newBuffer[index][1] = e.target.value;
+                                                                setScoreBuffer(newBuffer);
+                                                            }}
+                                                        />
+                                                    </div>
+                                                ))}
+
+                                                <div className="flex flex-row justify-between gap-1">
+                                                    <button
+                                                        className="bg-[#ffe0e0] text-[#350b0b] font-bold px-4 py-1 rounded-xl mt-2 w-full"
+                                                        onClick={() => {
+                                                            setScoreBuffer([]);
+
+                                                            let _scoreMode = {};
+                                                            participants.forEach((p) => {
+                                                                _scoreMode[p.studentId] = false;
+                                                            });
+                                                            setScoreMode(_scoreMode);
+                                                        }}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        className="bg-[#c2fca2] text-[#0b350d] font-bold px-4 py-1 rounded-xl mt-2 w-full"
+                                                        onClick={() => {
+                                                            markScore(participant.studentId, eventMetadata.name, user.id, Object.fromEntries(scoreBuffer)).then((res) => {
+                                                                if (res) {
+                                                                    let _scoreMode = {};
+                                                                    participants.forEach((p) => {
+                                                                        _scoreMode[p.studentId] = false;
+                                                                    });
+                                                                    setScoreMode(_scoreMode);
+
+                                                                    let _participants = [...participants];
+                                                                    _participants[index].score = _participants[index].score ?? {};
+                                                                    _participants[index].score[eventMetadata.name] = _participants[index].score[eventMetadata.name] ?? {};
+                                                                    _participants[index].score[eventMetadata.name][user.id] = {};
+                                                                    scoreBuffer.forEach(([key, val]) => {
+                                                                        _participants[index].score[eventMetadata.name][user.id][key] = val;
+                                                                    });
+                                                                    setParticipants(_participants);
+                                                                }
+                                                            })
+                                                        }}
+                                                    >
+                                                        Save
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : participant.score && participant.score[eventMetadata.name] && participant.score[eventMetadata.name][user.id] ? (
+                                        <div className="flex flex-col gap-2 mt-4">
+                                            <hr />
+                                            <h2 className="text-lg font-bold">Score</h2>
+                                            {Object.entries(participant.score[eventMetadata.name][user.id]).map(([key, val], index) => (
+                                                <div key={index} className="flex flex-row justify-between items-center">
+                                                    <label className="text-sm">{key}</label>
+                                                    <p className="text-md font-semibold">{val}</p>
+                                                </div>
+                                            ))}
+
+                                        </div>
+                                    ) : null}
                                 </div>
                             ))}
                         </div>
@@ -112,7 +243,7 @@ export default function JudgePage() {
         </>
     ) : (
         <div className="flex h-screen items-center justify-center">
-            <p className="text-2xl font-semibold">Loading...</p>
+            <p className="text-xl font-semibold">Loading...</p>
         </div>
     );
 }

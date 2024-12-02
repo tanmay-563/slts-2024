@@ -174,3 +174,15 @@ export const getJudgeEventData = async (eventName) => {
 
     return [participants, eventMetaData];
 }
+
+export const markScore = async (studentId, eventName, judgeId, score) => {
+    // update score dict vals to float.
+    Object.keys(score).forEach((key) => {
+        score[key] = parseFloat(score[key]);
+    });
+
+    await updateDoc(doc(db, "registrationData", studentId), {
+        [`score.${eventName}.${judgeId}`]: score
+    });
+    return true;
+}

@@ -304,7 +304,7 @@ export default function ManageEvents() {
         </>
     ) : (
         <div className="flex h-screen items-center justify-center">
-            <p>Loading...</p>
+            <p className="text-xl font-semibold">Loading...</p>
         </div>
     )
 }
