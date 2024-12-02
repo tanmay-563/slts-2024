@@ -1,5 +1,5 @@
 import { db } from "./initApp";
-import { getDoc, doc, getDocs, query, collection, where } from "firebase/firestore";
+import { getDoc, doc, getDocs, query, collection, where, updateDoc } from "firebase/firestore";
 import { auth } from "./initApp";
 
 export const getUserData = async () => {
@@ -104,4 +104,36 @@ export const getDistrcitData = async (district) => {
     });
 
     return [data, Array.from(eventNameSet), Array.from(groupNameSet)];
+}
+
+export const getEventData = async (eventName) => {
+    // if (!auth.currentUser) {
+    //     return null;
+    // }
+
+    const eventDataCollectionRef = collection(db, "eventData");
+    const querySnapshot = await getDocs(eventDataCollectionRef);
+    const data = [];
+
+    querySnapshot.forEach((doc) => {
+        data.push(doc.data());
+    });
+
+    // Collect Unique Group Names
+    const groupNameSet = new Set();
+    data.forEach((row) => {
+        row.group.forEach((group) => {
+            groupNameSet.add(group);
+        });
+    });
+
+    return [data, Array.from(groupNameSet)];
+}
+
+export const updateCrieria = async (eventName, criteria) => {
+    await updateDoc(doc(db, "eventData", eventName), {
+        evalCriteria: criteria
+    });
+
+    return true;
 }

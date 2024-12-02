@@ -52,7 +52,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex h-screen flex-col justify-center items-center">
+    <main className="flex h-screen flex-col justify-center items-center m-8">
       {isLoading ? (<p>Loading...</p>) : (<div className="flex flex-col border border-gray-200 rounded-lg w-full md:w-[480px] bg-white">
         <h1 className="text-2xl font-semibold text-center pt-2">Sign In</h1>
         <p className="text-center text-gray-500 pb-2">SLBTS 2024, Tamil Nadu</p>
