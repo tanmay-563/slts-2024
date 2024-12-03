@@ -131,6 +131,15 @@ export const getEventData = async (eventName) => {
 }
 
 export const updateCrieria = async (eventName, criteria) => {
+    // if (!auth.currentUser) {
+    //     return null;
+    // }
+
+    // typecast all values to float.
+    Object.keys(criteria).forEach((key) => {
+        criteria[key] = parseFloat(criteria[key]);
+    });
+
     await updateDoc(doc(db, "eventData", eventName), {
         evalCriteria: criteria
     });
@@ -210,14 +219,15 @@ export const getJudgeEventData = async (eventName) => {
     return [participants, eventMetaData];
 }
 
-export const markScore = async (studentId, eventName, judgeId, score) => {
+export const markScore = async (studentId, eventName, judgeId, score, comment) => {
     // update score dict vals to float.
     Object.keys(score).forEach((key) => {
         score[key] = parseFloat(score[key]);
     });
 
     await updateDoc(doc(db, "registrationData", studentId), {
-        [`score.${eventName}.${judgeId}`]: score
+        [`score.${eventName}.${judgeId}`]: score,
+        [`comment.${eventName}.${judgeId}`]: comment == '' ? "-" : (comment ?? "-")
     });
     return true;
 }

@@ -54,7 +54,7 @@ export default function ManageEvents() {
 
     return !isLoading && user && filteredData ? (
         <>
-            <div className="flex flex-col justify-center w-screen ml-auto mr-auto">
+            <div className={"flex flex-col justify-center w-screen ml-auto mr-auto" + (cIsOpen ? " blur-sm" : "")}>
                 <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-row">
                     <div>
                         <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
@@ -160,6 +160,10 @@ export default function ManageEvents() {
                                                         <td className="border px-4 py-2">{event.evalCriteria[key]}</td>
                                                     </tr>
                                                 ))}
+                                                <tr>
+                                                    <td className="border px-4 py-2 font-bold">Total</td>
+                                                    <td className="border px-4 py-2 font-bold">{Object.values(event.evalCriteria).reduce((a, b) => a + b, 0)}</td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </td>
@@ -241,10 +245,10 @@ export default function ManageEvents() {
                                                 <input
                                                     type="number"
                                                     className="border p-2 rounded-2xl w-full"
-                                                    value={criteriaBuffer[index][1]}
+                                                    value={criteriaBuffer[index][1] ?? 0}
                                                     onChange={(e) => {
                                                         let _criteriaBuffer = [...criteriaBuffer];
-                                                        _criteriaBuffer[index][1] = parseInt(e.target.value);
+                                                        _criteriaBuffer[index][1] = e.target.value.toString();
                                                         setCriteriaBuffer(_criteriaBuffer);
                                                     }}
                                                 />
@@ -263,6 +267,11 @@ export default function ManageEvents() {
                                             </td>
                                         </tr>
                                     ))}
+                                    <tr>
+                                        {/* total */}
+                                        <td className="border px-4 py-2 font-bold">Total</td>
+                                        <td className="border px-4 py-2 font-bold">{criteriaBuffer.map((c) => c[1]).reduce((a, b) => a + parseInt(b), 0)}</td>
+                                    </tr>
                                 </tbody>
                             </table>
 

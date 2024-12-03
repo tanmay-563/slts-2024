@@ -15,6 +15,7 @@ export default function JudgePage() {
     const [filteredParticipants, setFilteredParticipants] = useState(null);
 
     const [scoreBuffer, setScoreBuffer] = useState([]);
+    const [commentBuffer, setCommentBuffer] = useState("");
     const [scoreMode, setScoreMode] = useState({});
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -106,6 +107,10 @@ export default function JudgePage() {
                                         <td className="border px-4 py-2">{value}</td>
                                     </tr>
                                 ))}
+                                <tr>
+                                    <td className="border px-4 py-2 font-semibold">Total</td>
+                                    <td className="border px-4 py-2 font-semibold">{Object.values(eventMetadata.evalCriteria).reduce((a, b) => a + b, 0)}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -154,6 +159,7 @@ export default function JudgePage() {
                                                             setScoreBuffer(Object.entries(participant.score[eventMetadata.name][user.id]).map(([key, val]) => [key, val]));
 
                                                             setScoreMode(_scoreMode);
+                                                            setCommentBuffer(participant.comment[eventMetadata.name][user.id] ?? "");
                                                         }}
                                                     >
                                                         Edit Score
@@ -171,6 +177,7 @@ export default function JudgePage() {
                                                             _scoreMode[participant.studentId] = true;
                                                             setScoreBuffer(Object.entries(eventMetadata.evalCriteria).map(([key, _]) => [key, 0]));
                                                             setScoreMode(_scoreMode);
+                                                            setCommentBuffer("");
                                                         }}
                                                     >
                                                         Evaluate
@@ -192,6 +199,7 @@ export default function JudgePage() {
                                                         <input
                                                             type="number"
                                                             className="border p-2 rounded-lg text-md"
+                                                            max={eventMetadata.evalCriteria[key]}
                                                             value={val}
                                                             onChange={(e) => {
                                                                 const newBuffer = [...scoreBuffer];
@@ -201,6 +209,22 @@ export default function JudgePage() {
                                                         />
                                                     </div>
                                                 ))}
+
+                                                <hr className="border-dashed mt-2" />
+                                                <div className="flex flex-row justify-between align-middle">
+                                                    <label className="text-sm">Total</label>
+                                                    <p className="text-md font-semibold">{scoreBuffer.reduce((a, b) => (a == "" ? 0 : a) + parseInt(b[1] == "" ? 0 : b[1]), 0)}</p>
+                                                </div>
+
+                                                <hr className="border-dashed" />
+                                                <div className="flex flex-col gap-2">
+                                                    <label className="text-sm">Comments (Optional)</label>
+                                                    <textarea
+                                                        className="border p-2 rounded-lg"
+                                                        value={commentBuffer}
+                                                        onChange={(e) => setCommentBuffer(e.target.value)}
+                                                    />
+                                                </div>
 
                                                 <div className="flex flex-row justify-between gap-1">
                                                     <button
@@ -220,7 +244,7 @@ export default function JudgePage() {
                                                     <button
                                                         className="bg-[#c2fca2] text-[#0b350d] font-semibold px-4 py-1 rounded-xl mt-2 w-full"
                                                         onClick={() => {
-                                                            markScore(participant.studentId, eventMetadata.name, user.id, Object.fromEntries(scoreBuffer)).then((res) => {
+                                                            markScore(participant.studentId, eventMetadata.name, user.id, Object.fromEntries(scoreBuffer), commentBuffer).then((res) => {
                                                                 if (res) {
                                                                     let _scoreMode = {};
                                                                     participants.forEach((p) => {
@@ -236,6 +260,11 @@ export default function JudgePage() {
                                                                     scoreBuffer.forEach(([key, val]) => {
                                                                         _participants[i].score[eventMetadata.name][user.id][key] = val;
                                                                     });
+
+                                                                    _participants[i].comment = _participants[i].comment ?? {};
+                                                                    _participants[i].comment[eventMetadata.name] = _participants[i].comment[eventMetadata.name] ?? {};
+                                                                    _participants[i].comment[eventMetadata.name][user.id] = commentBuffer;
+
                                                                     setParticipants(_participants);
                                                                 }
                                                             })
@@ -256,7 +285,16 @@ export default function JudgePage() {
                                                     <p className="text-md font-semibold">{val}</p>
                                                 </div>
                                             ))}
-
+                                            <hr className="border-dashed" />
+                                            <div className="flex flex-row justify-between items-center">
+                                                <label className="text-sm">Total</label>
+                                                <p className="text-md font-semibold">{Object.values(participant.score[eventMetadata.name][user.id]).reduce((a, b) => a + parseInt(b), 0)}</p>
+                                            </div>
+                                            <hr className="border-dashed" />
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-sm font-bold">Comments</label>
+                                                <p className="text-md">{participant.comment[eventMetadata.name][user.id] ?? "-"}</p>
+                                            </div>
                                         </div>
                                     ) : null}
                                 </div>
