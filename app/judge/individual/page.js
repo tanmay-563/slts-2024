@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
-import { getJudgeEventData, markScore } from "../../_util/data";
-import { auth } from "../../_util/initApp";
+import { getJudgeEventData, markScore } from "@/app/_util/data";
+import { auth } from "@/app/_util/initApp";
 
 export default function JudgePage() {
     const router = useRouter();

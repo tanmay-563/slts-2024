@@ -1,7 +1,8 @@
 "use client";
 
 import { getJudgeEventData } from "@/app/_util/data";
-import { useParams, useRouter } from "next/navigation"
+import { auth } from "@/app/_util/initApp";
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 

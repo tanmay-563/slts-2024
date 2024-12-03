@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { auth } from "../_util/initApp";
-import { getRegistrationData } from "../_util/data";
+import { auth } from "@/app/_util/initApp";
+import { getRegistrationData } from "@/app/_util/data";
 import secureLocalStorage from "react-secure-storage";
 
 export default function AdminDashboard() {

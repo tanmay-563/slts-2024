@@ -1,5 +1,5 @@
 import localFont from "next/font/local";
-import "./globals.css";
+import "@/app/globals.css";
 
 const gilroy = localFont({
   src: [

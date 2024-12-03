@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { auth } from "../_util/initApp";
-import { reverseDistrictCode } from "../_util/maps";
-import { getDistrcitData } from "../_util/data";
+import { auth } from "@/app/_util/initApp";
+import { reverseDistrictCode } from "@/app/_util/maps";
+import { getDistrcitData } from "@/app/_util/data";
 import secureLocalStorage from "react-secure-storage";
 
 export default function AdminDashboard() {

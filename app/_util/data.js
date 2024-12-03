@@ -1,6 +1,5 @@
-import { db } from "./initApp";
 import { getDoc, doc, getDocs, query, collection, where, updateDoc } from "firebase/firestore";
-import { auth } from "./initApp";
+import { auth, db } from "@/app/_util/initApp";
 
 export const getUserData = async () => {
     if (!auth.currentUser) {

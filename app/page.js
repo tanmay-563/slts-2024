@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./_util/initApp";
-import { getUserData } from "./_util/data";
+import { auth } from "@/app/_util/initApp";
+import { getUserData } from "@/app/_util/data";
 import { useRouter } from "next/navigation";
-import { reverseDistrictCode } from "./_util/maps";
+import { reverseDistrictCode } from "@/app/_util/maps";
 import secureLocalStorage from "react-secure-storage";
 
 export default function Home() {
