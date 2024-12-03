@@ -1,6 +1,7 @@
 "use client";
 
 import { getEventData, updateCrieria } from "@/app/_util/data";
+import { auth } from "@/app/_util/initApp";
 import { Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
