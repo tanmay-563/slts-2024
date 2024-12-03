@@ -182,7 +182,8 @@ export default function ManageEvents() {
                                         <button
                                             className="bg-[#f7ffce] text-[#2c350b] font-bold px-4 py-1 rounded-xl"
                                             onClick={() => {
-                                                router.push(`/admin/event/${event.name.includes("GROUP") ? "group" : "individual"}/${encodeURI(event.name)}`);
+                                                secureLocalStorage.setItem('event', JSON.stringify(event));
+                                                router.push(`/admin/event/${event.name.includes("GROUP") ? "group" : "individual"}`);
                                             }}
                                         >
                                             View Leaderboard

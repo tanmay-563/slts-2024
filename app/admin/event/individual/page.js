@@ -6,10 +6,10 @@ import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 
 export default function EventLeaderboardIndiPage() {
-    const { eventId } = useParams();
     const router = useRouter();
 
     const [user, setUser] = useState(null);
+    const [eventName, setEventName] = useState(null);
     const [eventMetadata, setEventMetadata] = useState(null);
     const [participants, setParticipants] = useState(null);
     const [filteredParticipants, setFilteredParticipants] = useState(null);
@@ -17,16 +17,20 @@ export default function EventLeaderboardIndiPage() {
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
-        if (!secureLocalStorage.getItem('user')) {
+        if (!secureLocalStorage.getItem('user') || !secureLocalStorage.getItem('event')) {
             router.push('/');
         }
 
         const user = JSON.parse(secureLocalStorage.getItem('user'));
-        if (user.role !== 'admin' || !eventId) {
+        const ex = JSON.parse(secureLocalStorage.getItem('event'));
+        const _eventName = ex.name;
+        setEventName(ex.name);
+
+        if (user.role !== 'admin' || !_eventName) {
             router.push('/');
         } else {
             setUser(user);
-            getJudgeEventData(decodeURI(eventId)).then((_data) => {
+            getJudgeEventData((_eventName)).then((_data) => {
                 if (_data == null || _data.length != 2) {
                     router.push('/');
                 }
@@ -40,21 +44,21 @@ export default function EventLeaderboardIndiPage() {
                             if (!participant.score) {
                                 participant.score = {};
                             }
-                            if (!participant.score[decodeURI(eventId)]) {
-                                participant.score[decodeURI(eventId)] = {};
+                            if (!participant.score[(_eventName)]) {
+                                participant.score[(_eventName)] = {};
                             }
-                            if (!participant.score[decodeURI(eventId)][judgeId]) {
-                                participant.score[decodeURI(eventId)][judgeId] = {};
+                            if (!participant.score[(_eventName)][judgeId]) {
+                                participant.score[(_eventName)][judgeId] = {};
                             }
-                            if (!participant.score[decodeURI(eventId)][judgeId][criteria]) {
-                                participant.score[decodeURI(eventId)][judgeId][criteria] = 0;
+                            if (!participant.score[(_eventName)][judgeId][criteria]) {
+                                participant.score[(_eventName)][judgeId][criteria] = 0;
                             }
 
                             if (!participant.judgeWiseTotal[judgeId]) {
                                 participant.judgeWiseTotal[judgeId] = 0;
                             }
 
-                            participant.judgeWiseTotal[judgeId] += parseInt(participant.score[decodeURI(eventId)][judgeId][criteria]);
+                            participant.judgeWiseTotal[judgeId] += parseInt(participant.score[(_eventName)][judgeId][criteria]);
                         })
                         participant.overallTotal = Object.values(participant.judgeWiseTotal).reduce((a, b) => a + b, 0);
                     });
@@ -67,12 +71,12 @@ export default function EventLeaderboardIndiPage() {
                             participant.comment = {};
                         }
 
-                        if (!participant.comment[decodeURI(eventId)]) {
-                            participant.comment[decodeURI(eventId)] = {};
+                        if (!participant.comment[(_eventName)]) {
+                            participant.comment[(_eventName)] = {};
                         }
 
-                        if (!participant.comment[decodeURI(eventId)][judgeId]) {
-                            participant.comment[decodeURI(eventId)][judgeId] = '';
+                        if (!participant.comment[(_eventName)][judgeId]) {
+                            participant.comment[(_eventName)][judgeId] = '';
                         }
                     })
                 });
@@ -85,9 +89,9 @@ export default function EventLeaderboardIndiPage() {
                 setFilteredParticipants(_data[0]);
             });
         }
-    }, [router, eventId]);
+    }, [router, eventName]);
 
-    return eventId && user && eventMetadata && participants && filteredParticipants ? (
+    return eventName && user && eventMetadata && participants && filteredParticipants ? (
         <>
             <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
                 <div className="rounded-2xl p-4 m-2 bg-white border overflow-x-auto justify-between flex flex-row">
@@ -191,7 +195,6 @@ export default function EventLeaderboardIndiPage() {
                                         <td className="px-4 py-2 border max-w-[200px]">
                                             <p className="font-bold">{row.district ?? "-"}</p>
                                             <p className="text-xs">{row.samithiName ?? '-'}</p>
-                                            <p className="text-xs">DOJ BV: {row.dateOfJoiningBalvikas ?? '-'} {row.yearOfJoiningBalvikas ?? '-'}</p>
                                             {row.studentGroup === 'Group 3' && (
                                                 <p className="text-xs">Passed group 2: {row.hasPassedGroup2Exam ?? '-'}</p>
                                             )}
@@ -204,7 +207,7 @@ export default function EventLeaderboardIndiPage() {
                                         {eventMetadata.evalCriteria && Object.keys(eventMetadata.evalCriteria).map((criteria, i1) => (
                                             <td key={i1} className="px-4 py-2 border">
                                                 {eventMetadata.judgeIdList.map((judgeId, i2) => (
-                                                    <p key={i2} className="text-xs">{row.score[decodeURI(eventId)][judgeId][criteria]}</p>
+                                                    <p key={i2} className="text-xs">{row.score[(eventName)][judgeId][criteria]}</p>
                                                 ))}
                                             </td>
                                         ))}
@@ -220,7 +223,7 @@ export default function EventLeaderboardIndiPage() {
                                             <div className="flex flex-col">
                                                 {eventMetadata.judgeIdList.map((judgeId, i) => (
                                                     <div key={i} className="flex flex-col">
-                                                        <p className="text-xs">{row.comment[decodeURI(eventId)][judgeId] == '' ? "-" : row.comment[decodeURI(eventId)][judgeId]}</p>
+                                                        <p className="text-xs">{row.comment[(eventName)][judgeId] == '' ? "-" : row.comment[(eventName)][judgeId]}</p>
                                                     </div>
                                                 ))}
                                             </div>
