@@ -12,5 +12,11 @@ Firebase powered web app to view and analyze registrations of SLTS-2024.
 - [x] Cached Login.
 - [x] Data being read from Firestore.
 - [x] Deployed using Firebase hosting.
+- [x] Dashboards for event judges.
+- [x] Judge can grade participants for individual events.
+- [x] Admin can view events.
+- [x] Admin can view leaderboard of individual events.
+- [x] Admin can update the marking criteria of events.
+- [x] Dynamic routes were optimized for cost through caching.
 
 `Ashwin Narayanan S`
