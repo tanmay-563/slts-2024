@@ -168,6 +168,7 @@ export default function ManageEvents() {
                                         </table>
                                     </td>
                                     <td className="border px-4 py-2">
+                                        <div className="flex flex-col gap-2">
                                         <button
                                             className="bg-[#cefdff] text-[#0b0d35] font-bold px-4 py-1 rounded-xl"
                                             onClick={() => {
@@ -178,6 +179,15 @@ export default function ManageEvents() {
                                         >
                                             Update Criteria
                                         </button>
+                                        <button
+                                            className="bg-[#f7ffce] text-[#2c350b] font-bold px-4 py-1 rounded-xl"
+                                            onClick={() => {
+                                                router.push(`/admin/event/${event.name.includes("GROUP") ? "group" : "individual"}/${encodeURI(event.name)}`);
+                                            }}
+                                        >
+                                            View Leaderboard
+                                        </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

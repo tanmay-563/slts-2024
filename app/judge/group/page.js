@@ -120,6 +120,7 @@ export default function JudgeGroupPage() {
                                         ))}
                                     </div>
                                     <div className="mt-4">
+                                        {/* TODO: Scoring for GROUP events. */}
                                     </div>
                                 </div>
                             ))}
