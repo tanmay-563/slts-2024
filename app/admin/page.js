@@ -12,6 +12,8 @@ export default function AdminDashboard() {
     const [data, setData] = useState(null);
     const [filteredData, setFilteredData] = useState(null);
 
+    // const [dumpData, setDumpData] = useState(null);
+
     // filters.
     const [districts, setDistricts] = useState([]);
     const [filterDistrict, setFilterDistrict] = useState("");
@@ -39,6 +41,8 @@ export default function AdminDashboard() {
 
             setData(_data[0]);
             setFilteredData(_data[0]);
+            // setDumpData(_data[0]);
+
             setDistricts(_data[1]);
             setEvents(_data[2]);
             setGroups(_data[3]);
@@ -58,369 +62,386 @@ export default function AdminDashboard() {
     }, [data, filterDistrict, filterEvent, filterGroup, searchQuery]);
 
 
-    const downloadDistrictRegistrationsAsCSV = () => {
-        if (filterDistrict === "") {
-            alert("Please select a district to download the data.");
-            return;
-        }
+    // const downloadDistrictRegistrationsAsCSV = () => {
+    //     if (filterDistrict === "") {
+    //         alert("Please select a district to download the data.");
+    //         return;
+    //     }
 
-        // Find unique set of keys.
-        let keys = new Set();
-        for (let i = 0; i < data.length; i++) {
-            Object.keys(data[i]).forEach((key) => {
-                keys.add(key);
-            });
-        }
+    //     let _dData = dumpData;
 
-        let _data = data.filter((row) => row.district === filterDistrict);
+    //     // Find unique set of keys.
+    //     let keys = new Set();
+    //     for (let i = 0; i < _dData.length; i++) {
+    //         Object.keys(_dData[i]).forEach((key) => {
+    //             keys.add(key);
+    //         });
+    //     }
 
-        let _downData = [];
-        for (let i = 0; i < _data.length; i++) {
-            let row = _data[i];
-            for (let key of keys) {
-                row[key] = row[key] ?? "-";
-                if (key !== "registeredEvents") {
-                    row[key] = row[key].toString().replace(/'/g, ' ');
-                    row[key] = row[key].toString().replace(/"/g, ' ');
-                    row[key] = row[key].toString().replace(/`/g, ' ');
-                }
-            }
-            _downData.push(row);
-        }
+    //     let _data = _dData.filter((row) => row.district === filterDistrict);
 
-        const csvData = _downData.map((row) => {
-            return {
-                "StudentID": row.studentId.toString().replace(/,/g, ' '),
-                "Name": row.studentFullName.toString().replace(/,/g, ' '),
-                "Gender": row.gender.toString().replace(/,/g, ' '),
-                "DOB": row.dateOfBirth.toString().replace(/,/g, ' '),
-                "Group": row.studentGroup.toString().replace(/,/g, ' '),
-                "District": row.district.toString().replace(/,/g, ' '),
-                "Samithi": row.samithiName.toString().replace(/,/g, ' '),
-                "DOJBalVikas": row.dateOfJoiningBalvikas.toString().replace(/,/g, ' '),
-                "YearOfJoiningBalVikas": row.yearOfJoiningBalvikas.toString().replace(/,/g, ' '),
-                "PassedGroup2?": row.hasPassedGroup2Exam.toString().replace(/,/g, ' '),
-                "TotalParticipatingEvents": row.registeredEvents.length.toString().replace(/,/g, ' '),
-                "RegisteredEvents": row.registeredEvents.join(' | ').toString().replace(/,/g, ' ') ?? "-",
-                "ArrivalDate": row.arrivalDate.toString().replace(/,/g, ' '),
-                "ArrivalTime": row.arrivalTime.toString().replace(/,/g, ' '),
-                "NeedsPickup": row.needsPickup.toString().replace(/,/g, ' '),
-                "ModeOfTravel": row.modeOfTravel.toString().replace(/,/g, ' '),
-                "PickupPoint": row.pickupPoint.toString().replace(/,/g, ' '),
-                "DepartureDate": row.departureDate.toString().replace(/,/g, ' '),
-                "DepartureTime": row.departureTime.toString().replace(/,/g, ' '),
-                "NeedsDrop?": row.needsDrop.toString().replace(/,/g, ' '),
-                "ModeOfTravelForDrop": row.modeOfTravelForDrop.toString().replace(/,/g, ' '),
-                "DropOffPoint": row.dropOffPoint.toString().replace(/,/g, ' '),
-                "HasAccompanyingAdults?": row.hasAccompanyingAdults.toString().replace(/,/g, ' '),
-                "AccompanyingPersonName": row.accompanyingPersonName.toString().replace(/,/g, ' '),
-                "AccompanyingPersonGender": row.accompanyingPersonGender.toString
-                    ().replace(/,/g, ' '),
-                "AccompanyingPersonAge": row.accompanyingPersonAge.toString().replace(/,/g, ' '),
-                "AccompanyingPersonRelation": row.accompanyingPersonRelation.toString().replace(/,/g, ' '),
-                "AccompanyingPersonContact": row.accompanyingPersonContact.toString().replace(/,/g, ' '),
-                "NumMaleAccompanying": row.numMaleAccompanying.toString().replace(/,/g, ' '),
-                "NumFemaleAccompanying": row.numFemaleAccompanying.toString().replace(/,/g, ' '),
-                "NumNonParticipatingSiblings": row.numNonParticipatingSiblings.toString().replace(/,/g, ' '),
-                "NeedsAccommodation?": row.needsAccommodation.toString().replace(/,/g, ' '),
-                "CheckInDate": row.checkInDate.toString().replace(/,/g, ' '),
-                "CheckInTime": row.checkInTime.toString().replace(/,/g, ' '),
-                "CheckOutDate": row.checkOutDate.toString().replace(/,/g, ' '),
-                "CheckOutTime": row.checkOutTime.toString().replace(/,/g, ' '),
-                "FoodAllergies": row.foodAllergies.toString().replace(/,/g, ' '),
-                "NumMaleAccompanyingNeedAccommodation": row.numMaleAccompanyingNeedAccommodation.toString().replace(/,/g, ' '),
-                "NumFemaleAccompanyingNeedAccommodation": row.numFemaleAccompanyingNeedAccommodation.toString().replace(/,/g, ' '),
-                "OverallRegistrationStatus": row.overallRegistrationStatus.toString().replace(/,/g, ' '),
-            }
-        });
+    //     let _downData = [];
+    //     for (let i = 0; i < _data.length; i++) {
+    //         let row = _data[i];
+    //         for (let key of keys) {
+    //             row[key] = row[key] ?? "-";
+    //             if (key !== "registeredEvents") {
+    //                 row[key] = row[key].toString().replace(/'/g, ' ');
+    //                 row[key] = row[key].toString().replace(/"/g, ' ');
+    //                 row[key] = row[key].toString().replace(/`/g, ' ');
+    //             }
+    //         }
+    //         _downData.push(row);
+    //     }
 
-        // add headers.
-        csvData.unshift({
-            "StudentID": "StudentID",
-            "Name": "Name",
-            "Gender": "Gender",
-            "DOB": "DOB",
-            "Group": "Group",
-            "District": "District",
-            "Samithi": "Samithi",
-            "DOJBalVikas": "DOJBalVikas",
-            "YearOfJoiningBalVikas": "YearOfJoiningBalVikas",
-            "PassedGroup2?": "PassedGroup2?",
-            "TotalParticipatingEvents": "TotalParticipatingEvents",
-            "RegisteredEvents": "RegisteredEvents",
-            "ArrivalDate": "ArrivalDate",
-            "ArrivalTime": "ArrivalTime",
-            "NeedsPickup": "NeedsPickup",
-            "ModeOfTravel": "ModeOfTravel",
-            "PickupPoint": "PickupPoint",
-            "DepartureDate": "DepartureDate",
-            "DepartureTime": "DepartureTime",
-            "NeedsDrop?": "NeedsDrop?",
-            "ModeOfTravelForDrop": "ModeOfTravelForDrop",
-            "DropOffPoint": "DropOffPoint",
-            "HasAccompanyingAdults?": "HasAccompanyingAdults?",
-            "AccompanyingPersonName": "AccompanyingPersonName",
-            "AccompanyingPersonGender": "AccompanyingPersonGender",
-            "AccompanyingPersonAge": "AccompanyingPersonAge",
-            "AccompanyingPersonRelation": "AccompanyingPersonRelation",
-            "AccompanyingPersonContact": "AccompanyingPersonContact",
-            "NumMaleAccompanying": "NumMaleAccompanying",
-            "NumFemaleAccompanying": "NumFemaleAccompanying",
-            "NumNonParticipatingSiblings": "NumNonParticipatingSiblings",
-            "NeedsAccommodation?": "NeedsAccommodation?",
-            "CheckInDate": "CheckInDate",
-            "CheckInTime": "CheckInTime",
-            "CheckOutDate": "CheckOutDate",
-            "CheckOutTime": "CheckOutTime",
-            "FoodAllergies": "FoodAllergies",
-            "NumMaleAccompanyingNeedAccommodation": "NumMaleAccompanyingNeedAccommodation",
-            "NumFemaleAccompanyingNeedAccommodation": "NumFemaleAccompanyingNeedAccommodation",
-            "OverallRegistrationStatus": "OverallRegistrationStatus",
-        });
+    //     const csvData = _downData.map((row) => {
+    //         return {
+    //             "StudentID": row.studentId.toString().replace(/,/g, ' '),
+    //             "Name": row.studentFullName.toString().replace(/,/g, ' '),
+    //             "Gender": row.gender.toString().replace(/,/g, ' '),
+    //             "DOB": row.dateOfBirth.toString().replace(/,/g, ' '),
+    //             "Group": row.studentGroup.toString().replace(/,/g, ' '),
+    //             "District": row.district.toString().replace(/,/g, ' '),
+    //             "Samithi": row.samithiName.toString().replace(/,/g, ' '),
+    //             "DOJBalVikas": row.dateOfJoiningBalvikas.toString().replace(/,/g, ' '),
+    //             "YearOfJoiningBalVikas": row.yearOfJoiningBalvikas.toString().replace(/,/g, ' '),
+    //             "PassedGroup2?": row.hasPassedGroup2Exam.toString().replace(/,/g, ' '),
+    //             "TotalParticipatingEvents": row.registeredEvents.length.toString().replace(/,/g, ' '),
+    //             "RegisteredEvents": row.registeredEvents.join(' | ').toString().replace(/,/g, ' ') ?? "-",
+    //             "ArrivalDate": row.arrivalDate.toString().replace(/,/g, ' '),
+    //             "ArrivalTime": row.arrivalTime.toString().replace(/,/g, ' '),
+    //             "NeedsPickup": row.needsPickup.toString().replace(/,/g, ' '),
+    //             "ModeOfTravel": row.modeOfTravel.toString().replace(/,/g, ' '),
+    //             "PickupPoint": row.pickupPoint.toString().replace(/,/g, ' '),
+    //             "DepartureDate": row.departureDate.toString().replace(/,/g, ' '),
+    //             "DepartureTime": row.departureTime.toString().replace(/,/g, ' '),
+    //             "NeedsDrop?": row.needsDrop.toString().replace(/,/g, ' '),
+    //             "ModeOfTravelForDrop": row.modeOfTravelForDrop.toString().replace(/,/g, ' '),
+    //             "DropOffPoint": row.dropOffPoint.toString().replace(/,/g, ' '),
+    //             "HasAccompanyingAdults?": row.hasAccompanyingAdults.toString().replace(/,/g, ' '),
+    //             "AccompanyingPersonName": row.accompanyingPersonName.toString().replace(/,/g, ' '),
+    //             "AccompanyingPersonGender": row.accompanyingPersonGender.toString
+    //                 ().replace(/,/g, ' '),
+    //             "AccompanyingPersonAge": row.accompanyingPersonAge.toString().replace(/,/g, ' '),
+    //             "AccompanyingPersonRelation": row.accompanyingPersonRelation.toString().replace(/,/g, ' '),
+    //             "AccompanyingPersonContact": row.accompanyingPersonContact.toString().replace(/,/g, ' '),
+    //             "NumMaleAccompanying": row.numMaleAccompanying.toString().replace(/,/g, ' '),
+    //             "NumFemaleAccompanying": row.numFemaleAccompanying.toString().replace(/,/g, ' '),
+    //             "NumNonParticipatingSiblings": row.numNonParticipatingSiblings.toString().replace(/,/g, ' '),
+    //             "NeedsAccommodation?": row.needsAccommodation.toString().replace(/,/g, ' '),
+    //             "CheckInDate": row.checkInDate.toString().replace(/,/g, ' '),
+    //             "CheckInTime": row.checkInTime.toString().replace(/,/g, ' '),
+    //             "CheckOutDate": row.checkOutDate.toString().replace(/,/g, ' '),
+    //             "CheckOutTime": row.checkOutTime.toString().replace(/,/g, ' '),
+    //             "FoodAllergies": row.foodAllergies.toString().replace(/,/g, ' '),
+    //             "NumMaleAccompanyingNeedAccommodation": row.numMaleAccompanyingNeedAccommodation.toString().replace(/,/g, ' '),
+    //             "NumFemaleAccompanyingNeedAccommodation": row.numFemaleAccompanyingNeedAccommodation.toString().replace(/,/g, ' '),
+    //             "OverallRegistrationStatus": row.overallRegistrationStatus.toString().replace(/,/g, ' '),
+    //             "Remarks": row.remarks.toString().replace(/,/g, ' '),
+    //         }
+    //     });
 
-        const csv = csvData.map(row => Object.values(row).join(',')).join('\n');
+    //     // add headers.
+    //     csvData.unshift({
+    //         "StudentID": "StudentID",
+    //         "Name": "Name",
+    //         "Gender": "Gender",
+    //         "DOB": "DOB",
+    //         "Group": "Group",
+    //         "District": "District",
+    //         "Samithi": "Samithi",
+    //         "DOJBalVikas": "DOJBalVikas",
+    //         "YearOfJoiningBalVikas": "YearOfJoiningBalVikas",
+    //         "PassedGroup2?": "PassedGroup2?",
+    //         "TotalParticipatingEvents": "TotalParticipatingEvents",
+    //         "RegisteredEvents": "RegisteredEvents",
+    //         "ArrivalDate": "ArrivalDate",
+    //         "ArrivalTime": "ArrivalTime",
+    //         "NeedsPickup": "NeedsPickup",
+    //         "ModeOfTravel": "ModeOfTravel",
+    //         "PickupPoint": "PickupPoint",
+    //         "DepartureDate": "DepartureDate",
+    //         "DepartureTime": "DepartureTime",
+    //         "NeedsDrop?": "NeedsDrop?",
+    //         "ModeOfTravelForDrop": "ModeOfTravelForDrop",
+    //         "DropOffPoint": "DropOffPoint",
+    //         "HasAccompanyingAdults?": "HasAccompanyingAdults?",
+    //         "AccompanyingPersonName": "AccompanyingPersonName",
+    //         "AccompanyingPersonGender": "AccompanyingPersonGender",
+    //         "AccompanyingPersonAge": "AccompanyingPersonAge",
+    //         "AccompanyingPersonRelation": "AccompanyingPersonRelation",
+    //         "AccompanyingPersonContact": "AccompanyingPersonContact",
+    //         "NumMaleAccompanying": "NumMaleAccompanying",
+    //         "NumFemaleAccompanying": "NumFemaleAccompanying",
+    //         "NumNonParticipatingSiblings": "NumNonParticipatingSiblings",
+    //         "NeedsAccommodation?": "NeedsAccommodation?",
+    //         "CheckInDate": "CheckInDate",
+    //         "CheckInTime": "CheckInTime",
+    //         "CheckOutDate": "CheckOutDate",
+    //         "CheckOutTime": "CheckOutTime",
+    //         "FoodAllergies": "FoodAllergies",
+    //         "NumMaleAccompanyingNeedAccommodation": "NumMaleAccompanyingNeedAccommodation",
+    //         "NumFemaleAccompanyingNeedAccommodation": "NumFemaleAccompanyingNeedAccommodation",
+    //         "OverallRegistrationStatus": "OverallRegistrationStatus",
+    //         "Remarks": "Remarks",
+    //     });
 
-        const csvFile = new Blob([csv], { type: 'text/csv' });
+    //     const csv = csvData.map(row => Object.values(row).join(',')).join('\n');
 
-        const downloadLink = document.createElement("a");
-        downloadLink.download = `${filterDistrict}_Registration_Data.csv`;
-        downloadLink.href = window.URL.createObjectURL(csvFile);
-        downloadLink.style.display = "none";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-    }
+    //     const csvFile = new Blob([csv], { type: 'text/csv' });
+
+    //     const downloadLink = document.createElement("a");
+    //     downloadLink.download = `${filterDistrict}_Registration_Data.csv`;
+    //     downloadLink.href = window.URL.createObjectURL(csvFile);
+    //     downloadLink.style.display = "none";
+    //     document.body.appendChild(downloadLink);
+    //     downloadLink.click();
+    //     document.body.removeChild(downloadLink);
+    // }
 
 
-    const downloadEventParticipantsAsCSV = () => {
-        if (filterEvent === "") {
-            alert("Please select an event to download the data.");
-            return;
-        }
+    // const downloadEventParticipantsAsCSV = () => {
+    //     if (filterEvent === "") {
+    //         alert("Please select an event to download the data.");
+    //         return;
+    //     }
 
-        // Find unique set of keys.
-        let keys = new Set();
-        for (let i = 0; i < filteredData.length; i++) {
-            Object.keys(filteredData[i]).forEach((key) => {
-                keys.add(key);
-            });
-        }
+    //     const _dData = dumpData;
 
-        let _downData = [];
-        for (let i = 0; i < filteredData.length; i++) {
-            let row = filteredData[i];
-            for (let key of keys) {
-                row[key] = row[key] ?? "-";
-                if (key !== "registeredEvents") {
-                    row[key] = row[key].toString().replace(/'/g, ' ');
-                    row[key] = row[key].toString().replace(/"/g, ' ');
-                    row[key] = row[key].toString().replace(/`/g, ' ');
-                }
-            }
-            _downData.push(row);
-        }
+    //     // Find unique set of keys.
+    //     let keys = new Set();
+    //     for (let i = 0; i < _dData.length; i++) {
+    //         Object.keys(_dData[i]).forEach((key) => {
+    //             keys.add(key);
+    //         });
+    //     }
 
-        // Remove commas from the rows.
-        const csvData = _downData.map((row) => {
-            return {
-                "StudentID": row.studentId.toString().replace(/,/g, ' '),
-                "Name": row.studentFullName.toString().replace(/,/g, ' '),
-                "Gender": row.gender.toString().replace(/,/g, ' '),
-                "DOB": row.dateOfBirth.toString().replace(/,/g, ' '),
-                "Group": row.studentGroup.toString().replace(/,/g, ' '),
-                "District": row.district.toString().replace(/,/g, ' '),
-                "Samithi": row.samithiName.toString().replace(/,/g, ' '),
-                "TotalParticipatingEvents": row.registeredEvents.length.toString().replace(/,/g, ' '),
-                "OtherParticipatingEvents": row.registeredEvents.filter((event) => event !== filterEvent).join('|').toString().replace(/,/g, ' ') ?? "-",
-            }
-        })
+    //     let _data = _dData;
 
-        if (filterEvent.includes("GROUP")) {
-            // Sort by district.
-            csvData.sort((a, b) => {
-                if (a.District < b.District) {
-                    return -1;
-                }
-                if (a.District > b.District) {
-                    return 1;
-                }
-                return 0;
-            });
-        } else {
-            // Sort the data by the number of events registered.
-            csvData.sort((a, b) => {
-                if (a.TotalParticipatingEvents < b.TotalParticipatingEvents) {
-                    return 1;
-                }
-                if (a.TotalParticipatingEvents > b.TotalParticipatingEvents) {
-                    return -1;
-                }
-                return 0;
-            });
-        }
+    //     let _downData = [];
+    //     for (let i = 0; i < _data.length; i++) {
+    //         let row = _data[i];
+    //         if (!row.registeredEvents.includes(filterEvent)) {
+    //             continue
+    //         }
+    //         for (let key of keys) {
+    //             row[key] = row[key] ?? "-";
+    //             if (key !== "registeredEvents") {
+    //                 row[key] = row[key].toString().replace(/'/g, ' ');
+    //                 row[key] = row[key].toString().replace(/"/g, ' ');
+    //                 row[key] = row[key].toString().replace(/`/g, ' ');
+    //             }
+    //         }
+    //         _downData.push(row);
+    //     }
 
-        // add headers.
-        csvData.unshift({
-            "StudentID": "StudentID",
-            "Name": "Name",
-            "Gender": "Gender",
-            "DOB": "DOB",
-            "Group": "Group",
-            "District": "District",
-            "Samithi": "Samithi",
-            "TotalParticipatingEvents": "TotalParticipatingEvents",
-            "OtherParticipatingEvents": "OtherParticipatingEvents",
-        });
+    //     // Remove commas from the rows.
+    //     const csvData = _downData.map((row) => {
+    //         return {
+    //             "StudentID": row.studentId.toString().replace(/,/g, ' '),
+    //             "Name": row.studentFullName.toString().replace(/,/g, ' '),
+    //             "Gender": row.gender.toString().replace(/,/g, ' '),
+    //             "DOB": row.dateOfBirth.toString().replace(/,/g, ' '),
+    //             "Group": row.studentGroup.toString().replace(/,/g, ' '),
+    //             "District": row.district.toString().replace(/,/g, ' '),
+    //             "Samithi": row.samithiName.toString().replace(/,/g, ' '),
+    //             "TotalParticipatingEvents": row.registeredEvents.length.toString().replace(/,/g, ' '),
+    //             "OtherParticipatingEvents": row.registeredEvents.filter((event) => event !== filterEvent).join('|').toString().replace(/,/g, ' ') ?? "-",
+    //             "OverallRegistrationStatus": row.overallRegistrationStatus.toString().replace(/,/g, ' '),
+    //             "Remarks": row.remarks.toString().replace(/,/g, ' '),
+    //         }
+    //     })
 
-        const csv = csvData.map(row => Object.values(row).join(',')).join('\n');
+    //     if (filterEvent.includes("GROUP")) {
+    //         // Sort by district.
+    //         csvData.sort((a, b) => {
+    //             if (a.District < b.District) {
+    //                 return -1;
+    //             }
+    //             if (a.District > b.District) {
+    //                 return 1;
+    //             }
+    //             return 0;
+    //         });
+    //     } else {
+    //         // Sort the data by the number of events registered.
+    //         csvData.sort((a, b) => {
+    //             if (a.TotalParticipatingEvents < b.TotalParticipatingEvents) {
+    //                 return 1;
+    //             }
+    //             if (a.TotalParticipatingEvents > b.TotalParticipatingEvents) {
+    //                 return -1;
+    //             }
+    //             return 0;
+    //         });
+    //     }
 
-        const csvFile = new Blob([csv], { type: 'text/csv' });
+    //     // add headers.
+    //     csvData.unshift({
+    //         "StudentID": "StudentID",
+    //         "Name": "Name",
+    //         "Gender": "Gender",
+    //         "DOB": "DOB",
+    //         "Group": "Group",
+    //         "District": "District",
+    //         "Samithi": "Samithi",
+    //         "TotalParticipatingEvents": "TotalParticipatingEvents",
+    //         "OtherParticipatingEvents": "OtherParticipatingEvents",
+    //         "OverallRegistrationStatus": "OverallRegistrationStatus",
+    //         "Remarks": "Remarks",
+    //     });
 
-        const downloadLink = document.createElement("a");
-        downloadLink.download = `${filterEvent}_Participants.csv`;
-        downloadLink.href = window.URL.createObjectURL(csvFile);
-        downloadLink.style.display = "none";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-    }
+    //     const csv = csvData.map(row => Object.values(row).join(',')).join('\n');
 
-    const downloadOverallRegistrationsAsCSV = () => {
-        // Find unique set of keys.
-        let keys = new Set();
-        for (let i = 0; i < data.length; i++) {
-            Object.keys(data[i]).forEach((key) => {
-                keys.add(key);
-            });
-        }
+    //     const csvFile = new Blob([csv], { type: 'text/csv' });
 
-        let _downData = [];
-        for (let i = 0; i < data.length; i++) {
-            let row = data[i];
-            for (let key of keys) {
-                row[key] = row[key] ?? "-";
-                if (key !== "registeredEvents") {
-                    row[key] = row[key].toString().replace(/'/g, ' ');
-                    row[key] = row[key].toString().replace(/"/g, ' ');
-                    row[key] = row[key].toString().replace(/`/g, ' ');
-                }
-            }
-            _downData.push(row);
-        }
+    //     const downloadLink = document.createElement("a");
+    //     downloadLink.download = `${filterEvent}_Participants.csv`;
+    //     downloadLink.href = window.URL.createObjectURL(csvFile);
+    //     downloadLink.style.display = "none";
+    //     document.body.appendChild(downloadLink);
+    //     downloadLink.click();
+    //     document.body.removeChild(downloadLink);
+    // }
 
-        const csvData = _downData.map((row) => {
-            return {
-                "StudentID": row.studentId.toString().replace(/,/g, ' '),
-                "Name": row.studentFullName.toString().replace(/,/g, ' '),
-                "Gender": row.gender.toString().replace(/,/g, ' '),
-                "DOB": row.dateOfBirth.toString().replace(/,/g, ' '),
-                "Group": row.studentGroup.toString().replace(/,/g, ' '),
-                "District": row.district.toString().replace(/,/g, ' '),
-                "Samithi": row.samithiName.toString().replace(/,/g, ' '),
-                "DOJBalVikas": row.dateOfJoiningBalvikas.toString().replace(/,/g, ' '),
-                "YearOfJoiningBalVikas": row.yearOfJoiningBalvikas.toString().replace(/,/g, ' '),
-                "PassedGroup2?": row.hasPassedGroup2Exam.toString().replace(/,/g, ' '),
-                "TotalParticipatingEvents": row.registeredEvents.length.toString().replace(/,/g, ' '),
-                "RegisteredEvents": row.registeredEvents.join(' | ').toString().replace(/,/g, ' ') ?? "-",
-                "ArrivalDate": row.arrivalDate.toString().replace(/,/g, ' '),
-                "ArrivalTime": row.arrivalTime.toString().replace(/,/g, ' '),
-                "NeedsPickup": row.needsPickup.toString().replace(/,/g, ' '),
-                "ModeOfTravel": row.modeOfTravel.toString().replace(/,/g, ' '),
-                "PickupPoint": row.pickupPoint.toString().replace(/,/g, ' '),
-                "DepartureDate": row.departureDate.toString().replace(/,/g, ' '),
-                "DepartureTime": row.departureTime.toString().replace(/,/g, ' '),
-                "NeedsDrop?": row.needsDrop.toString().replace(/,/g, ' '),
-                "ModeOfTravelForDrop": row.modeOfTravelForDrop.toString().replace(/,/g, ' '),
-                "DropOffPoint": row.dropOffPoint.toString().replace(/,/g, ' '),
-                "HasAccompanyingAdults?": row.hasAccompanyingAdults.toString().replace(/,/g, ' '),
-                "AccompanyingPersonName": row.accompanyingPersonName.toString().replace(/,/g, ' '),
-                "AccompanyingPersonGender": row.accompanyingPersonGender.toString
-                    ().replace(/,/g, ' '),
-                "AccompanyingPersonAge": row.accompanyingPersonAge.toString().replace(/,/g, ' '),
-                "AccompanyingPersonRelation": row.accompanyingPersonRelation.toString().replace(/,/g, ' '),
-                "AccompanyingPersonContact": row.accompanyingPersonContact.toString().replace(/,/g, ' '),
-                "NumMaleAccompanying": row.numMaleAccompanying.toString().replace(/,/g, ' '),
-                "NumFemaleAccompanying": row.numFemaleAccompanying.toString().replace(/,/g, ' '),
-                "NumNonParticipatingSiblings": row.numNonParticipatingSiblings.toString().replace(/,/g, ' '),
-                "NeedsAccommodation?": row.needsAccommodation.toString().replace(/,/g, ' '),
-                "CheckInDate": row.checkInDate.toString().replace(/,/g, ' '),
-                "CheckInTime": row.checkInTime.toString().replace(/,/g, ' '),
-                "CheckOutDate": row.checkOutDate.toString().replace(/,/g, ' '),
-                "CheckOutTime": row.checkOutTime.toString().replace(/,/g, ' '),
-                "FoodAllergies": row.foodAllergies.toString().replace(/,/g, ' '),
-                "NumMaleAccompanyingNeedAccommodation": row.numMaleAccompanyingNeedAccommodation.toString().replace(/,/g, ' '),
-                "NumFemaleAccompanyingNeedAccommodation": row.numFemaleAccompanyingNeedAccommodation.toString().replace(/,/g, ' '),
-                "OverallRegistrationStatus": row.overallRegistrationStatus.toString().replace(/,/g, ' '),
-            }
-        });
+    // const downloadOverallRegistrationsAsCSV = () => {
+    //     // Find unique set of keys.
+    //     let keys = new Set();
+    //     for (let i = 0; i < dumpData.length; i++) {
+    //         Object.keys(dumpData[i]).forEach((key) => {
+    //             keys.add(key);
+    //         });
+    //     }
 
-        // Sort the data by the district.
-        csvData.sort((a, b) => {
-            if (a.District < b.District) {
-                return -1;
-            }
-            if (a.District > b.District) {
-                return 1;
-            }
-            return 0;
-        });
+    //     let _downData = [];
+    //     for (let i = 0; i < dumpData.length; i++) {
+    //         let row = dumpData[i];
+    //         for (let key of keys) {
+    //             row[key] = row[key] ?? "-";
+    //             if (key !== "registeredEvents") {
+    //                 row[key] = row[key].toString().replace(/'/g, ' ');
+    //                 row[key] = row[key].toString().replace(/"/g, ' ');
+    //                 row[key] = row[key].toString().replace(/`/g, ' ');
+    //             }
+    //         }
+    //         _downData.push(row);
+    //     }
 
-        // add headers.
-        csvData.unshift({
-            "StudentID": "StudentID",
-            "Name": "Name",
-            "Gender": "Gender",
-            "DOB": "DOB",
-            "Group": "Group",
-            "District": "District",
-            "Samithi": "Samithi",
-            "DOJBalVikas": "DOJBalVikas",
-            "YearOfJoiningBalVikas": "YearOfJoiningBalVikas",
-            "PassedGroup2?": "PassedGroup2?",
-            "TotalParticipatingEvents": "TotalParticipatingEvents",
-            "RegisteredEvents": "RegisteredEvents",
-            "ArrivalDate": "ArrivalDate",
-            "ArrivalTime": "ArrivalTime",
-            "NeedsPickup": "NeedsPickup",
-            "ModeOfTravel": "ModeOfTravel",
-            "PickupPoint": "PickupPoint",
-            "DepartureDate": "DepartureDate",
-            "DepartureTime": "DepartureTime",
-            "NeedsDrop?": "NeedsDrop?",
-            "ModeOfTravelForDrop": "ModeOfTravelForDrop",
-            "DropOffPoint": "DropOffPoint",
-            "HasAccompanyingAdults?": "HasAccompanyingAdults?",
-            "AccompanyingPersonName": "AccompanyingPersonName",
-            "AccompanyingPersonGender": "AccompanyingPersonGender",
-            "AccompanyingPersonAge": "AccompanyingPersonAge",
-            "AccompanyingPersonRelation": "AccompanyingPersonRelation",
-            "AccompanyingPersonContact": "AccompanyingPersonContact",
-            "NumMaleAccompanying": "NumMaleAccompanying",
-            "NumFemaleAccompanying": "NumFemaleAccompanying",
-            "NumNonParticipatingSiblings": "NumNonParticipatingSiblings",
-            "NeedsAccommodation?": "NeedsAccommodation?",
-            "CheckInDate": "CheckInDate",
-            "CheckInTime": "CheckInTime",
-            "CheckOutDate": "CheckOutDate",
-            "CheckOutTime": "CheckOutTime",
-            "FoodAllergies": "FoodAllergies",
-            "NumMaleAccompanyingNeedAccommodation": "NumMaleAccompanyingNeedAccommodation",
-            "NumFemaleAccompanyingNeedAccommodation": "NumFemaleAccompanyingNeedAccommodation",
-            "OverallRegistrationStatus": "OverallRegistrationStatus",
-        });
+    //     const csvData = _downData.map((row) => {
+    //         return {
+    //             "StudentID": row.studentId.toString().replace(/,/g, ' '),
+    //             "Name": row.studentFullName.toString().replace(/,/g, ' '),
+    //             "Gender": row.gender.toString().replace(/,/g, ' '),
+    //             "DOB": row.dateOfBirth.toString().replace(/,/g, ' '),
+    //             "Group": row.studentGroup.toString().replace(/,/g, ' '),
+    //             "District": row.district.toString().replace(/,/g, ' '),
+    //             "Samithi": row.samithiName.toString().replace(/,/g, ' '),
+    //             "DOJBalVikas": row.dateOfJoiningBalvikas.toString().replace(/,/g, ' '),
+    //             "YearOfJoiningBalVikas": row.yearOfJoiningBalvikas.toString().replace(/,/g, ' '),
+    //             "PassedGroup2?": row.hasPassedGroup2Exam.toString().replace(/,/g, ' '),
+    //             "TotalParticipatingEvents": row.registeredEvents.length.toString().replace(/,/g, ' '),
+    //             "RegisteredEvents": row.registeredEvents.join(' | ').toString().replace(/,/g, ' ') ?? "-",
+    //             "ArrivalDate": row.arrivalDate.toString().replace(/,/g, ' '),
+    //             "ArrivalTime": row.arrivalTime.toString().replace(/,/g, ' '),
+    //             "NeedsPickup": row.needsPickup.toString().replace(/,/g, ' '),
+    //             "ModeOfTravel": row.modeOfTravel.toString().replace(/,/g, ' '),
+    //             "PickupPoint": row.pickupPoint.toString().replace(/,/g, ' '),
+    //             "DepartureDate": row.departureDate.toString().replace(/,/g, ' '),
+    //             "DepartureTime": row.departureTime.toString().replace(/,/g, ' '),
+    //             "NeedsDrop?": row.needsDrop.toString().replace(/,/g, ' '),
+    //             "ModeOfTravelForDrop": row.modeOfTravelForDrop.toString().replace(/,/g, ' '),
+    //             "DropOffPoint": row.dropOffPoint.toString().replace(/,/g, ' '),
+    //             "HasAccompanyingAdults?": row.hasAccompanyingAdults.toString().replace(/,/g, ' '),
+    //             "AccompanyingPersonName": row.accompanyingPersonName.toString().replace(/,/g, ' '),
+    //             "AccompanyingPersonGender": row.accompanyingPersonGender.toString
+    //                 ().replace(/,/g, ' '),
+    //             "AccompanyingPersonAge": row.accompanyingPersonAge.toString().replace(/,/g, ' '),
+    //             "AccompanyingPersonRelation": row.accompanyingPersonRelation.toString().replace(/,/g, ' '),
+    //             "AccompanyingPersonContact": row.accompanyingPersonContact.toString().replace(/,/g, ' '),
+    //             "NumMaleAccompanying": row.numMaleAccompanying.toString().replace(/,/g, ' '),
+    //             "NumFemaleAccompanying": row.numFemaleAccompanying.toString().replace(/,/g, ' '),
+    //             "NumNonParticipatingSiblings": row.numNonParticipatingSiblings.toString().replace(/,/g, ' '),
+    //             "NeedsAccommodation?": row.needsAccommodation.toString().replace(/,/g, ' '),
+    //             "CheckInDate": row.checkInDate.toString().replace(/,/g, ' '),
+    //             "CheckInTime": row.checkInTime.toString().replace(/,/g, ' '),
+    //             "CheckOutDate": row.checkOutDate.toString().replace(/,/g, ' '),
+    //             "CheckOutTime": row.checkOutTime.toString().replace(/,/g, ' '),
+    //             "FoodAllergies": row.foodAllergies.toString().replace(/,/g, ' '),
+    //             "NumMaleAccompanyingNeedAccommodation": row.numMaleAccompanyingNeedAccommodation.toString().replace(/,/g, ' '),
+    //             "NumFemaleAccompanyingNeedAccommodation": row.numFemaleAccompanyingNeedAccommodation.toString().replace(/,/g, ' '),
+    //             "OverallRegistrationStatus": row.overallRegistrationStatus.toString().replace(/,/g, ' '),
+    //             "Remarks": row.remarks.toString().replace(/,/g, ' '),
+    //         }
+    //     });
 
-        const csv = csvData.map(row => Object.values(row).join(',')).join('\n');
+    //     // Sort the data by the district.
+    //     csvData.sort((a, b) => {
+    //         if (a.District < b.District) {
+    //             return -1;
+    //         }
+    //         if (a.District > b.District) {
+    //             return 1;
+    //         }
+    //         return 0;
+    //     });
 
-        const csvFile = new Blob([csv], { type: 'text/csv' });
+    //     // add headers.
+    //     csvData.unshift({
+    //         "StudentID": "StudentID",
+    //         "Name": "Name",
+    //         "Gender": "Gender",
+    //         "DOB": "DOB",
+    //         "Group": "Group",
+    //         "District": "District",
+    //         "Samithi": "Samithi",
+    //         "DOJBalVikas": "DOJBalVikas",
+    //         "YearOfJoiningBalVikas": "YearOfJoiningBalVikas",
+    //         "PassedGroup2?": "PassedGroup2?",
+    //         "TotalParticipatingEvents": "TotalParticipatingEvents",
+    //         "RegisteredEvents": "RegisteredEvents",
+    //         "ArrivalDate": "ArrivalDate",
+    //         "ArrivalTime": "ArrivalTime",
+    //         "NeedsPickup": "NeedsPickup",
+    //         "ModeOfTravel": "ModeOfTravel",
+    //         "PickupPoint": "PickupPoint",
+    //         "DepartureDate": "DepartureDate",
+    //         "DepartureTime": "DepartureTime",
+    //         "NeedsDrop?": "NeedsDrop?",
+    //         "ModeOfTravelForDrop": "ModeOfTravelForDrop",
+    //         "DropOffPoint": "DropOffPoint",
+    //         "HasAccompanyingAdults?": "HasAccompanyingAdults?",
+    //         "AccompanyingPersonName": "AccompanyingPersonName",
+    //         "AccompanyingPersonGender": "AccompanyingPersonGender",
+    //         "AccompanyingPersonAge": "AccompanyingPersonAge",
+    //         "AccompanyingPersonRelation": "AccompanyingPersonRelation",
+    //         "AccompanyingPersonContact": "AccompanyingPersonContact",
+    //         "NumMaleAccompanying": "NumMaleAccompanying",
+    //         "NumFemaleAccompanying": "NumFemaleAccompanying",
+    //         "NumNonParticipatingSiblings": "NumNonParticipatingSiblings",
+    //         "NeedsAccommodation?": "NeedsAccommodation?",
+    //         "CheckInDate": "CheckInDate",
+    //         "CheckInTime": "CheckInTime",
+    //         "CheckOutDate": "CheckOutDate",
+    //         "CheckOutTime": "CheckOutTime",
+    //         "FoodAllergies": "FoodAllergies",
+    //         "NumMaleAccompanyingNeedAccommodation": "NumMaleAccompanyingNeedAccommodation",
+    //         "NumFemaleAccompanyingNeedAccommodation": "NumFemaleAccompanyingNeedAccommodation",
+    //         "OverallRegistrationStatus": "OverallRegistrationStatus",
+    //         "Remarks": "Remarks",
+    //     });
 
-        const downloadLink = document.createElement("a");
-        downloadLink.download = `Overall_Registration_Data.csv`;
-        downloadLink.href = window.URL.createObjectURL(csvFile);
-        downloadLink.style.display = "none";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-    }
+    //     const csv = csvData.map(row => Object.values(row).join(',')).join('\n');
+
+    //     const csvFile = new Blob([csv], { type: 'text/csv' });
+
+    //     const downloadLink = document.createElement("a");
+    //     downloadLink.download = `Overall_Registration_Data.csv`;
+    //     downloadLink.href = window.URL.createObjectURL(csvFile);
+    //     downloadLink.style.display = "none";
+    //     document.body.appendChild(downloadLink);
+    //     downloadLink.click();
+    //     document.body.removeChild(downloadLink);
+    // }
 
     return user && filteredData ? (
         <>
@@ -508,13 +529,13 @@ export default function AdminDashboard() {
                                 </div>
                             </div>
 
-                            <div className="flex flex-row gap-4">
+                            {/*<div className="flex flex-row gap-4">
                                 <button
                                     className="bg-[#ceffcf] text-[#0c350b] font-bold px-4 py-1 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                                     disabled={filteredData.length === 0}
                                     onClick={downloadOverallRegistrationsAsCSV}
                                 >
-                                    Download Overall Registrations CSV
+                                    Download Overall Registrations
                                 </button>
 
                                 <button
@@ -522,7 +543,7 @@ export default function AdminDashboard() {
                                     disabled={filterEvent === ""}
                                     onClick={downloadEventParticipantsAsCSV}
                                 >
-                                    Download Event Participants CSV
+                                    Download Event Participants
                                 </button>
 
                                 <button
@@ -530,9 +551,9 @@ export default function AdminDashboard() {
                                     disabled={filterDistrict === ""}
                                     onClick={downloadDistrictRegistrationsAsCSV}
                                 >
-                                    Download District Registrations CSV
+                                    Download District Registrations
                                 </button>
-                            </div>
+                            </div>*/}
                         </div>
                     </div>
                 </div>
