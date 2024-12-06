@@ -58,6 +58,76 @@ export default function AdminDashboard() {
     }, [data, filterDistrict, filterEvent, filterGroup, searchQuery]);
 
 
+    const downloadEventParticipantsAsCSV = () => {
+        if (filterEvent === "") {
+            alert("Please select an event to download the data.");
+            return;
+        }
+
+        // Remove commas from the rows.
+        const csvData = filteredData.map((row) => {
+            return {
+                "StudentID": row.studentId.toString().replace(/,/g, ' '),
+                "Name": row.studentFullName.toString().replace(/,/g, ' '),
+                "DOB": row.dateOfBirth.toString().replace(/,/g, ' '),
+                "Group": row.studentGroup.toString().replace(/,/g, ' '),
+                "District": row.district.toString().replace(/,/g, ' '),
+                "Samithi": row.samithiName.toString().replace(/,/g, ' '),
+                "TotalParticipatingEvents": row.registeredEvents.length.toString().replace(/,/g, ' '),
+                "OtherParticipatingEvents": row.registeredEvents.filter((event) => event !== filterEvent).join('|').toString().replace(/,/g, ' ') ?? "-",
+            }
+        })
+
+        if (filterEvent.includes("GROUP")) {
+            // Sort by district.
+            csvData.sort((a, b) => {
+                if (a.District < b.District) {
+                    return -1;
+                }
+                if (a.District > b.District) {
+                    return 1;
+                }
+                return 0;
+            });
+        } else {
+            // Sort the data by the number of events registered.
+            csvData.sort((a, b) => {
+                if (a.TotalParticipatingEvents < b.TotalParticipatingEvents) {
+                    return 1;
+                }
+                if (a.TotalParticipatingEvents > b.TotalParticipatingEvents) {
+                    return -1;
+                }
+                return 0;
+            });
+        }
+
+        // add headers.
+        csvData.unshift({
+            "StudentID": "StudentID",
+            "Name": "Name",
+            "DOB": "DOB",
+            "Group": "Group",
+            "District": "District",
+            "Samithi": "Samithi",
+            "TotalParticipatingEvents": "TotalParticipatingEvents",
+            "OtherParticipatingEvents": "OtherParticipatingEvents",
+        });
+
+        const csv = csvData.map(row => Object.values(row).join(',')).join('\n');
+
+        const csvFile = new Blob([csv], { type: 'text/csv' });
+
+        const downloadLink = document.createElement("a");
+        downloadLink.download = `${filterEvent}_Participants.csv`;
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    }
+
+
 
     return user && filteredData ? (
         <>
@@ -143,6 +213,16 @@ export default function AdminDashboard() {
                                         ))}
                                     </select>
                                 </div>
+                            </div>
+
+                            <div className="flex flex-row gap-4">
+                                <button
+                                    className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                                    disabled={filterEvent === ""}
+                                    onClick={downloadEventParticipantsAsCSV}
+                                >
+                                    Download Participants CSV
+                                </button>
                             </div>
                         </div>
                     </div>
