@@ -290,7 +290,7 @@ export default function AdminDashboard() {
                         </thead>
                         <tbody>
                             {filteredData.map((row, index) => (
-                                <tr key={index} className="bg-white hover:bg-blue-50 text-bold transition duration-200">
+                                <tr key={index} className={`${row.overallRegistrationStatus === "Accepted" ? "bg-white" : "bg-red-200"} hover:bg-blue-50 text-bold transition duration-200`}>
                                     <td className="px-4 py-2 border max-w-[160px]">
                                         <p className="font-bold">{row.studentFullName ?? "-"}</p>
                                         <p className="text-xs">{row.gender ?? "-"} - {row.dateOfBirth ?? "-"}</p>
