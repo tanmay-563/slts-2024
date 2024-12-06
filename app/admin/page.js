@@ -36,7 +36,7 @@ export default function AdminDashboard() {
             if (_data == null || _data.length != 4) {
                 router.push('/');
             }
-            
+
             setData(_data[0]);
             setFilteredData(_data[0]);
             setDistricts(_data[1]);
@@ -215,13 +215,13 @@ export default function AdminDashboard() {
                                         <p className="text-sm font-bold">Female</p>
                                         <p className="text-4xl font-bold">{filteredData.reduce((acc, row) => acc + parseInt(row.numFemaleAccompanyingNeedAccommodation ?? 0), 0)}</p>
                                     </div>
-                                    <div className="pt-2 bg-gray-100 p-2 px-8 rounded-2xl">
+                                    {/* <div className="pt-2 bg-gray-100 p-2 px-8 rounded-2xl">
                                         <p className="text-sm font-bold">Total</p>
                                         <p className="text-4xl font-bold">
                                             {filteredData.reduce((acc, row) => acc + parseInt(row.numMaleAccompanyingNeedAccommodation ?? 0), 0) +
                                                 filteredData.reduce((acc, row) => acc + parseInt(row.numFemaleAccompanyingNeedAccommodation ?? 0), 0)}
                                         </p>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                             <div className="border-l px-2">
@@ -237,18 +237,32 @@ export default function AdminDashboard() {
                                         <p className="text-sm font-bold">Female</p>
                                         <p className="text-4xl font-bold">{filteredData.reduce((acc, row) => acc + parseInt((row.needsAccommodation == "Yes" && row.gender == "Female" ? 1 : 0) ?? 0), 0)}</p>
                                     </div>
-                                    <div className="pt-2 bg-gray-100 p-2 px-8 rounded-2xl">
+                                    {/* <div className="pt-2 bg-gray-100 p-2 px-8 rounded-2xl">
                                         <p className="text-sm font-bold">Total</p>
                                         <p className="text-4xl font-bold">
                                             {filteredData.reduce((acc, row) => acc + parseInt((row.needsAccommodation == "Yes" && row.gender == "Male" ? 1 : 0) ?? 0), 0) +
                                                 filteredData.reduce((acc, row) => acc + parseInt((row.needsAccommodation == "Yes" && row.gender == "Female" ? 1 : 0) ?? 0), 0)}
                                         </p>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
-                            <div className="border-l pl-2">
-                                <div>
-                                    <p className="text-sm font-semibold">Overall</p>
+                        </div>
+                    </div>
+                    <div className="bg-white p-4 rounded-2xl border flex flex-col justify-between">
+                        <p className="text-lg font-bold">Accommodation</p>
+                        <div>
+                            <div>
+                                <p className="text-sm font-semibold">Overall</p>
+                            </div>
+                            <div className="flex justify-around gap-3">
+                                <div className="pt-2">
+                                    <p className="text-sm font-bold">Male</p>
+                                    <p className="text-4xl font-bold">{filteredData.reduce((acc, row) => acc + parseInt((row.needsAccommodation == "Yes" && row.gender == "Male" ? 1 : 0) ?? 0), 0) + filteredData.reduce((acc, row) => acc + parseInt(row.numMaleAccompanyingNeedAccommodation ?? 0), 0)}</p>
+                                </div>
+                                <div className="pt-2">
+                                    <p className="text-sm font-bold">Female</p>
+                                    <p className="text-4xl font-bold">{filteredData.reduce((acc, row) => acc + parseInt((row.needsAccommodation == "Yes" && row.gender == "Female" ? 1 : 0) ?? 0), 0) +
+                                        filteredData.reduce((acc, row) => acc + parseInt(row.numFemaleAccompanyingNeedAccommodation ?? 0), 0)}</p>
                                 </div>
                                 <div className="pt-2 bg-gray-100 p-2 px-8 rounded-2xl">
                                     <p className="text-sm font-bold">Total</p>
