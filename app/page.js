@@ -16,21 +16,25 @@ export default function Home() {
 
   const router = useRouter();
 
-  // Auto login.
-  useEffect(() => {
-    const user = secureLocalStorage.getItem('user');
-    if (user) {
-      const data = JSON.parse(user);
-      if (data.role == 'admin') {
-        router.push('/admin');
-      } else if (data.role == 'judge') {
-        data.event.includes("GROUP") ? router.push('/judge/group') : router.push('/judge/individual');
-      } else if (Object.keys(reverseDistrictCode).indexOf(data.role.toString().toUpperCase()) != -1) {
-        router.push('/district');
-      }
-    }
+  // // Auto login.
+  // useEffect(() => {
+  //   const user = secureLocalStorage.getItem('user');
+  //   if (user) {
+  //     const data = JSON.parse(user);
+  //     if (data.role == 'admin') {
+  //       router.push('/admin');
+  //     } else if (data.role == 'judge') {
+  //       data.event.includes("GROUP") ? router.push('/judge/group') : router.push('/judge/individual');
+  //     } else if (Object.keys(reverseDistrictCode).indexOf(data.role.toString().toUpperCase()) != -1) {
+  //       router.push('/district');
+  //     }
+  //   }
 
-    setIsLoading(false);
+  //   setIsLoading(false);
+  // }, [router]);
+
+  useEffect(() => {
+    router.push("/admin")
   }, [router]);
 
   const handleLogin = async (e) => {
