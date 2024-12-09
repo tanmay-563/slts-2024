@@ -27,15 +27,12 @@ export default function AdminDashboard() {
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
-        // if (!secureLocalStorage.getItem('user')) {
-        //     router.push('/');
-        // }
+        if (!secureLocalStorage.getItem('user')) {
+            router.push('/');
+        }
 
-        // const user = JSON.parse(secureLocalStorage.getItem('user'));
-        setUser({
-            name: "Control Room User",
-            email: "controlroom@slts.cbe",
-        });
+        const user = JSON.parse(secureLocalStorage.getItem('user'));
+        setUser(user);
         getRegistrationData().then((_data) => {
             // Handle Logout.
             if (_data == null || _data.length != 4) {
@@ -455,12 +452,12 @@ export default function AdminDashboard() {
                         <p className="text-gray-700">{user.email}</p>
                     </div>
                     <div className="flex flex-row">
-                        {/* <button
+                        <button
                             className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
                             onClick={() => router.push('/admin/event')}
                         >
                             Events
-                        </button> */}
+                        </button>
                         <button
                             className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
                             onClick={() => {
