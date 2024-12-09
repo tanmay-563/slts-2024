@@ -53,7 +53,13 @@ export default function Home() {
           router.push('/district');
         }
       });
-    })
+    }).catch((error) => {
+      if (error.code === "auth/invalid-credential") {
+        alert("Invalid credentials. Please try again.");
+      } else {
+        alert(error.code ?? "An error occurred. Please try again.");
+      }
+    });
   }
 
   return (
