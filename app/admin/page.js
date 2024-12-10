@@ -25,6 +25,9 @@ export default function AdminDashboard() {
     const [filterGroup, setFilterGroup] = useState("");
 
     const [searchQuery, setSearchQuery] = useState("");
+    const [filterNeedForPickup, setFilterNeedForPickup] = useState("all");
+    const [filterNeedForDrop, setFilterNeedForDrop] = useState("all");
+    const [filterNeedForAccommodation, setFilterNeedForAccommodation] = useState("all");
 
     useEffect(() => {
         if (!secureLocalStorage.getItem('user')) {
@@ -52,14 +55,34 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         if (data) {
-            setFilteredData(data.filter((row) => {
-                return (filterDistrict === "" || row.district === filterDistrict) &&
-                    (filterEvent === "" || row.registeredEvents.includes(filterEvent)) &&
-                    (filterGroup === "" || row.studentGroup === filterGroup) &&
-                    (searchQuery === "" || row.studentFullName.toLowerCase().includes(searchQuery.toLowerCase()) || row.studentId.toLowerCase().includes(searchQuery.toLowerCase()));
-            }));
+            setFilteredData(
+                data.filter((row) => {
+                    return (
+                        (filterDistrict === "" || row.district === filterDistrict) &&
+                        (filterEvent === "" || row.registeredEvents.includes(filterEvent)) &&
+                        (filterGroup === "" || row.studentGroup === filterGroup) &&
+                        (filterNeedForPickup === "all" || (row.needsPickup.toString() === filterNeedForPickup) ) &&
+                        (filterNeedForDrop === "all" || (row.needsDrop.toString() === filterNeedForDrop) ) &&
+                        (filterNeedForAccommodation === "all" || (row.needsAccommodation.toString() === filterNeedForAccommodation)) &&
+                        (searchQuery === "" ||
+                            row.studentFullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            row.studentId.toLowerCase().includes(searchQuery.toLowerCase()))
+                    );
+
+                })
+            );
         }
-    }, [data, filterDistrict, filterEvent, filterGroup, searchQuery]);
+    }, [
+        data,
+        filterDistrict,
+        filterEvent,
+        filterGroup,
+        filterNeedForPickup,
+        filterNeedForDrop,
+        filterNeedForAccommodation,
+        searchQuery,
+    ]);
+    
 
 
     // const downloadDistrictRegistrationsAsCSV = () => {
@@ -525,6 +548,45 @@ export default function AdminDashboard() {
                                         {groups.map((group, index) => (
                                             <option key={index} value={group}>{group}</option>
                                         ))}
+                                    </select>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                <label htmlFor="needForPickup">Need for Pickup</label>
+                                <select
+                                    id="needForPickup"
+                                    className="border p-2 rounded-2xl"
+                                    value={filterNeedForPickup}
+                                    onChange={(e) => setFilterNeedForPickup(e.target.value)}
+                                >
+                                    <option value="all" >All</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>   
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                <label htmlFor="needForDrop">Need for Drop</label>
+                                <select
+                                    id="needForDrop"
+                                    className="border p-2 rounded-2xl"
+                                    value={filterNeedForDrop}
+                                    onChange={(e) => setFilterNeedForDrop(e.target.value)}
+                                >
+                                    <option value="all">All</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label htmlFor="needForAccommodation">Need for Accommodation</label>
+                                    <select
+                                        id="needForAccommodation"
+                                        className="border p-2 rounded-2xl"
+                                        value={filterNeedForAccommodation}
+                                        onChange={(e) => setFilterNeedForAccommodation(e.target.value)}
+                                    >
+                                        <option value="all">All</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
                                     </select>
                                 </div>
                             </div>
