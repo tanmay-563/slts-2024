@@ -64,6 +64,7 @@ export default function Home() {
 
   return (
     <main className="flex h-screen flex-col justify-center items-center m-4">
+      <h1 className="absolute top-4 left-4 text-[24px] font-bold">SLBTS.2024</h1>
       {isLoading ?
         (
           <div className="flex h-screen items-center justify-center">
@@ -78,23 +79,23 @@ export default function Home() {
               <input
                 type="email"
                 placeholder="Email"
-                className="border border-gray-200 p-2 rounded-lg"
+                className="border border-gray-200 pt-2 pb-2 pl-4 rounded-full"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               <input
                 type="password"
                 placeholder="Password"
-                className="border border-gray-200 p-2 rounded-lg"
+                className="border border-gray-200 pt-2 pb-2 pl-4 rounded-full"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button
                 type="submit"
                 disabled={!email || !password}
-                className="w-full text-lg rounded-lg bg-black text-white p-2 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full text-lg rounded-full bg-black text-white p-2 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed mt-8"
               >
-                Sign in
+                Sign In
               </button>
             </form>
           </div>
