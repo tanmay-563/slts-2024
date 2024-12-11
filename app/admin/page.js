@@ -24,7 +24,22 @@ export default function AdminDashboard() {
     const [groups, setGroups] = useState([]);
     const [filterGroup, setFilterGroup] = useState("");
 
+    const [modeOfTravelOptions, setModeOfTravelOptions] = useState([]);
+    const [filterModeOfTravel, setFilterModeOfTravel] = useState("");
+
+    const [modeOfTravelForDropOptions, setModeOfTravelForDropOptions] = useState([]);
+    const [filterModeOfTravelForDrop, setFilterModeOfTravelForDrop] = useState("");
+
+    const [checkInDateOptions, setCheckInDateOptions] = useState([]);
+    const [filterCheckInDate, setFilterCheckInDate] = useState("");
+
+    const [checkOutDateOptions, setCheckOutDateOptions] = useState([]);
+    const [filterCheckOutDate, setFilterCheckOutDate] = useState("");
+
     const [searchQuery, setSearchQuery] = useState("");
+    const [filterNeedForPickup, setFilterNeedForPickup] = useState("");
+    const [filterNeedForDrop, setFilterNeedForDrop] = useState("");
+    const [filterNeedForAccommodation, setFilterNeedForAccommodation] = useState("");
 
     useEffect(() => {
         if (!secureLocalStorage.getItem('user')) {
@@ -35,7 +50,7 @@ export default function AdminDashboard() {
         setUser(user);
         getRegistrationData().then((_data) => {
             // Handle Logout.
-            if (_data == null || _data.length != 4) {
+            if (_data == null || _data.length != 8) {
                 router.push('/');
             }
 
@@ -46,20 +61,52 @@ export default function AdminDashboard() {
             setDistricts(_data[1]);
             setEvents(_data[2]);
             setGroups(_data[3]);
+            setModeOfTravelOptions(_data[4]);
+            setModeOfTravelForDropOptions(_data[5]);
+            setCheckInDateOptions(_data[6]);
+            setCheckOutDateOptions(_data[7]);
         });
     }, [router]);
 
 
     useEffect(() => {
         if (data) {
-            setFilteredData(data.filter((row) => {
-                return (filterDistrict === "" || row.district === filterDistrict) &&
-                    (filterEvent === "" || row.registeredEvents.includes(filterEvent)) &&
-                    (filterGroup === "" || row.studentGroup === filterGroup) &&
-                    (searchQuery === "" || row.studentFullName.toLowerCase().includes(searchQuery.toLowerCase()) || row.studentId.toLowerCase().includes(searchQuery.toLowerCase()));
-            }));
+            setFilteredData(
+                data.filter((row) => {
+                    return (
+                        (filterDistrict === "" || row.district === filterDistrict) &&
+                        (filterEvent === "" || row.registeredEvents.includes(filterEvent)) &&
+                        (filterGroup === "" || row.studentGroup === filterGroup) &&
+                        (filterModeOfTravel === "" || row.modeOfTravel === filterModeOfTravel) &&
+                        (filterModeOfTravelForDrop === "" || row.modeOfTravelForDrop === filterModeOfTravelForDrop) &&
+                        (filterNeedForPickup === "" || (row.needsPickup.toString() === filterNeedForPickup)) &&
+                        (filterNeedForDrop === "" || (row.needsDrop.toString() === filterNeedForDrop)) &&
+                        (filterNeedForAccommodation === "" || (row.needsAccommodation.toString() === filterNeedForAccommodation)) &&
+                        (filterCheckInDate === "" || row.checkInDate === filterCheckInDate) &&
+                        (filterCheckOutDate === "" || row.checkOutDate === filterCheckOutDate) &&
+                        (searchQuery === "" ||
+                            row.studentFullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            row.studentId.toLowerCase().includes(searchQuery.toLowerCase()))
+                    );
+
+                })
+            );
         }
-    }, [data, filterDistrict, filterEvent, filterGroup, searchQuery]);
+    }, [
+        data,
+        filterDistrict,
+        filterEvent,
+        filterGroup,
+        filterNeedForPickup,
+        filterNeedForDrop,
+        filterNeedForAccommodation,
+        searchQuery,
+        filterModeOfTravel,
+        filterModeOfTravelForDrop,
+        filterCheckInDate,
+        filterCheckOutDate,
+    ]);
+
 
 
     // const downloadDistrictRegistrationsAsCSV = () => {
@@ -492,7 +539,7 @@ export default function AdminDashboard() {
                                         className="border p-2 rounded-2xl"
                                         value={filterDistrict}
                                         onChange={(e) => setFilterDistrict(e.target.value)}
-                                        >
+                                    >
                                         <option value="">All</option>
                                         {districts.map((district, index) => (
                                             <option key={index} value={district}>{district}</option>
@@ -506,14 +553,14 @@ export default function AdminDashboard() {
                                         className="border p-2 rounded-2xl"
                                         value={filterEvent}
                                         onChange={(e) => setFilterEvent(e.target.value)}
-                                        >
+                                    >
                                         <option value="">All</option>
                                         {events.map((event, index) => (
                                             <option key={index} value={event}>{event}</option>
                                         ))}
                                     </select>
                                 </div>
-                                <div className="flex flex-col flex-grow2">
+                                <div className="flex flex-col flex-grow">
                                     <label htmlFor="group" className="mb-2"><b>Group</b></label>
                                     <select
                                         id="group"
@@ -557,6 +604,119 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                 </div>
+
+                <div className="flex flex-row m-4 gap-4 items-center">
+                    <div className="bg-white p-4 rounded-2xl border flex-grow">
+                        <div className="flex flex-row flex-wrap justify-between gap-2">
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="needForPickup"><b>Needs Pickup</b></label>
+                                <select
+                                    id="needForPickup"
+                                    className="border p-2 rounded-2xl"
+                                    value={filterNeedForPickup}
+                                    onChange={(e) => setFilterNeedForPickup(e.target.value)}
+                                >
+                                    <option value="" >All</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="modeOfTravel"><b>Mode Of Travel</b></label>
+                                <select
+                                    id="modeOfTravel"
+                                    className="border p-2 rounded-2xl"
+                                    value={filterModeOfTravel}
+                                    onChange={(e) => setFilterModeOfTravel(e.target.value)}
+                                >
+                                    <option value="">All</option>
+                                    {modeOfTravelOptions.map((mode, index) => (
+                                        <option key={index} value={mode}>{mode}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-2xl border flex-grow">
+                        <div className="flex flex-row flex-wrap justify-between gap-2">
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="needForDrop"><b>Needs Drop</b></label>
+                                <select
+                                    id="needForDrop"
+                                    className="border p-2 rounded-2xl"
+                                    value={filterNeedForDrop}
+                                    onChange={(e) => setFilterNeedForDrop(e.target.value)}
+                                >
+                                    <option value="">All</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col justify-between gap-2">
+                                <label htmlFor="modeOfTravelForDrop"><b>Mode Of Travel</b></label>
+                                <select
+                                    id="modeOfTravelForDrop"
+                                    className="border p-2 rounded-2xl"
+                                    value={filterModeOfTravelForDrop}
+                                    onChange={(e) => setFilterModeOfTravelForDrop(e.target.value)}
+                                >
+                                    <option value="">All</option>
+                                    {modeOfTravelOptions.map((mode, index) => (
+                                        <option key={index} value={mode}>{mode}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-2xl border flex-grow">
+                        <div className="flex flex-row flex-wrap justify-between gap-2">
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="needForAccommodation"><b>Needs Accommodation</b></label>
+                                <select
+                                    id="needForAccommodation"
+                                    className="border p-2 rounded-2xl"
+                                    value={filterNeedForAccommodation}
+                                    onChange={(e) => setFilterNeedForAccommodation(e.target.value)}
+                                >
+                                    <option value="">All</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="pickupPoint"><b>Check In Date</b></label>
+                                <select
+                                    id="checkInDate"
+                                    className="border p-2 rounded-2xl"
+                                    value={filterCheckInDate}
+                                    onChange={(e) => setFilterCheckInDate(e.target.value)}
+                                >
+                                    <option value="">All</option>
+                                    {checkInDateOptions.map((date, index) => (
+                                        <option key={index} value={date}>{date}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="dropOffPoint"><b>Check Out Date</b></label>
+                                <select
+                                    id="checkOutDate"
+                                    className="border p-2 rounded-2xl"
+                                    value={filterCheckOutDate}
+                                    onChange={(e) => setFilterCheckOutDate(e.target.value)}
+                                >
+                                    <option value="">All</option>
+                                    {checkOutDateOptions.map((date, index) => (
+                                        <option key={index} value={date}>{date}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
                 <div className="flex flex-row flex-wrap gap-4 m-4 justify-center overflow-x-auto">
                     <div className="bg-white p-4 rounded-2xl border flex flex-col justify-between">
@@ -636,7 +796,7 @@ export default function AdminDashboard() {
                             </div>
                             <div className="border-l px-2">
                                 <div>
-                                    <p className="text-sm font-semibold  text-gray-500">Participants</p>
+                                    <p className="text-sm font-semibold text-gray-500">Participants</p>
                                 </div>
                                 <div className="flex justify-around gap-3">
                                     <div className="pt-2">
@@ -662,7 +822,7 @@ export default function AdminDashboard() {
                         <p className="text-lg font-bold">Accommodation</p>
                         <div>
                             <div>
-                                <p className="text-sm font-semibold  text-gray-500">Overall</p>
+                                <p className="text-sm font-semibold text-gray-500">Overall</p>
                             </div>
                             <div className="flex justify-around gap-3">
                                 <div className="pt-2">
@@ -764,8 +924,9 @@ export default function AdminDashboard() {
                                     </td>
                                     <td className="px-4 py-2 border">
                                         <div className="mt-2 bg-purple-100 p-2 rounded-2xl">
-                                            <p className="text-xs font-bold">Check-In Details</p>
+                                            <p className="text-xs font-bold">Check-In</p>
                                             <p className="text-xs">{row.checkInDate ?? "-"} - {row.checkInTime ?? "-"}</p>
+                                            <p className="text-xs font-bold">Check-Out</p>
                                             <p className="text-xs">{row.checkOutDate ?? "-"} - {row.checkOutTime ?? "-"}</p>
 
                                             <p className="text-xs mt-2 font-semibold">For student: {row.needsAccommodation ?? "-"}</p>
