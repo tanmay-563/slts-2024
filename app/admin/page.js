@@ -519,21 +519,21 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="flex flex-row flex-wrap gap-4 m-4 justify-center overflow-x-auto">
-                    <div className="bg-white p-4 rounded-2xl border">
+                    <div className="bg-white p-4 rounded-2xl border w-full">
                         <div className="flex flex-col gap-4">
                             <div>
                                 <input
                                     id="search"
-                                    className="border p-2 rounded-2xl w-full"
+                                    className="border pt-2 pb-2 pl-4 rounded-2xl w-full"
                                     placeholder="Search by name or student ID"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
                             </div>
 
-                            <div className="flex flex-row flex-wrap gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <label htmlFor="district">District</label>
+                            <div className="flex flex-row gap-8 items-center">
+                                <div className="flex flex-col flex-grow">
+                                    <label htmlFor="district" className="mb-2"><b>District</b></label>
                                     <select
                                         id="district"
                                         className="border p-2 rounded-2xl"
@@ -546,8 +546,8 @@ export default function AdminDashboard() {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="flex flex-col gap-2">
-                                    <label htmlFor="event">Event</label>
+                                <div className="flex flex-col flex-grow">
+                                    <label htmlFor="event" className="mb-2"><b>Event</b></label>
                                     <select
                                         id="event"
                                         className="border p-2 rounded-2xl"
@@ -560,8 +560,8 @@ export default function AdminDashboard() {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="flex flex-col gap-2">
-                                    <label htmlFor="group">Group</label>
+                                <div className="flex flex-col flex-grow">
+                                    <label htmlFor="group" className="mb-2"><b>Group</b></label>
                                     <select
                                         id="group"
                                         className="border p-2 rounded-2xl"
@@ -605,11 +605,11 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                <div className="flex flex-row flex-wrap justify-center items-center gap-4">
-                    <div className="bg-white p-4 rounded-2xl border">
-                        <div className="flex flex-row flex-wrap justify-between gap-4">
+                <div className="flex flex-row m-4 gap-4 items-center">
+                    <div className="bg-white p-4 rounded-2xl border flex-grow">
+                        <div className="flex flex-row flex-wrap justify-between gap-2">
                             <div className="flex flex-col gap-2">
-                                <label htmlFor="needForPickup">Needs Pickup</label>
+                                <label htmlFor="needForPickup"><b>Needs Pickup</b></label>
                                 <select
                                     id="needForPickup"
                                     className="border p-2 rounded-2xl"
@@ -622,7 +622,7 @@ export default function AdminDashboard() {
                                 </select>
                             </div>
                             <div className="flex flex-col gap-2">
-                                <label htmlFor="modeOfTravel">Mode Of Travel</label>
+                                <label htmlFor="modeOfTravel"><b>Mode Of Travel</b></label>
                                 <select
                                     id="modeOfTravel"
                                     className="border p-2 rounded-2xl"
@@ -638,10 +638,10 @@ export default function AdminDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-white p-4 rounded-2xl border">
-                        <div className="flex flex-row flex-wrap justify-between gap-4">
+                    <div className="bg-white p-4 rounded-2xl border flex-grow">
+                        <div className="flex flex-row flex-wrap justify-between gap-2">
                             <div className="flex flex-col gap-2">
-                                <label htmlFor="needForDrop">Needs Drop</label>
+                                <label htmlFor="needForDrop"><b>Needs Drop</b></label>
                                 <select
                                     id="needForDrop"
                                     className="border p-2 rounded-2xl"
@@ -654,7 +654,7 @@ export default function AdminDashboard() {
                                 </select>
                             </div>
                             <div className="flex flex-col justify-between gap-2">
-                                <label htmlFor="modeOfTravelForDrop">Mode Of Travel</label>
+                                <label htmlFor="modeOfTravelForDrop"><b>Mode Of Travel</b></label>
                                 <select
                                     id="modeOfTravelForDrop"
                                     className="border p-2 rounded-2xl"
@@ -670,10 +670,10 @@ export default function AdminDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-white p-4 rounded-2xl border">
-                        <div className="flex flex-row flex-wrap justify-between gap-4">
+                    <div className="bg-white p-4 rounded-2xl border flex-grow">
+                        <div className="flex flex-row flex-wrap justify-between gap-2">
                             <div className="flex flex-col gap-2">
-                                <label htmlFor="needForAccommodation">Needs Accommodation</label>
+                                <label htmlFor="needForAccommodation"><b>Needs Accommodation</b></label>
                                 <select
                                     id="needForAccommodation"
                                     className="border p-2 rounded-2xl"
@@ -686,7 +686,7 @@ export default function AdminDashboard() {
                                 </select>
                             </div>
                             <div className="flex flex-col gap-2">
-                                <label htmlFor="pickupPoint">Check In Date</label>
+                                <label htmlFor="pickupPoint"><b>Check In Date</b></label>
                                 <select
                                     id="checkInDate"
                                     className="border p-2 rounded-2xl"
@@ -700,7 +700,7 @@ export default function AdminDashboard() {
                                 </select>
                             </div>
                             <div className="flex flex-col gap-2">
-                                <label htmlFor="dropOffPoint">Check Out Date</label>
+                                <label htmlFor="dropOffPoint"><b>Check Out Date</b></label>
                                 <select
                                     id="checkOutDate"
                                     className="border p-2 rounded-2xl"
@@ -722,7 +722,7 @@ export default function AdminDashboard() {
                     <div className="bg-white p-4 rounded-2xl border flex flex-col justify-between">
                         <div>
                             <p className="text-lg font-bold">Total Registrations</p>
-                            <p className="text-sm font-semibold">Participants</p>
+                            <p className="text-sm font-semibold text-gray-500">Participants</p>
                         </div>
                         <div className="flex justify-around gap-3">
                             <div className="pt-2">
@@ -744,7 +744,7 @@ export default function AdminDashboard() {
                     <div className="bg-white p-4 rounded-2xl border flex flex-col justify-between">
                         <div>
                             <p className="text-lg font-bold">Total Accompanying Adults</p>
-                            <p className="text-sm font-semibold">Non-Participants</p>
+                            <p className="text-sm font-semibold text-gray-500">Non-Participants</p>
                         </div>
                         <div className="flex justify-around gap-3">
                             <div className="pt-2">
@@ -774,7 +774,7 @@ export default function AdminDashboard() {
                         <div className="flex flex-row flex-nowrap">
                             <div className="pr-2">
                                 <div>
-                                    <p className="text-sm font-semibold">Non-Participants</p>
+                                    <p className="text-sm font-semibold text-gray-500">Non-Participants</p>
                                 </div>
                                 <div className="flex justify-around gap-3">
                                     <div className="pt-2">
@@ -796,7 +796,7 @@ export default function AdminDashboard() {
                             </div>
                             <div className="border-l px-2">
                                 <div>
-                                    <p className="text-sm font-semibold">Participants</p>
+                                    <p className="text-sm font-semibold text-gray-500">Participants</p>
                                 </div>
                                 <div className="flex justify-around gap-3">
                                     <div className="pt-2">
@@ -822,7 +822,7 @@ export default function AdminDashboard() {
                         <p className="text-lg font-bold">Accommodation</p>
                         <div>
                             <div>
-                                <p className="text-sm font-semibold">Overall</p>
+                                <p className="text-sm font-semibold text-gray-500">Overall</p>
                             </div>
                             <div className="flex justify-around gap-3">
                                 <div className="pt-2">
@@ -864,7 +864,7 @@ export default function AdminDashboard() {
                                     <td className="px-4 py-2 border max-w-[160px]">
                                         <p className="font-bold">{row.studentFullName ?? "-"}</p>
                                         <p className="text-xs">{row.gender ?? "-"} - {row.dateOfBirth ?? "-"}</p>
-                                        <div className="flex flex-wrap gap-1">
+                                        <div className="flex flex-wrap gap-1 mt-3 mb-2">
                                             <p className="text-xs font-bold bg-[#c4ffc2] text-[#07210d] p-1 px-2 rounded-2xl w-fit">{row.studentId ?? "-"}</p>
                                             <p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">{row.studentGroup ?? "-"}</p>
                                         </div>
@@ -883,8 +883,8 @@ export default function AdminDashboard() {
                                         </div>
                                     </td>
                                     <td className="border max-w-[200px]">
-                                        <div className="flex flex-row justify-around items-center gap-1">
-                                            <div className="border rounded-2xl p-2">
+                                        <div className="flex flex-col justify-around items-center gap-4 mt-2 mb-2">
+                                            <div className="border rounded-2xl p-2 w-60">
                                                 <p className="text-xs font-semibold">{"Arrival"}</p>
                                                 <p className="text-xs font-bold">{row.arrivalDate ?? "-"} - {row.arrivalTime ?? "-"}</p>
                                                 <p className="text-xs">{row.needsPickup === "Yes" ? "Needs pickup." : "Pickup not needed."}</p>
@@ -895,7 +895,7 @@ export default function AdminDashboard() {
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="border rounded-2xl p-2">
+                                            <div className="border rounded-2xl p-2 w-60">
                                                 <p className="text-xs font-semibold">{"Departure"}</p>
                                                 <p className="text-xs font-bold">{row.departureDate ?? "-"} - {row.departureTime ?? "-"}</p>
                                                 <p className="text-xs">{row.needsDrop === "Yes" ? "Needs drop." : "Drop not needed."}</p>
