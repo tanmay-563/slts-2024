@@ -36,7 +36,22 @@ export default function AdminDashboard() {
     const [checkOutDateOptions, setCheckOutDateOptions] = useState([]);
     const [filterCheckOutDate, setFilterCheckOutDate] = useState("");
 
+    const [modeOfTravelOptions, setModeOfTravelOptions] = useState([]);
+    const [filterModeOfTravel, setFilterModeOfTravel] = useState("");
+
+    const [modeOfTravelForDropOptions, setModeOfTravelForDropOptions] = useState([]);
+    const [filterModeOfTravelForDrop, setFilterModeOfTravelForDrop] = useState("");
+
+    const [checkInDateOptions, setCheckInDateOptions] = useState([]);
+    const [filterCheckInDate, setFilterCheckInDate] = useState("");
+
+    const [checkOutDateOptions, setCheckOutDateOptions] = useState([]);
+    const [filterCheckOutDate, setFilterCheckOutDate] = useState("");
+
     const [searchQuery, setSearchQuery] = useState("");
+    const [filterNeedForPickup, setFilterNeedForPickup] = useState("");
+    const [filterNeedForDrop, setFilterNeedForDrop] = useState("");
+    const [filterNeedForAccommodation, setFilterNeedForAccommodation] = useState("");
     const [filterNeedForPickup, setFilterNeedForPickup] = useState("");
     const [filterNeedForDrop, setFilterNeedForDrop] = useState("");
     const [filterNeedForAccommodation, setFilterNeedForAccommodation] = useState("");
@@ -51,6 +66,7 @@ export default function AdminDashboard() {
         getRegistrationData().then((_data) => {
             // Handle Logout.
             if (_data == null || _data.length != 8) {
+            if (_data == null || _data.length != 8) {
                 router.push('/');
             }
 
@@ -61,6 +77,10 @@ export default function AdminDashboard() {
             setDistricts(_data[1]);
             setEvents(_data[2]);
             setGroups(_data[3]);
+            setModeOfTravelOptions(_data[4]);
+            setModeOfTravelForDropOptions(_data[5]);
+            setCheckInDateOptions(_data[6]);
+            setCheckOutDateOptions(_data[7]);
             setModeOfTravelOptions(_data[4]);
             setModeOfTravelForDropOptions(_data[5]);
             setCheckInDateOptions(_data[6]);
@@ -91,7 +111,42 @@ export default function AdminDashboard() {
 
                 })
             );
+            setFilteredData(
+                data.filter((row) => {
+                    return (
+                        (filterDistrict === "" || row.district === filterDistrict) &&
+                        (filterEvent === "" || row.registeredEvents.includes(filterEvent)) &&
+                        (filterGroup === "" || row.studentGroup === filterGroup) &&
+                        (filterModeOfTravel === "" || row.modeOfTravel === filterModeOfTravel) &&
+                        (filterModeOfTravelForDrop === "" || row.modeOfTravelForDrop === filterModeOfTravelForDrop) &&
+                        (filterNeedForPickup === "" || (row.needsPickup.toString() === filterNeedForPickup)) &&
+                        (filterNeedForDrop === "" || (row.needsDrop.toString() === filterNeedForDrop)) &&
+                        (filterNeedForAccommodation === "" || (row.needsAccommodation.toString() === filterNeedForAccommodation)) &&
+                        (filterCheckInDate === "" || row.checkInDate === filterCheckInDate) &&
+                        (filterCheckOutDate === "" || row.checkOutDate === filterCheckOutDate) &&
+                        (searchQuery === "" ||
+                            row.studentFullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            row.studentId.toLowerCase().includes(searchQuery.toLowerCase()))
+                    );
+
+                })
+            );
         }
+    }, [
+        data,
+        filterDistrict,
+        filterEvent,
+        filterGroup,
+        filterNeedForPickup,
+        filterNeedForDrop,
+        filterNeedForAccommodation,
+        searchQuery,
+        filterModeOfTravel,
+        filterModeOfTravelForDrop,
+        filterCheckInDate,
+        filterCheckOutDate,
+    ]);
+
     }, [
         data,
         filterDistrict,
@@ -925,7 +980,9 @@ export default function AdminDashboard() {
                                     <td className="px-4 py-2 border">
                                         <div className="mt-2 bg-purple-100 p-2 rounded-2xl">
                                             <p className="text-xs font-bold">Check-In</p>
+                                            <p className="text-xs font-bold">Check-In</p>
                                             <p className="text-xs">{row.checkInDate ?? "-"} - {row.checkInTime ?? "-"}</p>
+                                            <p className="text-xs font-bold">Check-Out</p>
                                             <p className="text-xs font-bold">Check-Out</p>
                                             <p className="text-xs">{row.checkOutDate ?? "-"} - {row.checkOutTime ?? "-"}</p>
 
