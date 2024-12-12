@@ -20,6 +20,8 @@ export default function JudgePage() {
 
     const [searchQuery, setSearchQuery] = useState("");
 
+    const [isSaving, setIsSaving] = useState(false);
+
     useEffect(() => {
         if (participants) {
             setFilteredParticipants(
@@ -279,7 +281,8 @@ export default function JudgePage() {
 
                                                 <div className="flex flex-row justify-between gap-1">
                                                     <button
-                                                        className="bg-[#ffe0e0] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2 w-full"
+                                                        className="bg-[#ffe0e0] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2 w-full disabled:opacity-50"
+                                                        disabled={isSaving}
                                                         onClick={() => {
                                                             setScoreBuffer([]);
 
@@ -293,8 +296,10 @@ export default function JudgePage() {
                                                         Cancel
                                                     </button>
                                                     <button
-                                                        className="bg-[#c2fca2] text-[#0b350d] font-semibold px-4 py-1 rounded-xl mt-2 w-full"
+                                                        className="bg-[#c2fca2] text-[#0b350d] font-semibold px-4 py-1 rounded-xl mt-2 w-full disabled:opacity-50"
+                                                        disabled={isSaving}
                                                         onClick={() => {
+                                                            setIsSaving(true);
                                                             markScore(
                                                                 participant.studentId,
                                                                 eventMetadata.name,
@@ -340,10 +345,15 @@ export default function JudgePage() {
 
                                                                     setParticipants(_participants);
                                                                 }
+
+                                                                setIsSaving(false);
+                                                            }).catch((_) => {
+                                                                alert("An error occurred. Please try again.");
+                                                                setIsSaving(false);
                                                             });
                                                         }}
                                                     >
-                                                        Save
+                                                        {isSaving ? "Saving..." : "Save"}
                                                     </button>
                                                 </div>
                                             </div>

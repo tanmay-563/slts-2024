@@ -12,13 +12,17 @@ export default function JudgeGroupPage() {
 	const [user, setUser] = useState(null);
 	const [eventMetadata, setEventMetadata] = useState(null);
 	const [participants, setParticipants] = useState(null);
-	const [filteredParticipants, setFilteredParticipants] = useState(null);
+	// const [filteredParticipants, setFilteredParticipants] = useState(null);
 
 	const [scoreBuffer, setScoreBuffer] = useState([]);
 	const [scoreMode, setScoreMode] = useState({});
 	const [commentBuffer, setCommentBuffer] = useState("");
 
-	const [searchQuery, setSearchQuery] = useState("");
+	const [isSaving, setIsSaving] = useState(false);
+
+	// const [searchQuery, setSearchQuery] = useState("");
+
+	// TODO: Add search functionality.
 
 	useEffect(() => {
 		if (!secureLocalStorage.getItem("user")) {
@@ -268,7 +272,8 @@ export default function JudgeGroupPage() {
 
 												<div className="flex flex-row justify-between gap-1 my-2">
 													<button
-														className="bg-[#ffe0e0] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2 w-full"
+														className="bg-[#ffe0e0] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2 w-full disabled:opacity-50"
+														disabled={isSaving}
 														onClick={() => {
 															setScoreBuffer([]);
 
@@ -284,8 +289,10 @@ export default function JudgeGroupPage() {
 														Cancel
 													</button>
 													<button
-														className="bg-[#c2fca2] text-[#0b350d] font-semibold px-4 py-1 rounded-xl mt-2 w-full"
+														className="bg-[#c2fca2] text-[#0b350d] font-semibold px-4 py-1 rounded-xl mt-2 w-full disabled:opacity-50"
+														disabled={isSaving}
 														onClick={() => {
+															setIsSaving(true);
 															markGroupScore(
 																val.map((p) => p.studentId),
 																eventMetadata.name,
@@ -349,10 +356,15 @@ export default function JudgeGroupPage() {
 
 																	setParticipants(updatedParticipants);
 																}
+
+																setIsSaving(false);
+															}).catch((_) => {
+																alert("An error occurred. Please try again.");
+																setIsSaving(false);
 															});
 														}}
 													>
-														Save
+														{isSaving ? "Saving..." : "Save"}
 													</button>
 												</div>
 											</div>
