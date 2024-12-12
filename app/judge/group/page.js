@@ -289,7 +289,6 @@ export default function JudgeGroupPage() {
                                 if (res) {
                                   let _scoreMode = {};
 
-                                  // Initialize the _scoreMode object
                                   for (let region in participants) {
                                     participants[region].forEach((p) => {
                                       _scoreMode[p.studentId] = false;
@@ -299,12 +298,10 @@ export default function JudgeGroupPage() {
 
                                   let _participants = [];
 
-                                  // Flatten the participants object into an array of participants
                                   for (let region in participants) {
                                     _participants.push(...participants[region]);
                                   }
 
-                                  // Find participants matching the specified district
                                   const indices = _participants.map(
                                     (p, index) => p.district === val[0].district
                                   );
@@ -333,7 +330,6 @@ export default function JudgeGroupPage() {
                                         ][user.id][key] = val;
                                       });
 
-                                      // Add or update the comment
                                       _participants[i].comment =
                                         _participants[i].comment ?? {};
                                       _participants[i].comment[
