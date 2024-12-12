@@ -21,7 +21,7 @@ export default function JudgeGroupPage() {
 	const [searchQuery, setSearchQuery] = useState("");
 
 	useEffect(() => {
-	    if (!secureLocalStorage.getItem("user")) {
+		if (!secureLocalStorage.getItem("user")) {
 			router.push("/");
 		}
 
@@ -287,7 +287,7 @@ export default function JudgeGroupPage() {
 														className="bg-[#c2fca2] text-[#0b350d] font-semibold px-4 py-1 rounded-xl mt-2 w-full"
 														onClick={() => {
 															markGroupScore(
-																val[0].district,
+																val.map((p) => p.studentId),
 																eventMetadata.name,
 																user.id,
 																Object.fromEntries(scoreBuffer),

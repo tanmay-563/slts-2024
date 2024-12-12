@@ -284,7 +284,7 @@ export const markScore = async (
 };
 
 export const markGroupScore = async (
-  district,
+  studentIds,
   eventName,
   judgeId,
   score,
@@ -296,16 +296,10 @@ export const markGroupScore = async (
     }
   });
 
-  const students = await getDocs(
-    query(collection(db, "registrationData"), where("district", "==", district))
-  );
-
-  for (const student of students.docs) {
-    const studentId = student.id;
-
+  for (const studentId of studentIds) {
     await updateDoc(doc(db, "registrationData", studentId), {
       [`score.${eventName}.${judgeId}`]: score,
-      [`comment.${eventName}.${judgeId}`]: comment?.trim() || "-",
+      [`comment.${eventName}.${judgeId}`]: comment == "" ? "-" : comment ?? "-",
     });
 
     console.log(`Updated student: ${studentId}`);
