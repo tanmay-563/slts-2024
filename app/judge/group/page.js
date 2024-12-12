@@ -98,23 +98,32 @@ export default function JudgeGroupPage() {
                     </tr>
                   )
                 )}
+                <tr>
+                  <td className="border px-4 py-2 font-semibold">Total</td>
+                  <td className="border px-4 py-2 font-semibold">
+                    {Object.values(eventMetadata.evalCriteria).reduce(
+                      (a, b) => a + b
+                    )}
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
 
+        {/* Each Group as one card */}
         <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
-          <div className="rounded-2xl p-4 my-4 bg-white border overflow-x-auto">
+          <div className="rounded-3xl p-4 my-4 bg-white border overflow-x-auto">
             <div className="flex flex-row justify-between">
               <h1 className="text-2xl font-bold">Participants</h1>
             </div>
             <div className="grid grid-cols-1 gap-4 mt-4">
-              {Object.entries(participants).map(([district, val], index) => (
+              {Object.entries(participants).map(([_, val], index) => (
                 <div
                   key={index}
-                  className="rounded-2xl  px-4 bg-gray-100 border"
+                  className="rounded-2xl px-4 py-1 bg-gray-100 border"
                 >
-                  <div className="flex flex-row justify-between">
+                  <div className="flex flex-row justify-between pb-4">
                     <div className="flex flex-col justify-between">
                       {val.map((participant, index) => (
                         <div className="mt-4" key={index}>
@@ -132,12 +141,11 @@ export default function JudgeGroupPage() {
                               </p>
                             </div>
                           </div>
-                          <hr />
+                          {/* <hr /> */}
                         </div>
                       ))}
                     </div>
                     <div className="mt-4">
-                      {/* TODO: Scoring for GROUP events. */}
                       {val[0].score &&
                         val[0].score[eventMetadata.name] &&
                         val[0].score[eventMetadata.name][user.id] ? (
@@ -259,7 +267,7 @@ export default function JudgeGroupPage() {
                           />
                         </div>
 
-                        <div className="flex flex-row justify-between gap-1">
+                        <div className="flex flex-row justify-between gap-1 my-2">
                           <button
                             className="bg-[#ffe0e0] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2 w-full"
                             onClick={() => {
@@ -303,35 +311,23 @@ export default function JudgeGroupPage() {
                                   }
 
                                   const indices = _participants.map(
-                                    (p, index) => p.district === val[0].district
+                                    (p, _) => p.district === val[0].district
                                   );
 
                                   for (
-                                    let i = 0;
-                                    i < _participants.length;
-                                    i++
+                                    let i = 0; i < _participants.length; i++
                                   ) {
                                     if (indices[i]) {
-                                      _participants[i].score =
-                                        _participants[i].score ?? {};
-                                      _participants[i].score[
-                                        eventMetadata.name
-                                      ] =
-                                        _participants[i].score[
-                                        eventMetadata.name
-                                        ] ?? {};
-                                      _participants[i].score[
-                                        eventMetadata.name
-                                      ][user.id] = {};
+                                      _participants[i].score = _participants[i].score ?? {};
+                                      _participants[i].score[eventMetadata.name] = _participants[i].score[eventMetadata.name] ?? {};
+                                      _participants[i].score[eventMetadata.name][user.id] = {};
 
                                       scoreBuffer.forEach(([key, val]) => {
-                                        _participants[i].score[
-                                          eventMetadata.name
-                                        ][user.id][key] = val;
+                                        _participants[i].score[eventMetadata.name][user.id][key] = val;
                                       });
 
-                                      _participants[i].comment =
-                                        _participants[i].comment ?? {};
+                                      _participants[i].comment = _participants[i].comment ?? {};
+                                      
                                       _participants[i].comment[
                                         eventMetadata.name
                                       ] =
@@ -353,7 +349,6 @@ export default function JudgeGroupPage() {
                                   }
 
                                   setParticipants(updatedParticipants);
-                                  console.log(updatedParticipants);
                                 }
                               });
                             }}
@@ -390,7 +385,7 @@ export default function JudgeGroupPage() {
                         </p>
                       </div>
                       <hr className="border-dashed" />
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-2 mb-2">
                         <label className="text-sm font-bold">Comments</label>
                         <p className="text-md">
                           {val[0].comment[eventMetadata.name][user.id] ?? "-"}
