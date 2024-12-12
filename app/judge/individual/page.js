@@ -20,33 +20,42 @@ export default function JudgePage() {
 
     const [searchQuery, setSearchQuery] = useState("");
 
+    const [isSaving, setIsSaving] = useState(false);
+
     useEffect(() => {
         if (participants) {
-            setFilteredParticipants(participants.filter((participant) => {
-                return searchQuery == "" || participant.studentId.toLowerCase().includes(searchQuery.toLowerCase());
-            }));
+            setFilteredParticipants(
+                participants.filter((participant) => {
+                    return (
+                        searchQuery == "" ||
+                        participant.studentId
+                            .toLowerCase()
+                            .includes(searchQuery.toLowerCase())
+                    );
+                })
+            );
         }
-    }, [searchQuery, participants])
+    }, [searchQuery, participants]);
 
     useEffect(() => {
-        if (!secureLocalStorage.getItem('user')) {
-            router.push('/');
+        if (!secureLocalStorage.getItem("user")) {
+            router.push("/");
         }
 
-        const user = JSON.parse(secureLocalStorage.getItem('user'));
-        if (user.role !== 'judge' || !user.event) {
-            router.push('/');
+        const user = JSON.parse(secureLocalStorage.getItem("user"));
+        if (user.role !== "judge" || !user.event) {
+            router.push("/");
         } else {
             setUser(user);
             getJudgeEventData(user.event).then((_data) => {
                 if (_data == null || _data.length != 2) {
-                    router.push('/');
+                    router.push("/");
                 }
 
                 let _scoreMode = {};
                 _data[0].forEach((participant) => {
                     _scoreMode[participant.studentId] = false;
-                })
+                });
                 setScoreMode(_scoreMode);
                 setEventMetadata(_data[1]);
                 setParticipants(_data[0]);
@@ -62,7 +71,9 @@ export default function JudgePage() {
                     <div>
                         <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
                         <p className="text-gray-700 mt-2">{user.email}</p>
-                        <p className="text-gray-700">Judge for <span className="font-bold">{user.event}</span></p>
+                        <p className="text-gray-700">
+                            Judge for <span className="font-bold">{user.event}</span>
+                        </p>
                     </div>
                     <div>
                         <button
@@ -70,7 +81,7 @@ export default function JudgePage() {
                             onClick={() => {
                                 auth.signOut();
                                 secureLocalStorage.clear();
-                                router.push('/');
+                                router.push("/");
                             }}
                         >
                             Logout
@@ -85,7 +96,10 @@ export default function JudgePage() {
                         <p className="text-md">{participants.length} Participants</p>
                         <div className="flex flex-row flex-wrap gap-1 mt-1">
                             {eventMetadata.group.map((group, index) => (
-                                <p key={index} className="bg-gray-200 text-gray-800 font-semibold px-2 py-1 rounded-xl w-fit">
+                                <p
+                                    key={index}
+                                    className="bg-gray-200 text-gray-800 font-semibold px-2 py-1 rounded-xl w-fit"
+                                >
                                     {group}
                                 </p>
                             ))}
@@ -101,15 +115,22 @@ export default function JudgePage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {Object.entries(eventMetadata.evalCriteria).map(([key, value], index) => (
-                                    <tr key={index}>
-                                        <td className="border px-4 py-2">{key}</td>
-                                        <td className="border px-4 py-2">{value}</td>
-                                    </tr>
-                                ))}
+                                {Object.entries(eventMetadata.evalCriteria).map(
+                                    ([key, value], index) => (
+                                        <tr key={index}>
+                                            <td className="border px-4 py-2">{key}</td>
+                                            <td className="border px-4 py-2">{value}</td>
+                                        </tr>
+                                    )
+                                )}
                                 <tr>
                                     <td className="border px-4 py-2 font-semibold">Total</td>
-                                    <td className="border px-4 py-2 font-semibold">{Object.values(eventMetadata.evalCriteria).reduce((a, b) => a + b, 0)}</td>
+                                    <td className="border px-4 py-2 font-semibold">
+                                        {Object.values(eventMetadata.evalCriteria).reduce(
+                                            (a, b) => a + b,
+                                            0
+                                        )}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -139,67 +160,92 @@ export default function JudgePage() {
                                 <div key={index} className="rounded-2xl p-4 bg-gray-100 border">
                                     <div className="flex flex-row justify-between">
                                         <div>
-                                            <h2 className="text-xl font-bold">{participant.studentId}</h2>
-                                            <p className="text-xs">{participant.gender ?? "-"} - {participant.dateOfBirth ?? "-"}</p>
-                                            <p className="text-xs mt-2 font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">{participant.studentGroup ?? "-"}</p>
+                                            <h2 className="text-xl font-bold">
+                                                {participant.studentId}
+                                            </h2>
+                                            <p className="text-xs">
+                                                {participant.gender ?? "-"} -{" "}
+                                                {participant.dateOfBirth ?? "-"}
+                                            </p>
+                                            <p className="text-xs mt-2 font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
+                                                {participant.studentGroup ?? "-"}
+                                            </p>
                                         </div>
                                         <div>
-                                            {participant.score && participant.score[eventMetadata.name] && participant.score[eventMetadata.name][user.id] ? (
+                                            {participant.score &&
+                                                participant.score[eventMetadata.name] &&
+                                                participant.score[eventMetadata.name][user.id] ? (
                                                 <div className="mt-2 flex flex-col">
                                                     <button
                                                         className="bg-[#ffcece] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2"
                                                         onClick={() => {
-
                                                             let _scoreMode = {};
                                                             participants.forEach((p) => {
                                                                 _scoreMode[p.studentId] = false;
                                                             });
                                                             _scoreMode[participant.studentId] = true;
 
-                                                            setScoreBuffer(Object.entries(participant.score[eventMetadata.name][user.id]).map(([key, val]) => [key, val]));
+                                                            setScoreBuffer(
+                                                                Object.entries(
+                                                                    participant.score[eventMetadata.name][user.id]
+                                                                ).map(([key, val]) => [key, val])
+                                                            );
 
                                                             setScoreMode(_scoreMode);
-                                                            setCommentBuffer(participant.comment[eventMetadata.name][user.id] ?? "");
+                                                            setCommentBuffer(
+                                                                participant.comment[eventMetadata.name][
+                                                                user.id
+                                                                ] ?? ""
+                                                            );
                                                         }}
                                                     >
                                                         Edit Score
                                                     </button>
                                                 </div>
+                                            ) : scoreMode[participant.studentId] == false ? (
+                                                <button
+                                                    className="bg-[#ffd8a1] text-[#35250b] font-semibold px-4 py-1 rounded-xl mt-2"
+                                                    onClick={() => {
+                                                        let _scoreMode = {};
+                                                        participants.forEach((p) => {
+                                                            _scoreMode[p.studentId] = false;
+                                                        });
+                                                        _scoreMode[participant.studentId] = true;
+                                                        setScoreBuffer(
+                                                            Object.entries(eventMetadata.evalCriteria).map(
+                                                                ([key, _]) => [key, 0]
+                                                            )
+                                                        );
+                                                        setScoreMode(_scoreMode);
+                                                        setCommentBuffer("");
+                                                    }}
+                                                >
+                                                    Evaluate
+                                                </button>
                                             ) : (
-                                                scoreMode[participant.studentId] == false ? (
-                                                    <button
-                                                        className="bg-[#ffd8a1] text-[#35250b] font-semibold px-4 py-1 rounded-xl mt-2"
-                                                        onClick={() => {
-                                                            let _scoreMode = {};
-                                                            participants.forEach((p) => {
-                                                                _scoreMode[p.studentId] = false;
-                                                            });
-                                                            _scoreMode[participant.studentId] = true;
-                                                            setScoreBuffer(Object.entries(eventMetadata.evalCriteria).map(([key, _]) => [key, 0]));
-                                                            setScoreMode(_scoreMode);
-                                                            setCommentBuffer("");
-                                                        }}
-                                                    >
-                                                        Evaluate
-                                                    </button>
-                                                ) : (
-                                                    <p className="bg-[#a1fffd] text-[#0b3533] font-semibold px-4 py-1 rounded-xl mt-2">Evaluating</p>
-                                                )
+                                                <p className="bg-[#a1fffd] text-[#0b3533] font-semibold px-4 py-1 rounded-xl mt-2">
+                                                    Evaluating
+                                                </p>
                                             )}
                                         </div>
                                     </div>
 
-                                    {scoreMode[participant.studentId] && eventMetadata.evalCriteria ? (
+                                    {scoreMode[participant.studentId] &&
+                                        eventMetadata.evalCriteria ? (
                                         <>
                                             <hr className="my-4" />
                                             <div className="flex flex-col gap-2 justify-center items-stretch align-middle">
                                                 {scoreBuffer.map(([key, val], index) => (
-                                                    <div key={index} className="flex flex-row justify-between items-center">
+                                                    <div
+                                                        key={index}
+                                                        className="flex flex-row justify-between items-center"
+                                                    >
                                                         <label className="text-sm">{key}</label>
                                                         <input
                                                             type="number"
                                                             className="border p-2 rounded-lg text-md"
                                                             max={eventMetadata.evalCriteria[key]}
+                                                            min={0}
                                                             value={val}
                                                             onChange={(e) => {
                                                                 const newBuffer = [...scoreBuffer];
@@ -213,7 +259,14 @@ export default function JudgePage() {
                                                 <hr className="border-dashed mt-2" />
                                                 <div className="flex flex-row justify-between align-middle">
                                                     <label className="text-sm">Total</label>
-                                                    <p className="text-md font-semibold">{scoreBuffer.reduce((a, b) => (a == "" ? 0 : a) + parseInt(b[1] == "" ? 0 : b[1]), 0)}</p>
+                                                    <p className="text-md font-semibold">
+                                                        {scoreBuffer.reduce(
+                                                            (a, b) =>
+                                                                (a == "" ? 0 : a) +
+                                                                parseInt(b[1] == "" ? 0 : b[1]),
+                                                            0
+                                                        )}
+                                                    </p>
                                                 </div>
 
                                                 <hr className="border-dashed" />
@@ -228,7 +281,8 @@ export default function JudgePage() {
 
                                                 <div className="flex flex-row justify-between gap-1">
                                                     <button
-                                                        className="bg-[#ffe0e0] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2 w-full"
+                                                        className="bg-[#ffe0e0] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2 w-full disabled:opacity-50"
+                                                        disabled={isSaving}
                                                         onClick={() => {
                                                             setScoreBuffer([]);
 
@@ -242,9 +296,17 @@ export default function JudgePage() {
                                                         Cancel
                                                     </button>
                                                     <button
-                                                        className="bg-[#c2fca2] text-[#0b350d] font-semibold px-4 py-1 rounded-xl mt-2 w-full"
+                                                        className="bg-[#c2fca2] text-[#0b350d] font-semibold px-4 py-1 rounded-xl mt-2 w-full disabled:opacity-50"
+                                                        disabled={isSaving}
                                                         onClick={() => {
-                                                            markScore(participant.studentId, eventMetadata.name, user.id, Object.fromEntries(scoreBuffer), commentBuffer).then((res) => {
+                                                            setIsSaving(true);
+                                                            markScore(
+                                                                participant.studentId,
+                                                                eventMetadata.name,
+                                                                user.id,
+                                                                Object.fromEntries(scoreBuffer),
+                                                                commentBuffer
+                                                            ).then((res) => {
                                                                 if (res) {
                                                                     let _scoreMode = {};
                                                                     participants.forEach((p) => {
@@ -253,34 +315,62 @@ export default function JudgePage() {
                                                                     setScoreMode(_scoreMode);
 
                                                                     let _participants = [...participants];
-                                                                    const i = _participants.findIndex((p) => p.studentId == participant.studentId);
-                                                                    _participants[i].score = _participants[i].score ?? {};
-                                                                    _participants[i].score[eventMetadata.name] = _participants[i].score[eventMetadata.name] ?? {};
-                                                                    _participants[i].score[eventMetadata.name][user.id] = {};
+                                                                    const i = _participants.findIndex(
+                                                                        (p) => p.studentId == participant.studentId
+                                                                    );
+                                                                    _participants[i].score =
+                                                                        _participants[i].score ?? {};
+                                                                    _participants[i].score[eventMetadata.name] =
+                                                                        _participants[i].score[
+                                                                        eventMetadata.name
+                                                                        ] ?? {};
+                                                                    _participants[i].score[eventMetadata.name][
+                                                                        user.id
+                                                                    ] = {};
                                                                     scoreBuffer.forEach(([key, val]) => {
-                                                                        _participants[i].score[eventMetadata.name][user.id][key] = val;
+                                                                        _participants[i].score[eventMetadata.name][
+                                                                            user.id
+                                                                        ][key] = val;
                                                                     });
 
-                                                                    _participants[i].comment = _participants[i].comment ?? {};
-                                                                    _participants[i].comment[eventMetadata.name] = _participants[i].comment[eventMetadata.name] ?? {};
-                                                                    _participants[i].comment[eventMetadata.name][user.id] = commentBuffer;
+                                                                    _participants[i].comment =
+                                                                        _participants[i].comment ?? {};
+                                                                    _participants[i].comment[eventMetadata.name] =
+                                                                        _participants[i].comment[
+                                                                        eventMetadata.name
+                                                                        ] ?? {};
+                                                                    _participants[i].comment[eventMetadata.name][
+                                                                        user.id
+                                                                    ] = commentBuffer;
 
                                                                     setParticipants(_participants);
                                                                 }
-                                                            })
+
+                                                                setIsSaving(false);
+                                                            }).catch((_) => {
+                                                                alert("An error occurred. Please try again.");
+                                                                setIsSaving(false);
+                                                            });
                                                         }}
                                                     >
-                                                        Save
+                                                        {isSaving ? "Saving..." : "Save"}
                                                     </button>
                                                 </div>
                                             </div>
                                         </>
-                                    ) : participant.score && participant.score[eventMetadata.name] && participant.score[eventMetadata.name][user.id] ? (
+                                    ) : participant.score &&
+                                        participant.score[eventMetadata.name] &&
+                                        participant.score[eventMetadata.name][user.id] ? (
                                         <div className="flex flex-col gap-2 mt-4">
                                             <hr />
                                             <h2 className="text-lg font-bold">Score</h2>
-                                            {Object.entries(participant.score[eventMetadata.name][user.id]).map(([key, val], index) => (
-                                                <div key={index} className="flex flex-row justify-between items-center">
+                                            {Object.entries(
+                                                participant.score[eventMetadata.name][user.id]
+                                            ).map(([key, val], index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex flex-row justify-between items-center"
+                                                >
                                                     <label className="text-sm">{key}</label>
                                                     <p className="text-md font-semibold">{val}</p>
                                                 </div>
@@ -288,12 +378,19 @@ export default function JudgePage() {
                                             <hr className="border-dashed" />
                                             <div className="flex flex-row justify-between items-center">
                                                 <label className="text-sm">Total</label>
-                                                <p className="text-md font-semibold">{Object.values(participant.score[eventMetadata.name][user.id]).reduce((a, b) => a + parseInt(b), 0)}</p>
+                                                <p className="text-md font-semibold">
+                                                    {Object.values(
+                                                        participant.score[eventMetadata.name][user.id]
+                                                    ).reduce((a, b) => a + parseInt(b), 0)}
+                                                </p>
                                             </div>
                                             <hr className="border-dashed" />
                                             <div className="flex flex-col gap-2">
                                                 <label className="text-sm font-bold">Comments</label>
-                                                <p className="text-md">{participant.comment[eventMetadata.name][user.id] ?? "-"}</p>
+                                                <p className="text-md">
+                                                    {participant.comment[eventMetadata.name][user.id] ??
+                                                        "-"}
+                                                </p>
                                             </div>
                                         </div>
                                     ) : null}
