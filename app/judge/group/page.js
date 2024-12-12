@@ -139,8 +139,8 @@ export default function JudgeGroupPage() {
                     <div className="mt-4">
                       {/* TODO: Scoring for GROUP events. */}
                       {val[0].score &&
-                      val[0].score[eventMetadata.name] &&
-                      val[0].score[eventMetadata.name][user.id] ? (
+                        val[0].score[eventMetadata.name] &&
+                        val[0].score[eventMetadata.name][user.id] ? (
                         <div className="mt-2 flex flex-col">
                           <button
                             className="bg-[#ffcece] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2"
@@ -166,7 +166,7 @@ export default function JudgeGroupPage() {
                               setScoreMode(_scoreMode);
                               setCommentBuffer(
                                 val[0].comment[eventMetadata.name][user.id] ??
-                                  ""
+                                ""
                               );
                             }}
                           >
@@ -318,7 +318,7 @@ export default function JudgeGroupPage() {
                                         eventMetadata.name
                                       ] =
                                         _participants[i].score[
-                                          eventMetadata.name
+                                        eventMetadata.name
                                         ] ?? {};
                                       _participants[i].score[
                                         eventMetadata.name
@@ -336,7 +336,7 @@ export default function JudgeGroupPage() {
                                         eventMetadata.name
                                       ] =
                                         _participants[i].comment[
-                                          eventMetadata.name
+                                        eventMetadata.name
                                         ] ?? {};
                                       _participants[i].comment[
                                         eventMetadata.name
