@@ -135,6 +135,7 @@ export default function JudgePage() {
                         </div>
 
                         <div className="grid grid-cols-1 gap-4 mt-4">
+                            {console.log(filteredParticipants)}
                             {filteredParticipants.map((participant, index) => (
                                 <div key={index} className="rounded-2xl p-4 bg-gray-100 border">
                                     <div className="flex flex-row justify-between">
@@ -200,6 +201,7 @@ export default function JudgePage() {
                                                             type="number"
                                                             className="border p-2 rounded-lg text-md"
                                                             max={eventMetadata.evalCriteria[key]}
+                                                            min={0}
                                                             value={val}
                                                             onChange={(e) => {
                                                                 const newBuffer = [...scoreBuffer];

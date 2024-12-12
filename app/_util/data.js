@@ -230,3 +230,25 @@ export const markScore = async (studentId, eventName, judgeId, score, comment) =
     });
     return true;
 }
+
+export const markGroupScore = async (district, eventName, judgeId, score, comment) => {
+    // update score dict vals to float.
+    Object.keys(score).forEach((key) => {
+        score[key] = parseFloat(score[key]);
+    });
+
+    const students = await getDocs(query(
+        collection(db, "registrationData"),
+        where("district", "==", district)
+    ));
+
+    for (const student of students.docs) {
+        const studentId = student.id;
+        await updateDoc(doc(db, "registrationData", studentId), {
+            [`score.${eventName}.${judgeId}`]: score,
+            [`comment.${eventName}.${judgeId}`]: comment === "" ? "-" : (comment ?? "-"),
+        });
+
+    return true; 
+}
+}
