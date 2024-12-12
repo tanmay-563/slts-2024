@@ -49,6 +49,10 @@ export const getRegistrationData = async () => {
     const districtSet = new Set();
     const eventNameSet = new Set();
     const groupNameSet = new Set();
+    const modeOfTravelSet = new Set();
+    const modeOfTravelForDropSet = new Set();
+    const checkInDateSet = new Set();
+    const checkOutDateSet = new Set();
 
     data.forEach((row) => {
         districtSet.add(row.district);
@@ -56,9 +60,25 @@ export const getRegistrationData = async () => {
             eventNameSet.add(event);
         });
         groupNameSet.add(row.studentGroup);
+
+        if (row.modeOfTravel != "" && row.modeOfTravel != null) {
+            modeOfTravelSet.add(row.modeOfTravel);
+        }
+
+        if (row.modeOfTravelForDrop != "" && row.modeOfTravelForDrop != null) {
+            modeOfTravelForDropSet.add(row.modeOfTravelForDrop);
+        }
+
+        if (row.checkInDate != "" && row.checkInDate != null) {
+            checkInDateSet.add(row.checkInDate);
+        }
+
+        if (row.checkOutDate != "" && row.checkOutDate != null) {
+            checkOutDateSet.add(row.checkOutDate);
+        }
     });
 
-    return [data, Array.from(districtSet), Array.from(eventNameSet), Array.from(groupNameSet)];
+    return [data, Array.from(districtSet), Array.from(eventNameSet), Array.from(groupNameSet), Array.from(modeOfTravelSet), Array.from(modeOfTravelForDropSet), Array.from(checkInDateSet), Array.from(checkOutDateSet)];
 }
 
 export const getDistrcitData = async (district) => {
