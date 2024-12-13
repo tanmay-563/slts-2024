@@ -12,9 +12,6 @@ export default function Transport() {
     const [data, setData] = useState(null);
     const [filteredData, setFilteredData] = useState(null);
 
-    // const [dumpData, setDumpData] = useState(null);
-
-    // filters.
     const [districts, setDistricts] = useState([]);
     const [filterDistrict, setFilterDistrict] = useState("");
 
@@ -30,23 +27,13 @@ export default function Transport() {
     const [modeOfTravelForDropOptions, setModeOfTravelForDropOptions] = useState([]);
     const [filterModeOfTravelForDrop, setFilterModeOfTravelForDrop] = useState("");
 
-    const [checkInDateOptions, setCheckInDateOptions] = useState([]);
-    const [filterCheckInDate, setFilterCheckInDate] = useState("");
-
-    const [checkOutDateOptions, setCheckOutDateOptions] = useState([]);
-    const [filterCheckOutDate, setFilterCheckOutDate] = useState("");
-
     const [searchQuery, setSearchQuery] = useState("");
     const [filterNeedForPickup, setFilterNeedForPickup] = useState("");
     const [filterNeedForDrop, setFilterNeedForDrop] = useState("");
-    const [filterNeedForAccommodation, setFilterNeedForAccommodation] = useState("");
 
-    const [filterArrivalStartDate, setFilterArrivalStartDate] = useState(""); // Start date for Arrival
-    const [filterArrivalEndDate, setFilterArrivalEndDate] = useState(""); // End date for Arrival
-
-    const [filterDepartureStartDate, setFilterDepartureStartDate] = useState(""); // Start date for Departure
-    const [filterDepartureEndDate, setFilterDepartureEndDate] = useState(""); // End date for Departure
-
+    // Inside your component
+    const [filterArrivalDate, setFilterArrivalDate] = useState("");
+    const [filterDepartureDate, setFilterDepartureDate] = useState("");
 
     useEffect(() => {
         if (!secureLocalStorage.getItem('user')) {
@@ -63,15 +50,11 @@ export default function Transport() {
 
             setData(_data[0]);
             setFilteredData(_data[0]);
-            // setDumpData(_data[0]);
-
             setDistricts(_data[1]);
             setEvents(_data[2]);
             setGroups(_data[3]);
             setModeOfTravelOptions(_data[4]);
             setModeOfTravelForDropOptions(_data[5]);
-            setCheckInDateOptions(_data[6]);
-            setCheckOutDateOptions(_data[7]);
         });
     }, [router]);
 
@@ -80,46 +63,48 @@ export default function Transport() {
         if (data) {
             setFilteredData(
                 data.filter((row) => {
-                    const arrivalDate = new Date(row.arrivalDate);
-                    const departureDate = new Date(row.departureDate);
-                    
-                    const arrivalStartDate = new Date(filterArrivalStartDate);
-                    const arrivalEndDate = new Date(filterArrivalEndDate);
+                    // Date filters
+                    const matchesArrivalDate = filterArrivalDate == "" || new Date(row.arrivalDate) <= new Date(filterArrivalDate);
+                    const matchesDepartureDate = filterDepartureDate == "" || new Date(row.departureDate) >= new Date(filterDepartureDate);
+
+                    // Validate filters
+                    const matchesDistrict = filterDistrict === "" || row.district === filterDistrict;
+                    const matchesEvent = filterEvent === "" || row.registeredEvents.includes(filterEvent);
+                    const matchesGroup = filterGroup === "" || row.studentGroup === filterGroup;
+                    const matchesModeOfTravel =
+                        filterModeOfTravel === "" || row.modeOfTravel === filterModeOfTravel;
+                    const matchesModeOfTravelForDrop =
+                        filterModeOfTravelForDrop === "" || row.modeOfTravelForDrop === filterModeOfTravelForDrop;
+                    const matchesNeedForPickup =
+                        filterNeedForPickup === "" || row.needsPickup.toString() === filterNeedForPickup;
+                    const matchesNeedForDrop =
+                        filterNeedForDrop === "" || row.needsDrop.toString() === filterNeedForDrop;
+                    const matchesSearchQuery =
+                        searchQuery === "" ||
+                        row.studentFullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        row.studentId.toLowerCase().includes(searchQuery.toLowerCase());
     
-                    const departureStartDate = new Date(filterDepartureStartDate);
-                    const departureEndDate = new Date(filterDepartureEndDate);
+                    // Additional conditions (apply only if respective filters are active)
+                    const isPickupNeeded =
+                        filterModeOfTravel === "" || (row.needsPickup === "Yes" && row.modeOfTravel !== "Pickup not needed");
+                    const isDropNeeded =
+                        filterModeOfTravelForDrop === "" ||
+                        (row.needsDrop === "Yes" && row.modeOfTravelForDrop !== "Drop not needed");
     
+                    // Combine all filters and additional conditions
                     return (
-                        // Exclude rows where modeOfTravelForDrop or modeOfTravelForPickup contains "Pickup not needed." or "Drop not needed."
-                        !(
-                            row.modeOfTravelForDrop &&
-                            row.modeOfTravelForDrop.toLowerCase().includes("drop not needed.")
-                        ) &&
-                        !(
-                            row.modeOfTravelForPickup &&
-                            row.modeOfTravelForPickup.toLowerCase().includes("pickup not needed.")
-                        ) &&
-                        // Filtering logic for other conditions
-                        (filterDistrict === "" || row.district === filterDistrict) &&
-                        (filterEvent === "" || row.registeredEvents.includes(filterEvent)) &&
-                        (filterGroup === "" || row.studentGroup === filterGroup) &&
-                        (filterModeOfTravelForDrop === "" ||
-                            (row.modeOfTravelForDrop &&
-                            row.modeOfTravelForDrop.trim() !== "" &&
-                            ["train", "bus"].includes(row.modeOfTravelForDrop.toLowerCase().trim()) &&
-                            row.modeOfTravelForDrop.toLowerCase().trim() === filterModeOfTravelForDrop.toLowerCase().trim())) &&
-                        (filterNeedForAccommodation === "" || (row.needsAccommodation.toString() === filterNeedForAccommodation)) &&
-                        (filterCheckInDate === "" || row.checkInDate === filterCheckInDate) &&
-                        (filterCheckOutDate === "" || row.checkOutDate === filterCheckOutDate) &&
-                        // Filtering for Arrival Date range
-                        (filterArrivalStartDate === "" || arrivalDate >= arrivalStartDate) &&
-                        (filterArrivalEndDate === "" || arrivalDate <= arrivalEndDate) &&
-                        // Filtering for Departure Date range
-                        (filterDepartureStartDate === "" || departureDate >= departureStartDate) &&
-                        (filterDepartureEndDate === "" || departureDate <= departureEndDate) &&
-                        (searchQuery === "" ||
-                            row.studentFullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            row.studentId.toLowerCase().includes(searchQuery.toLowerCase()))
+                        matchesArrivalDate &&
+                        matchesDepartureDate &&
+                        matchesDistrict &&
+                        matchesEvent &&
+                        matchesGroup &&
+                        matchesModeOfTravel &&
+                        matchesModeOfTravelForDrop &&
+                        matchesNeedForPickup &&
+                        matchesNeedForDrop &&
+                        matchesSearchQuery &&
+                        isPickupNeeded &&
+                        isDropNeeded
                     );
                 })
             );
@@ -131,20 +116,13 @@ export default function Transport() {
         filterGroup,
         filterNeedForPickup,
         filterNeedForDrop,
-        filterNeedForAccommodation,
         searchQuery,
+        filterModeOfTravel,
         filterModeOfTravelForDrop,
-        filterCheckInDate,
-        filterCheckOutDate,
-        filterArrivalStartDate, // Adding to the dependency array
-        filterArrivalEndDate, // Adding to the dependency array
-        filterDepartureStartDate, // Adding to the dependency array
-        filterDepartureEndDate, // Adding to the dependency array
+        filterArrivalDate,
+        filterDepartureDate,
     ]);
     
-       
-    
-
     return user && filteredData ? (
         <>
             <div className="flex flex-col justify-center w-fit ml-auto mr-auto">
@@ -237,63 +215,46 @@ export default function Transport() {
 
                 <div className="flex flex-row m-4 gap-4 items-center">
                     <div className="bg-white p-4 rounded-2xl border flex-grow">
-                        <div className="flex flex-row flex-wrap justify-between gap-2">
-                            <div className="flex flex-col justify-between gap-2">
-                                <label htmlFor="modeOfTravelForDrop"><b>Mode Of Transport</b></label>
-                                <select
-                                    id="modeOfTravelForDrop"
-                                    className="border p-2 rounded-2xl w-60"
-                                    value={filterModeOfTravelForDrop}
-                                    onChange={(e) => setFilterModeOfTravelForDrop(e.target.value)}
-                                >
-                                    <option value="">All</option>
-                                    {modeOfTravelOptions.map((mode, index) => (
-                                        <option key={index} value={mode}>{mode}</option>
-                                    ))}
-                                </select>
-                            </div>
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="modeOfTravel"><b>Mode Of Transport</b></label>
+                            <select
+                                id="modeOfTravel"
+                                className="border p-2 rounded-2xl"
+                                value={filterModeOfTravel}
+                                onChange={(e) => setFilterModeOfTravel(e.target.value)}
+                            >
+                                <option value="">All</option>
+                                {modeOfTravelOptions.map((mode, index) => (
+                                    <option key={index} value={mode}>{mode}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
-
                     <div className="bg-white p-4 rounded-2xl border flex-grow">
-                        <div className="flex flex-row flex-wrap justify-between gap-2">
-                            <div className="flex flex-col gap-2">
-                                <label htmlFor="checkInStartDate"><b>Arrival Date Range</b></label>
-                                <input
-                                    type="date"
-                                    id="checkInStartDate"
-                                    className="border p-2 rounded-2xl"
-                                    value={filterArrivalStartDate}
-                                    onChange={(e) => setFilterArrivalStartDate(e.target.value)}
-                                />
-                                <input
-                                    type="date"
-                                    id="checkInEndDate"
-                                    className="border p-2 rounded-2xl"
-                                    value={filterArrivalEndDate}
-                                    onChange={(e) => setFilterArrivalEndDate(e.target.value)}
-                                />
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <label htmlFor="checkOutStartDate"><b>Departure Date Range</b></label>
-                                <input
-                                    type="date"
-                                    id="checkOutStartDate"
-                                    className="border p-2 rounded-2xl"
-                                    value={filterDepartureStartDate}
-                                    onChange={(e) => setFilterDepartureStartDate(e.target.value)}
-                                />
-                                <input
-                                    type="date"
-                                    id="checkOutEndDate"
-                                    className="border p-2 rounded-2xl"
-                                    value={filterDepartureEndDate}
-                                    onChange={(e) => setFilterDepartureEndDate(e.target.value)}
-                                />
-                            </div>
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="arrivalDate"><b>Arrival Date</b></label>
+                            <input
+                                type="date"
+                                id="arrivalDate"
+                                className="border p-2 rounded-2xl"
+                                value={filterArrivalDate}
+                                onChange={(e) => setFilterArrivalDate(e.target.value)}
+                            />
                         </div>
                     </div>
+                    <div className="bg-white p-4 rounded-2xl border flex-grow">
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="departureDate"><b>Departure Date</b></label>
+                            <input
+                                type="date"
+                                id="departureDate"
+                                className="border p-2 rounded-2xl"
+                                value={filterDepartureDate}
+                                onChange={(e) => setFilterDepartureDate(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
                 </div>
 
 
