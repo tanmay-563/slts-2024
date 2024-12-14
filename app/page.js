@@ -102,7 +102,6 @@ export default function Home() {
                 {showPassword ? "🫣" : "👁"}
               </span>
             </div>
-            <p span="errorhandle"> </p>
             <button
               type="submit"
               disabled={!email || !password}
