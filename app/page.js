@@ -45,7 +45,7 @@ export default function Home() {
         getUserData().then((data) => {
           if (data.role == "admin") {
             secureLocalStorage.setItem("user", JSON.stringify(data));
-            router.push("/admin/event");
+            router.push("/admin");
           } else if (data.role == "judge") {
             secureLocalStorage.setItem("user", JSON.stringify(data));
             data.event.includes("GROUP") ? router.push("/judge/group") : router.push("/judge/individual");
@@ -99,7 +99,7 @@ export default function Home() {
                 className="absolute inset-y-0 right-4 flex items-center cursor-pointer text-gray-500"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? "🙈" : "👁"}
+                {showPassword ? "🫣" : "👁"}
               </span>
             </div>
             <p span="errorhandle"> </p>
