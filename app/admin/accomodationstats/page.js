@@ -7,18 +7,15 @@ import secureLocalStorage from "react-secure-storage";
 
 export default function DistrictStats() {
   const router = useRouter();
+
+  // State variables
   const [user, setUser] = useState(null);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-
   const [districts, setDistricts] = useState([]);
-  const [filterDistrict, setFilterDistrict] = useState(""); // initialize with empty string for filtering
-
   const [checkInDateOptions, setCheckInDateOptions] = useState([]);
-  const [checkInData, setCheckInData] = useState([]);
-
   const [checkOutDateOptions, setCheckOutDateOptions] = useState([]);
-  const [filterCheckOutDate, setFilterCheckOutDate] = useState("");
+  const [checkInData, setCheckInData] = useState([]);
 
   useEffect(() => {
     const savedUser = secureLocalStorage.getItem("user");
@@ -37,48 +34,61 @@ export default function DistrictStats() {
         return;
       }
 
-      // Set state with fetched data
       setData(_data[0]);
       setDistricts(_data[1]);
       setCheckInDateOptions(_data[6]);
       setCheckOutDateOptions(_data[7]);
 
-      // Organize and sort data
-      const organizedData = _data[6].map((checkInDate) => ({
-        checkInDate: checkInDate,
-        rows: _data[0].filter((row) => row.checkInDate === checkInDate),
-      }));
+      const organizedData = _data[0];
 
-      organizedData.forEach((item) => {
-        item.rows.sort((a, b) => {
-          const dateA = new Date(a.pickUpTime);
-          const dateB = new Date(b.pickUpTime);
+      const sortedData = organizedData.sort((a, b) => {
+        const dateA = new Date(a.arrivalDate);
+        const dateB = new Date(b.arrivalDate);
 
-          return dateA - dateB;
-        });
+        if (dateA < dateB) return -1;
+        if (dateA > dateB) return 1;
+
+        const timeA = a.arrivalTime;
+        const timeB = b.arrivalTime;
+        if (timeA < timeB) return -1;
+        if (timeA > timeB) return 1;
+
+        const districtA = a.district.toLowerCase();
+        const districtB = b.district.toLowerCase();
+        if (districtA < districtB) return -1;
+        if (districtA > districtB) return 1;
+
+        return 0;
       });
-      setFilteredData(organizedData);
-      setCheckInData(organizedData);
-      console.log("Organized Data:", organizedData);
+
+      const groupedData = {};
+
+      sortedData.forEach((item) => {
+        const key = `${item.arrivalDate}_${item.arrivalTime}_${item.district}`;
+        if (!groupedData[key]) {
+          groupedData[key] = [];
+        }
+        groupedData[key].push(item);
+      });
+
+      // Create `groupedRows`
+      const groupedRows = Object.keys(groupedData).map((key) => {
+        const [arrivalDate, arrivalTime, district] = key.split("_");
+        return {
+          arrivalDate,
+          arrivalTime,
+          district,
+          rows: groupedData[key],
+        };
+      });
+
+      setFilteredData(groupedRows);
     });
   }, [router]);
 
-  useEffect(() => {
-    // Filtering the data when district or checkout date changes
-    const filtered = checkInData.map((item) => ({
-      checkInDate: item.checkInDate,
-      rows: item.rows.filter(
-        (row) =>
-          (filterDistrict === "" || row.district === filterDistrict) &&
-          (filterCheckOutDate === "" || row.checkOutDate === filterCheckOutDate)
-      ),
-    }));
-
-    setFilteredData(filtered);
-  }, [checkInData, filterDistrict, filterCheckOutDate]);
-
-  return user && data ? (
+  return user && data.length ? (
     <div className="flex flex-col justify-center w-fit mx-auto">
+      {/* User Info */}
       <div className="rounded-2xl p-4 m-4 bg-white border flex flex-row justify-between">
         <div>
           <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
@@ -96,130 +106,63 @@ export default function DistrictStats() {
         </button>
       </div>
 
-      {/* District Dropdown */}
-      <div>
-        <label htmlFor="District">
-          <b>District</b>
-        </label>
-        <select
-          id="District"
-          className="border p-2 rounded-2xl"
-          value={filterDistrict}
-          onChange={(e) => setFilterDistrict(e.target.value)} // handle district change
-        >
-          <option value="">All</option>
-          {districts.map((district, index) => (
-            <option key={index} value={district}>
-              {district}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Rendering Filtered Data */}
-      {filteredData.map(({ checkInDate, rows }, index) => (
-        <div key={index}>
+      {filteredData.map((group, idx) => (
+        <div key={idx} className="mb-4">
           <h1 className="text-xl font-bold text-gray-800 mb-2">
-            {checkInDate}
+            Check-In Date: {group.arrivalDate}
           </h1>
-          <div className="bg-white p-4 rounded-2xl border flex flex-col justify-between">
-            <p className="text-lg font-bold">Accommodation</p>
-            <div>
-              <div>
-                <p className="text-sm font-semibold text-gray-500">Overall</p>
+          <div className="bg-white p-4 rounded-2xl border">
+            <p className="text-lg font-bold">
+              Accommodation for {group.district}
+            </p>
+            <p className="text-sm font-semibold text-gray-500">
+              Date: {group.arrivalDate} | Time: {group.arrivalTime}
+            </p>
+            <div className="flex justify-around gap-3">
+              <div className="pt-2">
+                <p className="text-sm font-bold">Male</p>
+                <p className="text-4xl font-bold">
+                  {group.rows.reduce(
+                    (acc, row) =>
+                      acc +
+                      (row.needsAccommodation === "Yes" && row.gender === "Male"
+                        ? 1
+                        : 0) +
+                      (parseInt(row.numMaleAccompanyingNeedAccommodation) || 0),
+                    0
+                  )}
+                </p>
               </div>
-              <div className="flex justify-around gap-3">
-                <div className="pt-2">
-                  <p className="text-sm font-bold">Male</p>
-                  <p className="text-4xl font-bold">
-                    {rows.reduce(
-                      (acc, row) =>
-                        acc +
-                        parseInt(
-                          (row.needsAccommodation == "Yes" &&
-                          row.gender == "Male"
-                            ? 1
-                            : 0) ?? 0
-                        ),
-                      0
-                    ) +
-                      rows.reduce(
-                        (acc, row) =>
-                          acc +
-                          parseInt(
-                            row.numMaleAccompanyingNeedAccommodation ?? 0
-                          ),
-                        0
-                      )}
-                  </p>
-                </div>
-                <div className="pt-2">
-                  <p className="text-sm font-bold">Female</p>
-                  <p className="text-4xl font-bold">
-                    {rows.reduce(
-                      (acc, row) =>
-                        acc +
-                        parseInt(
-                          (row.needsAccommodation == "Yes" &&
-                          row.gender == "Female"
-                            ? 1
-                            : 0) ?? 0
-                        ),
-                      0
-                    ) +
-                      rows.reduce(
-                        (acc, row) =>
-                          acc +
-                          parseInt(
-                            row.numFemaleAccompanyingNeedAccommodation ?? 0
-                          ),
-                        0
-                      )}
-                  </p>
-                </div>
-                <div className="pt-2 bg-gray-100 p-2 px-8 rounded-2xl">
-                  <p className="text-sm font-bold">Total</p>
-                  <p className="text-4xl font-bold">
-                    {rows.reduce(
-                      (acc, row) =>
-                        acc +
-                        parseInt(
-                          (row.needsAccommodation == "Yes" &&
-                          row.gender == "Male"
-                            ? 1
-                            : 0) ?? 0
-                        ),
-                      0
-                    ) +
-                      rows.reduce(
-                        (acc, row) =>
-                          acc +
-                          parseInt(
-                            (row.needsAccommodation == "Yes" &&
-                            row.gender == "Female"
-                              ? 1
-                              : 0) ?? 0
-                          ),
-                        0
-                      ) +
-                      rows.reduce(
-                        (acc, row) =>
-                          acc +
-                          parseInt(
-                            row.numMaleAccompanyingNeedAccommodation ?? 0
-                          ),
-                        0
-                      ) +
-                      rows.reduce(
-                        (acc, row) =>
-                          acc +
-                          parseInt(
-                            row.numFemaleAccompanyingNeedAccommodation ?? 0
-                          ),
-                        0
-                      )}
-                  </p>
-                </div>
+              <div className="pt-2">
+                <p className="text-sm font-bold">Female</p>
+                <p className="text-4xl font-bold">
+                  {group.rows.reduce(
+                    (acc, row) =>
+                      acc +
+                      (row.needsAccommodation === "Yes" &&
+                      row.gender === "Female"
+                        ? 1
+                        : 0) +
+                      (parseInt(row.numFemaleAccompanyingNeedAccommodation) ||
+                        0),
+                    0
+                  )}
+                </p>
+              </div>
+              <div className="pt-2 bg-gray-100 p-2 px-8 rounded-2xl">
+                <p className="text-sm font-bold">Total</p>
+                <p className="text-4xl font-bold">
+                  {group.rows.reduce(
+                    (acc, row) =>
+                      acc +
+                      (row.needsAccommodation === "Yes" ? 1 : 0) +
+                      (parseInt(row.numMaleAccompanyingNeedAccommodation) ||
+                        0) +
+                      (parseInt(row.numFemaleAccompanyingNeedAccommodation) ||
+                        0),
+                    0
+                  )}
+                </p>
               </div>
             </div>
           </div>
