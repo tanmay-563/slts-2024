@@ -123,6 +123,17 @@ export default function DistrictStats() {
         return 0;
       });
       setUniqueDates(_uniqueDates);
+      
+      // sort by checkInDate groupedRows
+      groupedRows.sort((a, b) => {
+        if (a.checkInDate < b.checkInDate) {
+          return -1;
+        }
+        if (a.checkInDate > b.checkInDate) {
+          return 1;
+        }
+        return 0;
+      })
 
       // set default filter date
       setFilterDate(_uniqueDates[0]);
