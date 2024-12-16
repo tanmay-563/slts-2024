@@ -49,7 +49,7 @@ export default function GroupEventLeaderboardPage() {
                     return acc;
                 }, {});
 
-            
+
                 const groups = Object.values(groupedData).map((group) => {
                     const { members, ...rest } = group;
                     return { members, ...rest };
@@ -80,6 +80,22 @@ export default function GroupEventLeaderboardPage() {
                             group.judgeWiseTotal[judgeId] += parseInt(group.score[(_eventName)][judgeId][criteria]);
                         });
                         group.overallTotal = Object.values(group.judgeWiseTotal).reduce((a, b) => a + b, 0);
+                    });
+                });
+
+                groups.forEach((group) => {
+                    _data[1].judgeIdList.forEach((judgeId) => {
+                        if (!group.comment) {
+                            group.comment = {};
+                        }
+
+                        if (!group.comment[eventName]) {
+                            group.comment[eventName] = {};
+                        }
+
+                        if (!group.comment[eventName][judgeId]) {
+                            group.comment[eventName][judgeId] = "-";
+                        }
                     });
                 });
 
@@ -176,6 +192,7 @@ export default function GroupEventLeaderboardPage() {
                                     ))}
                                     <th className="border px-4 py-2">Judge Wise Total</th>
                                     <th className="border px-4 py-2">Overall Total</th>
+                                    <th className="border px-4 py-2">Comments</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -184,8 +201,8 @@ export default function GroupEventLeaderboardPage() {
                                         <td className="px-4 py-2 border font-bold">{group.district ?? "Unknown"}</td>
                                         <td className="px-4 py-2 border">
                                             {group.members.map((member, i) => (
-                                                <p key={i} className="text-xs">
-                                                    {member.name} ({member.id})
+                                                <p key={i} className="text-xs mt-2">
+                                                    <span className="font-bold bg-gray-100 p-1 rounded-2xl pr-2">{member.id}</span>{member.name}
                                                 </p>
                                             ))}
                                         </td>
@@ -202,6 +219,11 @@ export default function GroupEventLeaderboardPage() {
                                             ))}
                                         </td>
                                         <td className="px-4 py-2 border font-bold">{group.overallTotal}</td>
+                                        <td className="px-4 py-2 border">
+                                            {eventMetadata.judgeIdList.map((judgeId, i2) => (
+                                                <p key={i2} className="text-xs">{group.comment[eventName][judgeId]}</p>
+                                            ))}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
