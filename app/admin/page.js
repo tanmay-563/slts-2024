@@ -118,20 +118,20 @@ export default function AdminDashboard() {
 
     return user && filteredData ? (
         <>
-            <div className={"flex flex-col justify-center w-fit ml-auto mr-auto" + (isCorrectionDialogOpen ? " blur md:blur-none md:grayscale" : "")}>
+            <div className={"flex flex-col justify-center w-screen md:w-fit ml-auto mr-auto" + (isCorrectionDialogOpen ? " blur md:blur-none md:grayscale" : "")}>
                 <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-col md:flex-row gap-4 md:gap-0">
                     <div>
                         <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
                         <p className="text-gray-700">{user.email}</p>
                     </div>
-                    <div className="flex flex-row">
-                        {/* <button
+                    {/*<div className="flex flex-row">
+                        <button
                             className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
                             onClick={() => router.push('/admin/event')}
                         >
                             Events
-                        </button> */}
-                        {/* <button
+                        </button>
+                        <button
                             className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
                             onClick={() => router.push('/admin/accommodation')}
                         >
@@ -146,8 +146,8 @@ export default function AdminDashboard() {
                             }}
                         >
                             Logout
-                        </button> */}
-                    </div>
+                        </button>
+                    </div>*/}
                 </div>
 
                 <div className="flex flex-row flex-wrap gap-4 m-4 justify-center overflow-x-auto">
