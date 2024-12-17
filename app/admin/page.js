@@ -116,7 +116,7 @@ export default function AdminDashboard() {
 
     return user && filteredData ? (
         <>
-            <div className={"flex flex-col justify-center w-fit ml-auto mr-auto" + (isCorrectionDialogOpen ? " blur" : "")}>
+            <div className={"flex flex-col justify-center w-fit ml-auto mr-auto" + (isCorrectionDialogOpen ? " blur md:grayscale" : "")}>
                 <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-col md:flex-row gap-4 md:gap-0">
                     <div>
                         <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
@@ -731,6 +731,49 @@ export default function AdminDashboard() {
                                             <p className="text-xs font-bold bg-[#c4ffc2] text-[#07210d] p-1 px-2 rounded-2xl w-fit">{row.studentId ?? "-"}</p>
                                             <p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">{row.studentGroup ?? "-"}</p>
                                         </div>
+                                        <div className="mt-2 px-3">
+                                            {(row.correctionRequest && row.correctionRequest.sd) ? (
+                                                <div className="bg-red-100 p-2 rounded-xl border border-red-300">
+                                                    <p className="text-xs text-red-800 font-semibold">Correction Requested</p>
+                                                    <p className="text-xs text-red-800 font-light my-2">{row.correctionRequest.sd.correctionMessage ?? "-"}</p>
+                                                    <p className="text-xs text-red-800 font-light">Requested By Name: {row.correctionRequest.sd.correctedByName ?? "-"}</p>
+                                                    <p className="text-xs text-red-800 font-light">Requested By Phone: {row.correctionRequest.sd.correctedByPhoneNumber ?? "-"}</p>
+                                                    <button
+                                                        className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
+                                                        onClick={() => {
+                                                            setCorrectionData(row);
+                                                            setDialogTitle("Edit Correction Request in Student Details");
+                                                            setDialogType("sd");
+
+                                                            setCorrectionMessage(row.correctionRequest.sd.correctionMessage);
+                                                            setCorrectionName(row.correctionRequest.sd.correctedByName);
+                                                            setCorrectionPhone(row.correctionRequest.sd.correctedByPhoneNumber);
+
+                                                            setIsCorrectionDialogOpen(true);
+                                                        }}
+                                                    >
+                                                        Edit Correction Request
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
+                                                    onClick={() => {
+                                                        setCorrectionData(row);
+                                                        setDialogTitle("Request Correction in Student Details");
+                                                        setDialogType("sd");
+
+                                                        setCorrectionMessage("");
+                                                        setCorrectionName("");
+                                                        setCorrectionPhone("");
+
+                                                        setIsCorrectionDialogOpen(true);
+                                                    }}
+                                                >
+                                                    Request Correction in Student Details
+                                                </button>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="px-4 py-2 border max-w-[200px]">
                                         <p className="font-bold">{row.district ?? "-"}</p>
@@ -769,6 +812,49 @@ export default function AdminDashboard() {
                                                     </div>
                                                 )}
                                             </div>
+                                            <div className="mt-2 px-3">
+                                                {(row.correctionRequest && row.correctionRequest.ad) ? (
+                                                    <div className="bg-red-100 p-2 rounded-xl border border-red-300">
+                                                        <p className="text-xs text-red-800 font-semibold">Correction Requested</p>
+                                                        <p className="text-xs text-red-800 font-light my-2">{row.correctionRequest.ad.correctionMessage ?? "-"}</p>
+                                                        <p className="text-xs text-red-800 font-light">Requested By Name: {row.correctionRequest.ad.correctedByName ?? "-"}</p>
+                                                        <p className="text-xs text-red-800 font-light">Requested By Phone: {row.correctionRequest.ad.correctedByPhoneNumber ?? "-"}</p>
+                                                        <button
+                                                            className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
+                                                            onClick={() => {
+                                                                setCorrectionData(row);
+                                                                setDialogTitle("Edit Correction Request in Arrival & Departure Logistics");
+                                                                setDialogType("ad");
+
+                                                                setCorrectionMessage(row.correctionRequest.ad.correctionMessage);
+                                                                setCorrectionName(row.correctionRequest.ad.correctedByName);
+                                                                setCorrectionPhone(row.correctionRequest.ad.correctedByPhoneNumber);
+
+                                                                setIsCorrectionDialogOpen(true);
+                                                            }}
+                                                        >
+                                                            Edit Correction Request
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
+                                                        onClick={() => {
+                                                            setCorrectionData(row);
+                                                            setDialogTitle("Request Correction in Arrival & Departure Logistics");
+                                                            setDialogType("ad");
+
+                                                            setCorrectionMessage("");
+                                                            setCorrectionName("");
+                                                            setCorrectionPhone("");
+
+                                                            setIsCorrectionDialogOpen(true);
+                                                        }}
+                                                    >
+                                                        Request Correction in Arrival & Departure Logistics
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     </td>
                                     <td className="px-4 py-2 border">
@@ -784,6 +870,49 @@ export default function AdminDashboard() {
                                                 <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{row.numNonParticipatingSiblings ?? "0"} children</p>
                                             </div>
                                         </div>
+                                        <div className="mt-2 px-3">
+                                            {(row.correctionRequest && row.correctionRequest.ac) ? (
+                                                <div className="bg-red-100 p-2 rounded-xl border border-red-300">
+                                                    <p className="text-xs text-red-800 font-semibold">Correction Requested</p>
+                                                    <p className="text-xs text-red-800 font-light my-2">{row.correctionRequest.ac.correctionMessage ?? "-"}</p>
+                                                    <p className="text-xs text-red-800 font-light">Requested By Name: {row.correctionRequest.ac.correctedByName ?? "-"}</p>
+                                                    <p className="text-xs text-red-800 font-light">Requested By Phone: {row.correctionRequest.ac.correctedByPhoneNumber ?? "-"}</p>
+                                                    <button
+                                                        className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
+                                                        onClick={() => {
+                                                            setCorrectionData(row);
+                                                            setDialogTitle("Edit Correction Request in Accompany Details");
+                                                            setDialogType("ac");
+
+                                                            setCorrectionMessage(row.correctionRequest.ac.correctionMessage);
+                                                            setCorrectionName(row.correctionRequest.ac.correctedByName);
+                                                            setCorrectionPhone(row.correctionRequest.ac.correctedByPhoneNumber);
+
+                                                            setIsCorrectionDialogOpen(true);
+                                                        }}
+                                                    >
+                                                        Edit Correction Request
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
+                                                    onClick={() => {
+                                                        setCorrectionData(row);
+                                                        setDialogTitle("Request Correction in Accompany Details");
+                                                        setDialogType("ac");
+
+                                                        setCorrectionMessage("");
+                                                        setCorrectionName("");
+                                                        setCorrectionPhone("");
+
+                                                        setIsCorrectionDialogOpen(true);
+                                                    }}
+                                                >
+                                                    Request Correction in Accompany Details
+                                                </button>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="px-4 py-2 border">
                                         <div className="mt-2 bg-purple-100 p-2 rounded-2xl">
@@ -798,6 +927,49 @@ export default function AdminDashboard() {
                                                 <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{row.numMaleAccompanyingNeedAccommodation ?? "0"} male</p>
                                                 <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{row.numFemaleAccompanyingNeedAccommodation ?? "0"} female</p>
                                             </div>
+                                        </div>
+                                        <div className="mt-2 px-3 pb-4">
+                                            {(row.correctionRequest && row.correctionRequest.rc) ? (
+                                                <div className="bg-red-100 p-2 rounded-xl border border-red-300">
+                                                    <p className="text-xs text-red-800 font-semibold">Correction Requested</p>
+                                                    <p className="text-xs text-red-800 font-light my-2">{row.correctionRequest.rc.correctionMessage ?? "-"}</p>
+                                                    <p className="text-xs text-red-800 font-light">Requested By Name: {row.correctionRequest.rc.correctedByName ?? "-"}</p>
+                                                    <p className="text-xs text-red-800 font-light">Requested By Phone: {row.correctionRequest.rc.correctedByPhoneNumber ?? "-"}</p>
+                                                    <button
+                                                        className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
+                                                        onClick={() => {
+                                                            setCorrectionData(row);
+                                                            setDialogTitle("Edit Correction Request in Accomodation Details");
+                                                            setDialogType("rc");
+
+                                                            setCorrectionMessage(row.correctionRequest.rc.correctionMessage);
+                                                            setCorrectionName(row.correctionRequest.rc.correctedByName);
+                                                            setCorrectionPhone(row.correctionRequest.rc.correctedByPhoneNumber);
+
+                                                            setIsCorrectionDialogOpen(true);
+                                                        }}
+                                                    >
+                                                        Edit Correction Request
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
+                                                    onClick={() => {
+                                                        setCorrectionData(row);
+                                                        setDialogTitle("Request Correction in Accomodation Details");
+                                                        setDialogType("rc");
+
+                                                        setCorrectionMessage("");
+                                                        setCorrectionName("");
+                                                        setCorrectionPhone("");
+
+                                                        setIsCorrectionDialogOpen(true);
+                                                    }}
+                                                >
+                                                    Request Correction in Accomodation Details
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
@@ -937,11 +1109,11 @@ export default function AdminDashboard() {
                                     <input type="text" value={correctionName} className="border p-2 rounded-2xl w-full" placeholder="eg. Ananya (Coimbatore Guru)" onChange={(e) => {
                                         setCorrectionName(e.target.value);
                                     }} />
-                                    <input type="text" value={correctionPhone} className="border p-2 rounded-2xl w-full" placeholder="Plese enter your phone number." onChange={(e) => {
+                                    <input type="text" value={correctionPhone} className="border p-2 rounded-2xl w-full mt-1" placeholder="Plese enter your phone number." onChange={(e) => {
                                         setCorrectionPhone(e.target.value);
                                     }} />
 
-                                    <div className="flex flex-row justify-between">
+                                    <div className="flex flex-row justify-between mt-2">
                                         <button className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full" onClick={() => {
                                             setIsCorrectionDialogOpen(false);
                                         }}>
