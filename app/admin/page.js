@@ -3,8 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { auth } from "@/app/_util/initApp";
-import { getRegistrationData } from "@/app/_util/data";
+import { getRegistrationData, submitCorrectionRequest } from "@/app/_util/data";
 import secureLocalStorage from "react-secure-storage";
+import { Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
 export default function AdminDashboard() {
     const router = useRouter();
@@ -38,6 +39,15 @@ export default function AdminDashboard() {
     const [filterNeedForPickup, setFilterNeedForPickup] = useState("");
     const [filterNeedForDrop, setFilterNeedForDrop] = useState("");
     const [filterNeedForAccommodation, setFilterNeedForAccommodation] = useState("");
+
+    const [correctionData, setCorrectionData] = useState(null);
+    const [correctionMessage, setCorrectionMessage] = useState("");
+    const [correctionName, setCorrectionName] = useState("");
+    const [correctionPhone, setCorrectionPhone] = useState("");
+
+    const [isCorrectionDialogOpen, setIsCorrectionDialogOpen] = useState(false);
+    const [dialogTitle, setDialogTitle] = useState("");
+    const [dialogType, setDialogType] = useState("");
 
     useEffect(() => {
         if (!secureLocalStorage.getItem('user')) {
@@ -106,7 +116,7 @@ export default function AdminDashboard() {
 
     return user && filteredData ? (
         <>
-            <div className="flex flex-col justify-center w-fit ml-auto mr-auto">
+            <div className={"flex flex-col justify-center w-fit ml-auto mr-auto" + (isCorrectionDialogOpen ? " blur" : "")}>
                 <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-col md:flex-row gap-4 md:gap-0">
                     <div>
                         <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
@@ -462,6 +472,49 @@ export default function AdminDashboard() {
                                     <p key={index} className="text-xs bg-green-200 text-green-800 font-bold rounded-xl p-1 px-2 w-fit">{event ?? "-"}</p>
                                 ))}
                             </div>
+                            <div className="mt-2 px-3">
+                                {(row.correctionRequest && row.correctionRequest.sd) ? (
+                                    <div className="bg-red-100 p-2 rounded-xl border border-red-300">
+                                        <p className="text-xs text-red-800 font-semibold">Correction Requested</p>
+                                        <p className="text-xs text-red-800 font-light my-2">{row.correctionRequest.sd.correctionMessage ?? "-"}</p>
+                                        <p className="text-xs text-red-800 font-light">Requested By Name: {row.correctionRequest.sd.correctedByName ?? "-"}</p>
+                                        <p className="text-xs text-red-800 font-light">Requested By Phone: {row.correctionRequest.sd.correctedByPhoneNumber ?? "-"}</p>
+                                        <button
+                                            className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
+                                            onClick={() => {
+                                                setCorrectionData(row);
+                                                setDialogTitle("Edit Correction Request in Student Details");
+                                                setDialogType("sd");
+
+                                                setCorrectionMessage(row.correctionRequest.sd.correctionMessage);
+                                                setCorrectionName(row.correctionRequest.sd.correctedByName);
+                                                setCorrectionPhone(row.correctionRequest.sd.correctedByPhoneNumber);
+
+                                                setIsCorrectionDialogOpen(true);
+                                            }}
+                                        >
+                                            Edit Correction Request
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
+                                        onClick={() => {
+                                            setCorrectionData(row);
+                                            setDialogTitle("Request Correction in Student Details");
+                                            setDialogType("sd");
+
+                                            setCorrectionMessage("");
+                                            setCorrectionName("");
+                                            setCorrectionPhone("");
+
+                                            setIsCorrectionDialogOpen(true);
+                                        }}
+                                    >
+                                        Request Correction in Student Details
+                                    </button>
+                                )}
+                            </div>
                             <hr className="border-t mx-4 mt-3" />
                             <div className="mt-2">
                                 <p className="text-xs font-semibold text-gray-600 px-4">Arrival & Departure Logistics</p>
@@ -489,6 +542,49 @@ export default function AdminDashboard() {
                                         )}
                                     </div>
                                 </div>
+                            </div>
+                            <div className="mt-2 px-3">
+                                {(row.correctionRequest && row.correctionRequest.ad) ? (
+                                    <div className="bg-red-100 p-2 rounded-xl border border-red-300">
+                                        <p className="text-xs text-red-800 font-semibold">Correction Requested</p>
+                                        <p className="text-xs text-red-800 font-light my-2">{row.correctionRequest.ad.correctionMessage ?? "-"}</p>
+                                        <p className="text-xs text-red-800 font-light">Requested By Name: {row.correctionRequest.ad.correctedByName ?? "-"}</p>
+                                        <p className="text-xs text-red-800 font-light">Requested By Phone: {row.correctionRequest.ad.correctedByPhoneNumber ?? "-"}</p>
+                                        <button
+                                            className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
+                                            onClick={() => {
+                                                setCorrectionData(row);
+                                                setDialogTitle("Edit Correction Request in Arrival & Departure Logistics");
+                                                setDialogType("ad");
+
+                                                setCorrectionMessage(row.correctionRequest.ad.correctionMessage);
+                                                setCorrectionName(row.correctionRequest.ad.correctedByName);
+                                                setCorrectionPhone(row.correctionRequest.ad.correctedByPhoneNumber);
+
+                                                setIsCorrectionDialogOpen(true);
+                                            }}
+                                        >
+                                            Edit Correction Request
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
+                                        onClick={() => {
+                                            setCorrectionData(row);
+                                            setDialogTitle("Request Correction in Arrival & Departure Logistics");
+                                            setDialogType("ad");
+
+                                            setCorrectionMessage("");
+                                            setCorrectionName("");
+                                            setCorrectionPhone("");
+
+                                            setIsCorrectionDialogOpen(true);
+                                        }}
+                                    >
+                                        Request Correction in Arrival & Departure Logistics
+                                    </button>
+                                )}
                             </div>
                             <hr className="border-t mx-4 my-" />
                             <div className="py-2">
@@ -624,11 +720,155 @@ export default function AdminDashboard() {
                     </table>
                 </div>
             </div>
+
+
+            <Dialog open={isCorrectionDialogOpen} onClose={() => setIsCorrectionDialogOpen(false)} className="fixed z-50 shadow-2xl">
+                <div className="fixed inset-0 flex w-screen items-center justify-center p-2 overflow-y-auto">
+                    <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-3 text-left align-middle shadow-xl transition-all border">
+                        <div className="flex flex-row justify-between my-2">
+                            <DialogTitle className="text-sm font-medium text-gray-900 w-[70%]">
+                                {dialogTitle}
+                            </DialogTitle>
+                            <button
+                                onClick={() => setIsCorrectionDialogOpen(false)}
+                                className="bg-gray-200 p-1 rounded-full"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-4 w-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="black"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div className="flex flex-col gap-4">
+                            <div className={`bg-gray-100 text-bold flex flex-col gap-2 rounded-2xl`}>
+                                {dialogType === "sd" && (
+                                    <>
+                                        <div className="px-4 pt-2">
+                                            <p className="mt-1 text-xs font-semibold text-gray-600">Student Details</p>
+                                            <p className="font-bold">{correctionData.studentFullName ?? "-"}</p>
+                                            <p className="text-xs">{correctionData.gender ?? "-"} - {correctionData.dateOfBirth ?? "-"}</p>
+                                            <p className="text-xs">{correctionData.district ?? "-"}, {correctionData.samithiName ?? '-'}</p>
+                                            <p className="text-xs mt-2">DOJ BV: {correctionData.dateOfJoiningBalvikas ?? '-'} {correctionData.yearOfJoiningBalvikas ?? '-'}</p>
+                                            {correctionData.studentGroup === 'Group 3' && (
+                                                <p className="text-xs">Passed group 2: {correctionData.hasPassedGroup2Exam ?? '-'}</p>
+                                            )}
+                                        </div>
+                                        <div className="flex flex-wrap gap-1 px-3">
+                                            <p className="text-xs font-bold bg-[#c4ffc2] text-[#07210d] p-1 px-2 rounded-2xl w-fit">{correctionData.studentId ?? "-"}</p>
+                                            <p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">{correctionData.studentGroup ?? "-"}</p>
+                                            {correctionData.registeredEvents.map((event, index) => (
+                                                <p key={index} className="text-xs bg-green-200 text-green-800 font-bold rounded-xl p-1 px-2 w-fit">{event ?? "-"}</p>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                                {dialogType === "ad" && (
+                                    <div className="mt-2">
+                                        <p className="text-xs font-semibold text-gray-600 px-4">Arrival & Departure Logistics</p>
+                                        <div className="flex flex-col gap-1 px-3">
+                                            <div className="border bg-gray-200 rounded-2xl p-2 w-full mt-1">
+                                                <p className="text-xs font-semibold">{"Arrival"}</p>
+                                                <p className="text-xs font-bold">{correctionData.arrivalDate ?? "-"} - {correctionData.arrivalTime ?? "-"}</p>
+                                                <p className="text-xs">{correctionData.needsPickup === "Yes" ? "Needs pickup." : "Pickup not needed."}</p>
+                                                {correctionData.needsPickup === "Yes" && (
+                                                    <div className="bg-blue-100 p-2 rounded-xl mt-2 border border-blue-300">
+                                                        <p className="text-xs text-blue-950 font-semibold">Mode: {correctionData.modeOfTravel ?? "-"}</p>
+                                                        <p className="text-xs text-blue-950 font-semibold">Pickup Point: {correctionData.pickupPoint ?? "-"}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="border bg-gray-200 rounded-2xl p-2 w-full">
+                                                <p className="text-xs font-semibold">{"Departure"}</p>
+                                                <p className="text-xs font-bold">{correctionData.departureDate ?? "-"} - {correctionData.departureTime ?? "-"}</p>
+                                                <p className="text-xs">{correctionData.needsDrop === "Yes" ? "Needs drop." : "Drop not needed."}</p>
+                                                {correctionData.needsDrop === "Yes" && (
+                                                    <div className="bg-blue-100 p-2 rounded-xl mt-2 border border-blue-300">
+                                                        <p className="text-xs text-blue-950 font-semibold">Mode: {correctionData.modeOfTravelForDrop ?? "-"}</p>
+                                                        <p className="text-xs text-blue-950 font-semibold">Drop Point: {correctionData.dropOffPoint ?? "-"}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="mt-2 px-3">
+                                    <textarea
+                                        className="border p-2 rounded-2xl w-full"
+                                        placeholder="Enter correction details here..."
+                                        value={correctionMessage}
+                                        onChange={(e) => setCorrectionMessage(e.target.value)}
+                                    ></textarea>
+
+                                    <p className="text-xs mx-2 mt-2">{"Please enter your name and phone number so that we can identify who is requesting the correction."}</p>
+
+                                    <label htmlFor="name" className="text-xs mx-2 mt-2">{"Plese enter your name with role in Balvikas."}</label>
+                                    <input type="text" value={correctionName} className="border p-2 rounded-2xl w-full" placeholder="eg. Ananya (Coimbatore Guru)" onChange={(e) => {
+                                        setCorrectionName(e.target.value);
+                                    }} />
+                                    <input type="text" value={correctionPhone} className="border p-2 rounded-2xl w-full" placeholder="Plese enter your phone number." onChange={(e) => {
+                                        setCorrectionPhone(e.target.value);
+                                    }} />
+
+                                    <div className="flex flex-row justify-between">
+                                        <button className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full" onClick={() => {
+                                            setIsCorrectionDialogOpen(false);
+                                        }}>
+                                            Cancel
+                                        </button>
+                                        <button className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full" onClick={() => {
+                                            submitCorrectionRequest(
+                                                correctionData.studentId,
+                                                dialogType,
+                                                correctionMessage,
+                                                correctionName,
+                                                correctionPhone
+                                            ).then((res) => {
+                                                if (res === true) {
+                                                    data.map((row, index) => {
+                                                        if (row.studentId === correctionData.studentId) {
+                                                            data[index].correctionRequest[dialogType] = {
+                                                                correctionMessage: correctionMessage,
+                                                                correctedByName: correctionName,
+                                                                correctedByPhoneNumber: correctionPhone
+                                                            }
+                                                        }
+                                                    });
+
+                                                    setCorrectionMessage("");
+                                                    setCorrectionName("");
+                                                    setCorrectionPhone("");
+                                                    setDialogType("");
+                                                    setIsCorrectionDialogOpen(false);
+
+                                                } else {
+                                                    alert("Failed to submit correction request. Please try again later.");
+                                                }
+                                            })
+                                        }}>
+                                            Submit Correction
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </DialogPanel>
+                </div>
+            </Dialog>
         </>
     ) : (
         <div className="flex h-screen items-center justify-center">
             <p className="text-2xl font-semibold">Loading...</p>
         </div>
     )
-
 }
