@@ -46,8 +46,8 @@ export default function Home() {
         router.push("/admin");
       } else if (data.role == "judge") {
         data.event.includes("GROUP") ? router.push("/judge/group") : router.push("/judge/individual");
-      } else if (Object.keys(reverseDistrictCode).indexOf(data.role.toString().toUpperCase()) != -1) {
-        router.push("/district");
+      } else {
+        alert("Unauthorized. Please contact the SLTS team.");
       }
     }
 
