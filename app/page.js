@@ -17,8 +17,29 @@ export default function Home() {
   const router = useRouter();
 
   // Auto login.
+  // useEffect(() => {
+  //   const user = secureLocalStorage.getItem("user");
+  //   if (user) {
+  //     const data = JSON.parse(user);
+  //     if (data.role == "admin") {
+  //       router.push("/admin");
+  //     } else if (data.role == "judge") {
+  //       data.event.includes("GROUP") ? router.push("/judge/group") : router.push("/judge/individual");
+  //     } else if (Object.keys(reverseDistrictCode).indexOf(data.role.toString().toUpperCase()) != -1) {
+  //       router.push("/district");
+  //     }
+  //   }
+
+  //   setIsLoading(false);
+  // }, [router]);
+
   useEffect(() => {
-    const user = secureLocalStorage.getItem("user");
+    const user = JSON.stringify({
+      role: "admin",
+      name: "SLTS Corrections",
+      email: "Select your district, scroll down, and request for corrections if any by clicking the button.",
+    })
+    secureLocalStorage.setItem("user", user);
     if (user) {
       const data = JSON.parse(user);
       if (data.role == "admin") {
@@ -58,17 +79,17 @@ export default function Home() {
       .catch((error) => {
         if (error.code === "auth/invalid-credential") {
           alert("Invalid credentials. Please try again.");
-          
+
         } else {
           alert(error.code ?? "An error occurred. Please try again.");
         }
       });
   };
-  
+
 
   return (
     <main className="flex h-screen flex-col justify-center items-center m-4 bg-gray-100" >
-      
+
       <h1 className="absolute top-4 left-4 text-[24px] font-bold">SLBTS.2024</h1>
       {isLoading ? (
         <div className="flex h-screen items-center justify-center">
