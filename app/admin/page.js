@@ -49,6 +49,8 @@ export default function AdminDashboard() {
     const [dialogTitle, setDialogTitle] = useState("");
     const [dialogType, setDialogType] = useState("");
 
+    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
         if (!secureLocalStorage.getItem('user')) {
             router.push('/');
@@ -116,7 +118,7 @@ export default function AdminDashboard() {
 
     return user && filteredData ? (
         <>
-            <div className={"flex flex-col justify-center w-fit ml-auto mr-auto" + (isCorrectionDialogOpen ? " blur md:grayscale" : "")}>
+            <div className={"flex flex-col justify-center w-fit ml-auto mr-auto" + (isCorrectionDialogOpen ? " blur md:blur-none md:grayscale" : "")}>
                 <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-col md:flex-row gap-4 md:gap-0">
                     <div>
                         <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
@@ -1114,12 +1116,17 @@ export default function AdminDashboard() {
                                     }} />
 
                                     <div className="flex flex-row justify-between mt-2">
-                                        <button className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full" onClick={() => {
+                                        <button className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50" 
+                                        disabled={isLoading}
+                                        onClick={() => {
                                             setIsCorrectionDialogOpen(false);
                                         }}>
                                             Cancel
                                         </button>
-                                        <button className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full" onClick={() => {
+                                        <button className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50" 
+                                        disabled={isLoading || (correctionMessage.toString().trim().length === 0 && correctionName.toString().trim().length === 0 && correctionPhone.toString().trim().length === 0)}
+                                        onClick={() => {
+                                            setIsLoading(true);
                                             submitCorrectionRequest(
                                                 correctionData.studentId,
                                                 dialogType,
@@ -1127,9 +1134,18 @@ export default function AdminDashboard() {
                                                 correctionName,
                                                 correctionPhone
                                             ).then((res) => {
+                                                setIsLoading(false);
                                                 if (res === true) {
                                                     data.map((row, index) => {
                                                         if (row.studentId === correctionData.studentId) {
+                                                            if (!data[index].correctionRequest) {
+                                                                data[index].correctionRequest = {}
+                                                            }
+
+                                                            if (!data[index].correctionRequest[dialogType]) {
+                                                                data[index].correctionRequest[dialogType] = {}
+                                                            }
+
                                                             data[index].correctionRequest[dialogType] = {
                                                                 correctionMessage: correctionMessage,
                                                                 correctedByName: correctionName,
@@ -1147,9 +1163,14 @@ export default function AdminDashboard() {
                                                 } else {
                                                     alert("Failed to submit correction request. Please try again later.");
                                                 }
+                                            }).catch((err) => {
+                                                console.log(err);
+                                                alert("Failed to submit correction request. Please try again later.");
+                                            }).finally(() => {
+                                                setIsLoading(false);
                                             })
                                         }}>
-                                            Submit Correction
+                                            {isLoading ? "Submitting ... " :"Submit Correction"}
                                         </button>
                                     </div>
                                 </div>
