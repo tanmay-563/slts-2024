@@ -602,6 +602,49 @@ export default function AdminDashboard() {
                                     </div>
                                 </div>
                             </div>
+                            <div className="mt-2 px-3">
+                                {(row.correctionRequest && row.correctionRequest.ac) ? (
+                                    <div className="bg-red-100 p-2 rounded-xl border border-red-300">
+                                        <p className="text-xs text-red-800 font-semibold">Correction Requested</p>
+                                        <p className="text-xs text-red-800 font-light my-2">{row.correctionRequest.ac.correctionMessage ?? "-"}</p>
+                                        <p className="text-xs text-red-800 font-light">Requested By Name: {row.correctionRequest.ac.correctedByName ?? "-"}</p>
+                                        <p className="text-xs text-red-800 font-light">Requested By Phone: {row.correctionRequest.ac.correctedByPhoneNumber ?? "-"}</p>
+                                        <button
+                                            className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
+                                            onClick={() => {
+                                                setCorrectionData(row);
+                                                setDialogTitle("Edit Correction Request in Accompany Details");
+                                                setDialogType("ac");
+
+                                                setCorrectionMessage(row.correctionRequest.ac.correctionMessage);
+                                                setCorrectionName(row.correctionRequest.ac.correctedByName);
+                                                setCorrectionPhone(row.correctionRequest.ac.correctedByPhoneNumber);
+
+                                                setIsCorrectionDialogOpen(true);
+                                            }}
+                                        >
+                                            Edit Correction Request
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
+                                        onClick={() => {
+                                            setCorrectionData(row);
+                                            setDialogTitle("Request Correction in Accompany Details");
+                                            setDialogType("ac");
+
+                                            setCorrectionMessage("");
+                                            setCorrectionName("");
+                                            setCorrectionPhone("");
+
+                                            setIsCorrectionDialogOpen(true);
+                                        }}
+                                    >
+                                        Request Correction in Accompany Details
+                                    </button>
+                                )}
+                            </div>
                             <hr className="border-t mx-4" />
                             <div className="py-2">
                                 <p className="px-4 text-xs font-semibold text-gray-600">Accommodation Details</p>
@@ -798,6 +841,23 @@ export default function AdminDashboard() {
                                                         <p className="text-xs text-blue-950 font-semibold">Drop Point: {correctionData.dropOffPoint ?? "-"}</p>
                                                     </div>
                                                 )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {dialogType === "ac" && (
+                                    <div className="py-2">
+                                        <p className="px-4 text-xs font-semibold text-gray-600">Accompany Details</p>
+                                        <p className="px-4 text-xs">{correctionData.hasAccompanyingAdults === "Yes" ? "Has Accompanying adults." : "No Accompany."}</p>
+                                        <div className="mt-2 mx-3 bg-gray-50 p-2 rounded-2xl">
+                                            <p className="text-xs font-bold">{correctionData.accompanyingPersonName ?? "-"}</p>
+                                            <p className="text-xs">{correctionData.accompanyingPersonGender ?? "-"} - {correctionData.accompanyingPersonAge ?? "-"} yrs</p>
+                                            <p className="text-xs">{correctionData.accompanyingPersonRelation ?? "-"}</p>
+                                            <p className="text-xs">{correctionData.accompanyingPersonContact ?? "-"}</p>
+                                            <div className="flex gap-1 mt-2">
+                                                <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{correctionData.numMaleAccompanying ?? "0"} male</p>
+                                                <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{correctionData.numFemaleAccompanying ?? "0"} female</p>
+                                                <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{correctionData.numNonParticipatingSiblings ?? "0"} children</p>
                                             </div>
                                         </div>
                                     </div>
