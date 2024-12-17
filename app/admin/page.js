@@ -442,7 +442,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Mobile View */}
-                <div className="bg-white p-2 rounded-2xl border flex flex-col justify-between m-4 md:hidden gap-4">
+                <div className="bg-white p-2 rounded-3xl border flex flex-col justify-between m-4 md:hidden gap-4">
                     {filteredData.map((row, index) => (
                         <div key={index} className={`${row.overallRegistrationStatus === "Accepted" ? "bg-gray-100" : "bg-red-200"} text-bold flex flex-col gap-2 rounded-2xl`}>
                             <div className="px-4 pt-2">
