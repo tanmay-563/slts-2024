@@ -106,7 +106,7 @@ export const getRegistrationData = async () => {
   ];
 };
 
-export const getDistrcitData = async (district) => {
+export const getDistrictData = async (district) => {
   // if (!auth.currentUser) {
   //     return null;
   // }
@@ -129,28 +129,56 @@ export const getDistrcitData = async (district) => {
     }
   });
 
-  data.sort((a, b) => {
-    if (a.district < b.district) {
-      return -1;
-    }
-    if (a.district > b.district) {
-      return 1;
-    }
-    return 0;
-  });
-
-  // Collect unique event names, group names.
+  // Collect unique district names, event names, group names.
+  const districtSet = new Set();
   const eventNameSet = new Set();
   const groupNameSet = new Set();
+  const modeOfTravelSet = new Set();
+  const modeOfTravelForDropSet = new Set();
+  const checkInDateSet = new Set();
+  const checkOutDateSet = new Set();
 
   data.forEach((row) => {
+    districtSet.add(row.district);
     row.registeredEvents.forEach((event) => {
       eventNameSet.add(event);
     });
     groupNameSet.add(row.studentGroup);
+
+    if (row.modeOfTravel != "" && row.modeOfTravel != null) {
+      modeOfTravelSet.add(row.modeOfTravel);
+    }
+
+    if (row.modeOfTravelForDrop != "" && row.modeOfTravelForDrop != null) {
+      modeOfTravelForDropSet.add(row.modeOfTravelForDrop);
+    }
+
+    if (row.checkInDate != "" && row.checkInDate != null) {
+      checkInDateSet.add(row.checkInDate);
+    }
+
+    if (row.checkOutDate != "" && row.checkOutDate != null) {
+      checkOutDateSet.add(row.checkOutDate);
+    }
   });
 
-  return [data, Array.from(eventNameSet), Array.from(groupNameSet)];
+  const checkInDate = Array.from(checkInDateSet).sort(
+    (a, b) => new Date(a) - new Date(b)
+  );
+  const checkOutDate = Array.from(checkOutDateSet).sort(
+    (a, b) => new Date(a) - new Date(b)
+  );
+
+  return [
+    data,
+    Array.from(districtSet),
+    Array.from(eventNameSet),
+    Array.from(groupNameSet),
+    Array.from(modeOfTravelSet),
+    Array.from(modeOfTravelForDropSet),
+    checkInDate,
+    checkOutDate,
+  ];
 };
 
 export const getEventData = async (eventName) => {

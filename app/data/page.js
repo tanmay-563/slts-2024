@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { auth } from "@/app/_util/initApp";
-import { getDistrictData, getRegistrationData, submitCorrectionRequest } from "@/app/_util/data";
+// import { auth } from "@/app/_util/initApp";
+import { getRegistrationData, submitCorrectionRequest } from "@/app/_util/data";
 import secureLocalStorage from "react-secure-storage";
 import { Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
@@ -14,41 +14,7 @@ export default function AdminDashboard() {
     const [filteredData, setFilteredData] = useState(null);
 
     // filters.
-    const [districts, setDistricts] = useState([
-        'Chennai East Coast',
-        'Chennai North',
-        'Chennai North West',
-        'Chennai South',
-        'Chennai South East',
-        'Chennai West',
-        'Coimbatore',
-        'Cuddalore',
-        'Dharmapuri / Krishnagiri',
-        'Dindigul',
-        'Erode',
-        'Kanchipuram North',
-        'Kanchipuram South',
-        'Kanyakumari',
-        'Karur',
-        'Madurai',
-        'Mayiladuthurai',
-        'Nagapattinam',
-        'Nilgiris',
-        'Puducherry',
-        'Salem',
-        'Sivaganga&Ramnad',
-        'Thanjavur',
-        'Theni',
-        'Tirunelveli',
-        'Tirupur',
-        'Tiruvallur East',
-        'Tiruvannamalai',
-        'Trichy',
-        'Tuticorin',
-        'Vellore',
-        'Villupuram',
-        'Virudhunagar'
-    ]);
+    const [districts, setDistricts] = useState([]);
     const [filterDistrict, setFilterDistrict] = useState("");
 
     const [events, setEvents] = useState([]);
@@ -92,46 +58,24 @@ export default function AdminDashboard() {
 
         const user = JSON.parse(secureLocalStorage.getItem('user'));
         setUser(user);
+        getRegistrationData().then((_data) => {
+            // Handle Logout.
+            if (_data == null || _data.length != 8) {
+                router.push('/');
+            }
 
-        // getRegistrationData().then((_data) => {
-        //     // Handle Logout.
-        //     if (_data == null || _data.length != 8) {
-        //         router.push('/');
-        //     }
+            setData(_data[0]);
+            setFilteredData(_data[0]);
 
-        //     setData(_data[0]);
-        //     setFilteredData(_data[0]);
-
-        //     setDistricts(_data[1]);
-        //     setEvents(_data[2]);
-        //     setGroups(_data[3]);
-        //     setModeOfTravelOptions(_data[4]);
-        //     setModeOfTravelForDropOptions(_data[5]);
-        //     setCheckInDateOptions(_data[6]);
-        //     setCheckOutDateOptions(_data[7]);
-        // });
+            setDistricts(_data[1]);
+            setEvents(_data[2]);
+            setGroups(_data[3]);
+            setModeOfTravelOptions(_data[4]);
+            setModeOfTravelForDropOptions(_data[5]);
+            setCheckInDateOptions(_data[6]);
+            setCheckOutDateOptions(_data[7]);
+        });
     }, [router]);
-
-    useEffect(() => {
-        if (filterDistrict !== "") {
-            getDistrictData(filterDistrict).then((_data) => {
-                // Handle Logout.
-                if (_data == null || _data.length != 8) {
-                    router.push('/');
-                }
-
-                setData(_data[0]);
-                setFilteredData(_data[0]);
-
-                setEvents(_data[2]);
-                setGroups(_data[3]);
-                setModeOfTravelOptions(_data[4]);
-                setModeOfTravelForDropOptions(_data[5]);
-                setCheckInDateOptions(_data[6]);
-                setCheckOutDateOptions(_data[7]);
-            })
-        }
-    }, [filterDistrict, router])
 
 
     useEffect(() => {
@@ -139,7 +83,7 @@ export default function AdminDashboard() {
             setFilteredData(
                 data.filter((row) => {
                     return (
-                        // (filterDistrict === "" || row.district === filterDistrict) &&
+                        (filterDistrict === "" || row.district === filterDistrict) &&
                         (filterEvent === "" || row.registeredEvents.includes(filterEvent)) &&
                         (filterGroup === "" || row.studentGroup === filterGroup) &&
                         (filterModeOfTravel === "" || row.modeOfTravel === filterModeOfTravel) &&
@@ -159,7 +103,7 @@ export default function AdminDashboard() {
         }
     }, [
         data,
-        // filterDistrict,
+        filterDistrict,
         filterEvent,
         filterGroup,
         filterNeedForPickup,
@@ -172,7 +116,7 @@ export default function AdminDashboard() {
         filterCheckOutDate,
     ]);
 
-    return user && filterDistrict !== "" && data && filteredData ? (
+    return user && filteredData ? (
         <>
             <div className={"flex flex-col justify-center w-screen md:w-fit ml-auto mr-auto" + (isCorrectionDialogOpen ? " blur md:blur-none md:grayscale" : "")}>
                 <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-col md:flex-row gap-4 md:gap-0">
@@ -206,23 +150,6 @@ export default function AdminDashboard() {
                     </div>*/}
                 </div>
 
-                <div className="bg-white p-4 rounded-2xl border w-auto m-4">
-                    <div className="flex flex-col flex-grow w-full md:w-auto">
-                        <label htmlFor="district" className="mb-2"><b>District</b></label>
-                        <select
-                            id="district"
-                            className="border p-2 rounded-2xl"
-                            value={filterDistrict}
-                            onChange={(e) => setFilterDistrict(e.target.value)}
-                        >
-                            <option value="">Select district</option>
-                            {districts.map((district, index) => (
-                                <option key={index} value={district}>{district}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
                 <div className="flex flex-row flex-wrap gap-4 m-4 justify-center overflow-x-auto">
                     <div className="bg-white p-4 rounded-2xl border w-full">
                         <div className="flex flex-col gap-4">
@@ -237,7 +164,7 @@ export default function AdminDashboard() {
                             </div>
 
                             <div className="flex flex-col md:flex-row gap-8 items-center">
-                                {/* <div className="flex flex-col flex-grow w-full md:w-auto">
+                                <div className="flex flex-col flex-grow w-full md:w-auto">
                                     <label htmlFor="district" className="mb-2"><b>District</b></label>
                                     <select
                                         id="district"
@@ -250,7 +177,7 @@ export default function AdminDashboard() {
                                             <option key={index} value={district}>{district}</option>
                                         ))}
                                     </select>
-                                </div> */}
+                                </div>
                                 <div className="flex flex-col flex-grow w-full">
                                     <label htmlFor="event" className="mb-2"><b>Event</b></label>
                                     <select
@@ -1189,61 +1116,61 @@ export default function AdminDashboard() {
                                     }} />
 
                                     <div className="flex flex-row justify-between mt-2">
-                                        <button className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
-                                            disabled={isLoading}
-                                            onClick={() => {
-                                                setIsCorrectionDialogOpen(false);
-                                            }}>
+                                        <button className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50" 
+                                        disabled={isLoading}
+                                        onClick={() => {
+                                            setIsCorrectionDialogOpen(false);
+                                        }}>
                                             Cancel
                                         </button>
-                                        <button className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
-                                            disabled={isLoading || (correctionMessage.toString().trim().length === 0 && correctionName.toString().trim().length === 0 && correctionPhone.toString().trim().length === 0)}
-                                            onClick={() => {
-                                                setIsLoading(true);
-                                                submitCorrectionRequest(
-                                                    correctionData.studentId,
-                                                    dialogType,
-                                                    correctionMessage,
-                                                    correctionName,
-                                                    correctionPhone
-                                                ).then((res) => {
-                                                    setIsLoading(false);
-                                                    if (res === true) {
-                                                        data.map((row, index) => {
-                                                            if (row.studentId === correctionData.studentId) {
-                                                                if (!data[index].correctionRequest) {
-                                                                    data[index].correctionRequest = {}
-                                                                }
-
-                                                                if (!data[index].correctionRequest[dialogType]) {
-                                                                    data[index].correctionRequest[dialogType] = {}
-                                                                }
-
-                                                                data[index].correctionRequest[dialogType] = {
-                                                                    correctionMessage: correctionMessage,
-                                                                    correctedByName: correctionName,
-                                                                    correctedByPhoneNumber: correctionPhone
-                                                                }
+                                        <button className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50" 
+                                        disabled={isLoading || (correctionMessage.toString().trim().length === 0 && correctionName.toString().trim().length === 0 && correctionPhone.toString().trim().length === 0)}
+                                        onClick={() => {
+                                            setIsLoading(true);
+                                            submitCorrectionRequest(
+                                                correctionData.studentId,
+                                                dialogType,
+                                                correctionMessage,
+                                                correctionName,
+                                                correctionPhone
+                                            ).then((res) => {
+                                                setIsLoading(false);
+                                                if (res === true) {
+                                                    data.map((row, index) => {
+                                                        if (row.studentId === correctionData.studentId) {
+                                                            if (!data[index].correctionRequest) {
+                                                                data[index].correctionRequest = {}
                                                             }
-                                                        });
 
-                                                        setCorrectionMessage("");
-                                                        setCorrectionName("");
-                                                        setCorrectionPhone("");
-                                                        setDialogType("");
-                                                        setIsCorrectionDialogOpen(false);
+                                                            if (!data[index].correctionRequest[dialogType]) {
+                                                                data[index].correctionRequest[dialogType] = {}
+                                                            }
 
-                                                    } else {
-                                                        alert("Failed to submit correction request. Please try again later.");
-                                                    }
-                                                }).catch((err) => {
-                                                    console.log(err);
+                                                            data[index].correctionRequest[dialogType] = {
+                                                                correctionMessage: correctionMessage,
+                                                                correctedByName: correctionName,
+                                                                correctedByPhoneNumber: correctionPhone
+                                                            }
+                                                        }
+                                                    });
+
+                                                    setCorrectionMessage("");
+                                                    setCorrectionName("");
+                                                    setCorrectionPhone("");
+                                                    setDialogType("");
+                                                    setIsCorrectionDialogOpen(false);
+
+                                                } else {
                                                     alert("Failed to submit correction request. Please try again later.");
-                                                }).finally(() => {
-                                                    setIsLoading(false);
-                                                })
-                                            }}>
-                                            {isLoading ? "Submitting ... " : "Submit Correction"}
+                                                }
+                                            }).catch((err) => {
+                                                console.log(err);
+                                                alert("Failed to submit correction request. Please try again later.");
+                                            }).finally(() => {
+                                                setIsLoading(false);
+                                            })
+                                        }}>
+                                            {isLoading ? "Submitting ... " :"Submit Correction"}
                                         </button>
                                     </div>
                                 </div>
@@ -1253,35 +1180,9 @@ export default function AdminDashboard() {
                 </div>
             </Dialog>
         </>
-    ) :
-        user && filterDistrict === "" ? (
-            <div className={"flex flex-col justify-center w-screen md:w-fit ml-auto mr-auto" + (isCorrectionDialogOpen ? " blur md:blur-none md:grayscale" : "")}>
-                <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-col md:flex-row gap-4 md:gap-0">
-                    <div>
-                        <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
-                        <p className="text-gray-700">{user.email}</p>
-                    </div>
-                </div>
-                <div className="bg-white p-4 rounded-2xl border w-auto m-4">
-                    <div className="flex flex-col flex-grow w-full md:w-auto">
-                        <label htmlFor="district" className="mb-2"><b>District</b></label>
-                        <select
-                            id="district"
-                            className="border p-2 rounded-2xl"
-                            value={filterDistrict}
-                            onChange={(e) => setFilterDistrict(e.target.value)}
-                        >
-                            <option value="">Select district</option>
-                            {districts.map((district, index) => (
-                                <option key={index} value={district}>{district}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-            </div>
-        ) : (
-            <div className="flex h-screen items-center justify-center">
-                <p className="text-2xl font-semibold">Loading...</p>
-            </div>
-        )
+    ) : (
+        <div className="flex h-screen items-center justify-center">
+            <p className="text-2xl font-semibold">Loading...</p>
+        </div>
+    )
 }
