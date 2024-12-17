@@ -6,6 +6,7 @@ import {
   collection,
   where,
   updateDoc,
+  Timestamp,
 } from "firebase/firestore";
 import { auth, db } from "@/app/_util/initApp";
 
@@ -314,3 +315,23 @@ export const markGroupScore = async (
 
   return true;
 };
+
+export const submitCorrectionRequest = async (
+  studentId,
+  type,
+  correctionMessage,
+  correctedByName,
+  correctedByPhoneNumber,
+) => {
+  await updateDoc(doc(db, "registrationData", studentId), {
+    [`correctionRequest.${type}`]: {
+      correctionMessage: correctionMessage,
+      correctedByName: correctedByName,
+      correctedByPhoneNumber: correctedByPhoneNumber,
+      correctionStatus: "pending",
+      timeStamp: Timestamp.now(),
+    },
+  });
+
+  return true;
+}
