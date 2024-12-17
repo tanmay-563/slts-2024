@@ -646,7 +646,7 @@ export default function AdminDashboard() {
                                 )}
                             </div>
                             <hr className="border-t mx-4" />
-                            <div className="py-2">
+                            <div className="pt-2">
                                 <p className="px-4 text-xs font-semibold text-gray-600">Accommodation Details</p>
                                 <div className="mt-2 mx-3 bg-gray-50 p-2 rounded-2xl">
                                     <p className="text-xs font-bold">Check-In</p>
@@ -661,6 +661,49 @@ export default function AdminDashboard() {
                                         <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{row.numFemaleAccompanyingNeedAccommodation ?? "0"} female</p>
                                     </div>
                                 </div>
+                            </div>
+                            <div className="mt-2 px-3 pb-4">
+                                {(row.correctionRequest && row.correctionRequest.rc) ? (
+                                    <div className="bg-red-100 p-2 rounded-xl border border-red-300">
+                                        <p className="text-xs text-red-800 font-semibold">Correction Requested</p>
+                                        <p className="text-xs text-red-800 font-light my-2">{row.correctionRequest.rc.correctionMessage ?? "-"}</p>
+                                        <p className="text-xs text-red-800 font-light">Requested By Name: {row.correctionRequest.rc.correctedByName ?? "-"}</p>
+                                        <p className="text-xs text-red-800 font-light">Requested By Phone: {row.correctionRequest.rc.correctedByPhoneNumber ?? "-"}</p>
+                                        <button
+                                            className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
+                                            onClick={() => {
+                                                setCorrectionData(row);
+                                                setDialogTitle("Edit Correction Request in Accomodation Details");
+                                                setDialogType("rc");
+
+                                                setCorrectionMessage(row.correctionRequest.rc.correctionMessage);
+                                                setCorrectionName(row.correctionRequest.rc.correctedByName);
+                                                setCorrectionPhone(row.correctionRequest.rc.correctedByPhoneNumber);
+
+                                                setIsCorrectionDialogOpen(true);
+                                            }}
+                                        >
+                                            Edit Correction Request
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
+                                        onClick={() => {
+                                            setCorrectionData(row);
+                                            setDialogTitle("Request Correction in Accomodation Details");
+                                            setDialogType("rc");
+
+                                            setCorrectionMessage("");
+                                            setCorrectionName("");
+                                            setCorrectionPhone("");
+
+                                            setIsCorrectionDialogOpen(true);
+                                        }}
+                                    >
+                                        Request Correction in Accomodation Details
+                                    </button>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -858,6 +901,24 @@ export default function AdminDashboard() {
                                                 <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{correctionData.numMaleAccompanying ?? "0"} male</p>
                                                 <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{correctionData.numFemaleAccompanying ?? "0"} female</p>
                                                 <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{correctionData.numNonParticipatingSiblings ?? "0"} children</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {dialogType === "rc" && (
+                                    <div className="py-2">
+                                        <p className="px-4 text-xs font-semibold text-gray-600">Accommodation Details</p>
+                                        <div className="mt-2 mx-3 bg-gray-50 p-2 rounded-2xl">
+                                            <p className="text-xs font-bold">Check-In</p>
+                                            <p className="text-xs">{correctionData.checkInDate ?? "-"} - {correctionData.checkInTime ?? "-"}</p>
+                                            <p className="text-xs font-bold">Check-Out</p>
+                                            <p className="text-xs">{correctionData.checkOutDate ?? "-"} - {correctionData.checkOutTime ?? "-"}</p>
+
+                                            <p className="text-xs mt-2 font-semibold">For student: {correctionData.needsAccommodation ?? "-"}</p>
+                                            <p className="text-xs">Allergies: {correctionData.foodAllergies ?? "-"}</p>
+                                            <div className="flex gap-1 flex-wrap mt-2">
+                                                <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{correctionData.numMaleAccompanyingNeedAccommodation ?? "0"} male</p>
+                                                <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{correctionData.numFemaleAccompanyingNeedAccommodation ?? "0"} female</p>
                                             </div>
                                         </div>
                                     </div>
