@@ -107,7 +107,7 @@ export default function AdminDashboard() {
     return user && filteredData ? (
         <>
             <div className="flex flex-col justify-center w-fit ml-auto mr-auto">
-                <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-row">
+                <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-col md:flex-row gap-4 md:gap-0">
                     <div>
                         <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
                         <p className="text-gray-700">{user.email}</p>
@@ -151,8 +151,8 @@ export default function AdminDashboard() {
                                 />
                             </div>
 
-                            <div className="flex flex-row gap-8 items-center">
-                                <div className="flex flex-col flex-grow">
+                            <div className="flex flex-col md:flex-row gap-8 items-center">
+                                <div className="flex flex-col flex-grow w-full md:w-auto">
                                     <label htmlFor="district" className="mb-2"><b>District</b></label>
                                     <select
                                         id="district"
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="flex flex-col flex-grow">
+                                <div className="flex flex-col flex-grow w-full">
                                     <label htmlFor="event" className="mb-2"><b>Event</b></label>
                                     <select
                                         id="event"
@@ -180,7 +180,7 @@ export default function AdminDashboard() {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="flex flex-col flex-grow">
+                                <div className="flex flex-col flex-grow w-full">
                                     <label htmlFor="group" className="mb-2"><b>Group</b></label>
                                     <select
                                         id="group"
@@ -195,40 +195,14 @@ export default function AdminDashboard() {
                                     </select>
                                 </div>
                             </div>
-
-                            {/*<div className="flex flex-row gap-4">
-                                <button
-                                    className="bg-[#ceffcf] text-[#0c350b] font-bold px-4 py-1 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                                    disabled={filteredData.length === 0}
-                                    onClick={downloadOverallRegistrationsAsCSV}
-                                >
-                                    Download Overall Registrations
-                                </button>
-
-                                <button
-                                    className="bg-[#ceffcf] text-[#0c350b] font-bold px-4 py-1 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                                    disabled={filterEvent === ""}
-                                    onClick={downloadEventParticipantsAsCSV}
-                                >
-                                    Download Event Participants
-                                </button>
-
-                                <button
-                                    className="bg-[#ceffcf] text-[#0c350b] font-bold px-4 py-1 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                                    disabled={filterDistrict === ""}
-                                    onClick={downloadDistrictRegistrationsAsCSV}
-                                >
-                                    Download District Registrations
-                                </button>
-                            </div>*/}
                         </div>
                     </div>
                 </div>
 
-                <div className="flex flex-row m-4 gap-4 items-center">
-                    <div className="bg-white p-4 rounded-2xl border flex-grow">
+                <div className="flex flex-col md:flex-row m-4 gap-4 items-center">
+                    <div className="bg-white p-4 rounded-2xl border flex-grow w-full md:w-auto">
                         <div className="flex flex-row flex-wrap justify-between gap-2">
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 w-full md:w-auto">
                                 <label htmlFor="needForPickup"><b>Needs Pickup</b></label>
                                 <select
                                     id="needForPickup"
@@ -241,7 +215,7 @@ export default function AdminDashboard() {
                                     <option value="No">No</option>
                                 </select>
                             </div>
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 w-full md:w-auto">
                                 <label htmlFor="modeOfTravel"><b>Mode Of Travel</b></label>
                                 <select
                                     id="modeOfTravel"
@@ -258,9 +232,9 @@ export default function AdminDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-white p-4 rounded-2xl border flex-grow">
+                    <div className="bg-white p-4 rounded-2xl border flex-grow w-full md:w-auto">
                         <div className="flex flex-row flex-wrap justify-between gap-2">
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 w-full md:w-auto">
                                 <label htmlFor="needForDrop"><b>Needs Drop</b></label>
                                 <select
                                     id="needForDrop"
@@ -273,7 +247,7 @@ export default function AdminDashboard() {
                                     <option value="No">No</option>
                                 </select>
                             </div>
-                            <div className="flex flex-col justify-between gap-2">
+                            <div className="flex flex-col justify-between gap-2 w-full md:w-auto">
                                 <label htmlFor="modeOfTravelForDrop"><b>Mode Of Travel</b></label>
                                 <select
                                     id="modeOfTravelForDrop"
@@ -290,9 +264,9 @@ export default function AdminDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-white p-4 rounded-2xl border flex-grow">
-                        <div className="flex flex-row flex-wrap justify-between gap-2">
-                            <div className="flex flex-col gap-2">
+                    <div className="bg-white p-4 rounded-2xl border flex-grow w-full md:w-auto">
+                        <div className="flex flex-col md:flex-row flex-wrap justify-between gap-2">
+                            <div className="flex flex-col gap-2 w-full md:w-auto">
                                 <label htmlFor="needForAccommodation"><b>Needs Accommodation</b></label>
                                 <select
                                     id="needForAccommodation"
@@ -305,7 +279,7 @@ export default function AdminDashboard() {
                                     <option value="No">No</option>
                                 </select>
                             </div>
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 w-full md:w-auto">
                                 <label htmlFor="pickupPoint"><b>Check In Date</b></label>
                                 <select
                                     id="checkInDate"
@@ -319,7 +293,7 @@ export default function AdminDashboard() {
                                     ))}
                                 </select>
                             </div>
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 w-full md:w-auto">
                                 <label htmlFor="dropOffPoint"><b>Check Out Date</b></label>
                                 <select
                                     id="checkOutDate"
@@ -338,7 +312,7 @@ export default function AdminDashboard() {
                 </div>
 
 
-                <div className="flex flex-row flex-wrap gap-4 m-4 justify-center overflow-x-auto">
+                <div className="flex flex-col md:flex-row flex-wrap gap-4 m-4 justify-center overflow-x-auto">
                     <div className="bg-white p-4 rounded-2xl border flex flex-col justify-between">
                         <div>
                             <p className="text-lg font-bold">Total Registrations</p>
@@ -467,7 +441,94 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto m-4">
+                {/* Mobile View */}
+                <div className="bg-white p-2 rounded-3xl border flex flex-col justify-between m-4 md:hidden gap-4">
+                    {filteredData.map((row, index) => (
+                        <div key={index} className={`${row.overallRegistrationStatus === "Accepted" ? "bg-gray-100" : "bg-red-200"} text-bold flex flex-col gap-2 rounded-2xl`}>
+                            <div className="px-4 pt-2">
+                                <p className="mt-1 text-xs font-semibold text-gray-600">Student Details</p>
+                                <p className="font-bold">{row.studentFullName ?? "-"}</p>
+                                <p className="text-xs">{row.gender ?? "-"} - {row.dateOfBirth ?? "-"}</p>
+                                <p className="text-xs">{row.district ?? "-"}, {row.samithiName ?? '-'}</p>
+                                <p className="text-xs mt-2">DOJ BV: {row.dateOfJoiningBalvikas ?? '-'} {row.yearOfJoiningBalvikas ?? '-'}</p>
+                                {row.studentGroup === 'Group 3' && (
+                                    <p className="text-xs">Passed group 2: {row.hasPassedGroup2Exam ?? '-'}</p>
+                                )}
+                            </div>
+                            <div className="flex flex-wrap gap-1 px-3">
+                                <p className="text-xs font-bold bg-[#c4ffc2] text-[#07210d] p-1 px-2 rounded-2xl w-fit">{row.studentId ?? "-"}</p>
+                                <p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">{row.studentGroup ?? "-"}</p>
+                                {row.registeredEvents.map((event, index) => (
+                                    <p key={index} className="text-xs bg-green-200 text-green-800 font-bold rounded-xl p-1 px-2 w-fit">{event ?? "-"}</p>
+                                ))}
+                            </div>
+                            <hr className="border-t mx-4 mt-3" />
+                            <div className="mt-2">
+                                <p className="text-xs font-semibold text-gray-600 px-4">Arrival & Departure Logistics</p>
+                                <div className="flex flex-col gap-1 px-3">
+                                    <div className="border bg-gray-200 rounded-2xl p-2 w-full mt-1">
+                                        <p className="text-xs font-semibold">{"Arrival"}</p>
+                                        <p className="text-xs font-bold">{row.arrivalDate ?? "-"} - {row.arrivalTime ?? "-"}</p>
+                                        <p className="text-xs">{row.needsPickup === "Yes" ? "Needs pickup." : "Pickup not needed."}</p>
+                                        {row.needsPickup === "Yes" && (
+                                            <div className="bg-blue-100 p-2 rounded-xl mt-2 border border-blue-300">
+                                                <p className="text-xs text-blue-950 font-semibold">Mode: {row.modeOfTravel ?? "-"}</p>
+                                                <p className="text-xs text-blue-950 font-semibold">Pickup Point: {row.pickupPoint ?? "-"}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="border bg-gray-200 rounded-2xl p-2 w-full">
+                                        <p className="text-xs font-semibold">{"Departure"}</p>
+                                        <p className="text-xs font-bold">{row.departureDate ?? "-"} - {row.departureTime ?? "-"}</p>
+                                        <p className="text-xs">{row.needsDrop === "Yes" ? "Needs drop." : "Drop not needed."}</p>
+                                        {row.needsDrop === "Yes" && (
+                                            <div className="bg-blue-100 p-2 rounded-xl mt-2 border border-blue-300">
+                                                <p className="text-xs text-blue-950 font-semibold">Mode: {row.modeOfTravelForDrop ?? "-"}</p>
+                                                <p className="text-xs text-blue-950 font-semibold">Drop Point: {row.dropOffPoint ?? "-"}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                            <hr className="border-t mx-4 my-" />
+                            <div className="py-2">
+                                <p className="px-4 text-xs font-semibold text-gray-600">Accompany Details</p>
+                                <p className="px-4 text-xs">{row.hasAccompanyingAdults === "Yes" ? "Has Accompanying adults." : "No Accompany."}</p>
+                                <div className="mt-2 mx-3 bg-gray-50 p-2 rounded-2xl">
+                                    <p className="text-xs font-bold">{row.accompanyingPersonName ?? "-"}</p>
+                                    <p className="text-xs">{row.accompanyingPersonGender ?? "-"} - {row.accompanyingPersonAge ?? "-"} yrs</p>
+                                    <p className="text-xs">{row.accompanyingPersonRelation ?? "-"}</p>
+                                    <p className="text-xs">{row.accompanyingPersonContact ?? "-"}</p>
+                                    <div className="flex gap-1 mt-2">
+                                        <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{row.numMaleAccompanying ?? "0"} male</p>
+                                        <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{row.numFemaleAccompanying ?? "0"} female</p>
+                                        <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{row.numNonParticipatingSiblings ?? "0"} children</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr className="border-t mx-4" />
+                            <div className="py-2">
+                                <p className="px-4 text-xs font-semibold text-gray-600">Accommodation Details</p>
+                                <div className="mt-2 mx-3 bg-gray-50 p-2 rounded-2xl">
+                                    <p className="text-xs font-bold">Check-In</p>
+                                    <p className="text-xs">{row.checkInDate ?? "-"} - {row.checkInTime ?? "-"}</p>
+                                    <p className="text-xs font-bold">Check-Out</p>
+                                    <p className="text-xs">{row.checkOutDate ?? "-"} - {row.checkOutTime ?? "-"}</p>
+
+                                    <p className="text-xs mt-2 font-semibold">For student: {row.needsAccommodation ?? "-"}</p>
+                                    <p className="text-xs">Allergies: {row.foodAllergies ?? "-"}</p>
+                                    <div className="flex gap-1 flex-wrap mt-2">
+                                        <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{row.numMaleAccompanyingNeedAccommodation ?? "0"} male</p>
+                                        <p className="text-xs bg-blue-200 text-blue-800 font-bold rounded-xl p-1 px-2 w-fit">{row.numFemaleAccompanyingNeedAccommodation ?? "0"} female</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Tab and Desktop View */}
+                <div className="overflow-x-auto m-4 hidden md:block">
                     <table className="table-auto w-full mt-6 border-collapse">
                         <thead>
                             <tr className="bg-black text-white">
