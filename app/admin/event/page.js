@@ -184,7 +184,7 @@ export default function ManageEvents() {
                                                 onClick={() => {
                                                     secureLocalStorage.setItem('event', JSON.stringify(event));
                                                     router.push(`/admin/event/${event.name.includes("GROUP") ? "group" : "individual"}`);
-                                                    console.log(event)
+                                                    // console.log(event)
                                                 }}
                                             >
                                                 View Leaderboard
