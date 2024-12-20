@@ -35,6 +35,7 @@ export default function Transport() {
     const [filterArrivalDate, setFilterArrivalDate] = useState("");
     const [filterDepartureDate, setFilterDepartureDate] = useState("");
 
+
     useEffect(() => {
         if (!secureLocalStorage.getItem('user')) {
             router.push('/');

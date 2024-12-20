@@ -12,6 +12,7 @@ export default function AdminDashboard() {
     const [user, setUser] = useState(null);
     const [data, setData] = useState(null);
     const [filteredData, setFilteredData] = useState(null);
+    const [isOpen, setIsOpen] = useState(false);
 
     // filters.
     const [districts, setDistricts] = useState([
@@ -1184,7 +1185,7 @@ export default function AdminDashboard() {
                                     <input type="text" value={correctionName} className="border p-2 rounded-2xl w-full" placeholder="eg. Ananya (Coimbatore Guru)" onChange={(e) => {
                                         setCorrectionName(e.target.value);
                                     }} />
-                                    <input type="text" value={correctionPhone} className="border p-2 rounded-2xl w-full mt-1" placeholder="Plese enter your phone number." onChange={(e) => {
+                                    <input type="text" value={correctionPhone} className="border p-2 rounded-2xl w-full mt-1" placeholder="Please enter your phone number." onChange={(e) => {
                                         setCorrectionPhone(e.target.value);
                                     }} />
 

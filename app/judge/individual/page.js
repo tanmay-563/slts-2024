@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 import { getJudgeEventData, markScore } from "@/app/_util/data";
 import { auth } from "@/app/_util/initApp";
+import { Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
 export default function JudgePage() {
     const router = useRouter();
@@ -17,10 +18,72 @@ export default function JudgePage() {
     const [scoreBuffer, setScoreBuffer] = useState([]);
     const [commentBuffer, setCommentBuffer] = useState("");
     const [scoreMode, setScoreMode] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
     const [searchQuery, setSearchQuery] = useState("");
 
     const [isSaving, setIsSaving] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [additionalFields, setAdditionalFields] = useState(false); // State to track if additional fields are added
+    const [isNewSelected, setIsNewSelected] = useState(false); // State to track if "New" is clicked
+
+    const [studentId, setStudentId] = useState("");
+    const [groupNumber, setGroupNumber] = useState("");
+    const [dob, setDob] = useState("");
+    const [gender, setGender] = useState("");
+
+    const addNewFields = () => {
+        if (!additionalFields) {
+            setAdditionalFields(true); // Add additional fields when clicked
+        }
+        setIsNewSelected(true); // Make "New" button active
+    };
+
+    const handleAlreadyExist = () => {
+        setAdditionalFields(false); // Remove additional fields when clicked
+        setIsNewSelected(false); // Revert "New" button style
+    };
+
+    const handleInputChange = (e, field) => {
+        switch (field) {
+            case "studentId":
+                setStudentId(e.target.value);
+                break;
+            case "groupNumber":
+                setGroupNumber(e.target.value);
+                break;
+            case "dob":
+                setDob(e.target.value);
+                break;
+            case "gender":
+                setGender(e.target.value);
+                break;
+            default:
+                break;
+        }
+    };
+
+    const handleSubmitSubstitution = () => {
+        const updatedParticipants = participants.map((participant) => {
+            if (participant.studentId === studentId) {
+                return {
+                    ...participant,
+                    groupNumber,
+                    dob,
+                    gender,
+                };
+            }
+            return participant;
+        });
+        setParticipants(updatedParticipants); // Update participants list
+        setIsOpen(false); // Close dialog
+        setStudentId("");
+        setGroupNumber("");
+        setDob("");
+        setGender("");
+        setIsOpen(false);
+    };
+
 
     useEffect(() => {
         if (participants) {
@@ -177,6 +240,118 @@ export default function JudgePage() {
                                                 participant.score[eventMetadata.name][user.id] ? (
                                                 <div className="mt-2 flex flex-col">
                                                     <button
+                                                        className="bg-[#cceeff] text-[#003366] font-semibold px-4 py-1 rounded-xl mt-2"
+                                                        onClick={() => setIsOpen(true)}
+                                                    >
+                                                        Substitute
+                                                    </button>
+
+                                                    <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="fixed z-50 shadow-2xl">
+                                                        <div className="fixed inset-0 flex w-screen items-center justify-center p-2 overflow-y-auto backdrop-blur-sm">
+                                                            <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-4 text-left align-middle transition-all border">
+                                                                <div className="flex flex-row justify-between my-2">
+                                                                    <Dialog.Title className="text-sm font-medium text-gray-900 w-[70%]">Reason for not participating in the event</Dialog.Title>
+                                                                    <button
+                                                                        onClick={() => setIsOpen(false)}
+                                                                        className="bg-gray-200 p-1 rounded-full"
+                                                                    >
+                                                                        <svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            className="h-4 w-4"
+                                                                            fill="none"
+                                                                            viewBox="0 0 24 24"
+                                                                            stroke="black"
+                                                                        >
+                                                                            <path
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                strokeWidth={2}
+                                                                                d="M6 18L18 6M6 6l12 12"
+                                                                            />
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                                <textarea
+                                                                    placeholder="Type here...."
+                                                                    className="border p-2 rounded-2xl w-full"
+                                                                ></textarea>
+
+                                                                <div className="mt-4">
+                                                                    <p className="font-semibold">Add Substitute</p>
+                                                                    <div className="flex flex-row justify-between">
+                                                                        <button
+                                                                            className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
+                                                                            onClick={addNewFields}
+                                                                        >
+                                                                            New
+                                                                        </button>
+                                                                        <button
+                                                                            className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${!isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
+                                                                            onClick={handleAlreadyExist}
+                                                                        >
+                                                                            Already Exist
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="mt-6">
+                                                                    <p className="text-xs mx-2 mt-2">Please enter the student details below</p>
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder="Student ID"
+                                                                        value={studentId}
+                                                                        onChange={(e) => handleInputChange(e, "studentId")}
+                                                                        className="border p-2 rounded-2xl w-full mt-2"
+                                                                    />
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder="Group Number"
+                                                                        value={groupNumber}
+                                                                        onChange={(e) => handleInputChange(e, "groupNumber")}
+                                                                        className="border p-2 rounded-2xl w-full mt-2"
+                                                                    />
+
+                                                                    {/* Render additional fields dynamically */}
+                                                                    {additionalFields && (
+                                                                        <div>
+                                                                            <input
+                                                                                type="text"
+                                                                                placeholder="Date of Birth"
+                                                                                value={dob}
+                                                                                onChange={(e) => handleInputChange(e, "dob")}
+                                                                                className="border p-2 rounded-2xl w-full mt-2"
+                                                                            />
+                                                                            <input
+                                                                                type="text"
+                                                                                placeholder="Gender"
+                                                                                value={gender}
+                                                                                onChange={(e) => handleInputChange(e, "gender")}
+                                                                                className="border p-2 rounded-2xl w-full mt-2"
+                                                                            />
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+
+                                                                <div className="flex flex-row justify-between mt-2">
+                                                                    <button className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
+                                                                        disabled={isLoading}
+                                                                        onClick={() => {
+                                                                            setIsOpen(false);
+                                                                        }}>
+                                                                        Cancel
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={handleSubmitSubstitution}
+                                                                        disabled={isLoading || !studentId || !groupNumber || !dob || !gender}
+                                                                        className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
+                                                                    >
+                                                                        {isLoading ? "Submitting ..." : "Submit"}
+                                                                    </button>
+                                                                </div>
+                                                            </DialogPanel>
+                                                        </div>
+                                                    </Dialog>
+                                                    <button
                                                         className="bg-[#ffcece] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2"
                                                         onClick={() => {
                                                             let _scoreMode = {};
@@ -203,25 +378,140 @@ export default function JudgePage() {
                                                     </button>
                                                 </div>
                                             ) : scoreMode[participant.studentId] == false ? (
-                                                <button
-                                                    className="bg-[#ffd8a1] text-[#35250b] font-semibold px-4 py-1 rounded-xl mt-2"
-                                                    onClick={() => {
-                                                        let _scoreMode = {};
-                                                        participants.forEach((p) => {
-                                                            _scoreMode[p.studentId] = false;
-                                                        });
-                                                        _scoreMode[participant.studentId] = true;
-                                                        setScoreBuffer(
-                                                            Object.entries(eventMetadata.evalCriteria).map(
-                                                                ([key, _]) => [key, 0]
-                                                            )
-                                                        );
-                                                        setScoreMode(_scoreMode);
-                                                        setCommentBuffer("");
-                                                    }}
-                                                >
-                                                    Evaluate
-                                                </button>
+                                                <div className="flex flex-col justify-between">
+                                                    <button
+                                                        className="bg-[#cceeff] text-[#003366] font-semibold px-4 py-1 rounded-xl mt-2"
+                                                        onClick={() => setIsOpen(true)}
+                                                    >
+                                                        Substitute
+                                                    </button>
+
+                                                    <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="fixed z-50 shadow-2xl">
+                                                        <div className="fixed inset-0 flex w-screen items-center justify-center p-2 overflow-y-auto backdrop-blur-sm">
+                                                            <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-4 text-left align-middle">
+                                                                <div className="flex flex-row justify-between my-2">
+                                                                    <DialogTitle className="text-sm font-medium text-gray-900 w-[70%]">Reason for not participating in the event</DialogTitle>
+                                                                    <button
+                                                                        onClick={() => setIsOpen(false)}
+                                                                        className="bg-gray-200 p-1 rounded-full"
+                                                                    >
+                                                                        <svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            className="h-4 w-4"
+                                                                            fill="none"
+                                                                            viewBox="0 0 24 24"
+                                                                            stroke="black"
+                                                                        >
+                                                                            <path
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                strokeWidth={2}
+                                                                                d="M6 18L18 6M6 6l12 12"
+                                                                            />
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                                <textarea
+                                                                    placeholder="Type here...."
+                                                                    className="border p-2 rounded-2xl w-full"
+                                                                ></textarea>
+
+                                                                <div className="mt-4">
+                                                                    <p className="font-semibold">Add Substitute</p>
+                                                                    <div className="flex flex-row justify-between">
+                                                                        <button
+                                                                            className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
+                                                                            onClick={addNewFields}
+                                                                        >
+                                                                            New
+                                                                        </button>
+                                                                        <button
+                                                                            className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${!isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
+                                                                            onClick={handleAlreadyExist}
+                                                                        >
+                                                                            Already Exist
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="mt-6">
+                                                                    <p className="text-xs mx-2 mt-2">Please enter the student details below</p>
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder="Student ID"
+                                                                        value={studentId}
+                                                                        onChange={(e) => handleInputChange(e, "studentId")}
+                                                                        className="border p-2 rounded-2xl w-full mt-2"
+                                                                    />
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder="Group Number"
+                                                                        value={groupNumber}
+                                                                        onChange={(e) => handleInputChange(e, "groupNumber")}
+                                                                        className="border p-2 rounded-2xl w-full mt-2"
+                                                                    />
+
+                                                                    {/* Render additional fields dynamically */}
+                                                                    {additionalFields && (
+                                                                        <div>
+                                                                            <input
+                                                                                type="text"
+                                                                                placeholder="Date of Birth"
+                                                                                value={dob}
+                                                                                onChange={(e) => handleInputChange(e, "dob")}
+                                                                                className="border p-2 rounded-2xl w-full mt-2"
+                                                                            />
+                                                                            <input
+                                                                                type="text"
+                                                                                placeholder="Gender"
+                                                                                value={gender}
+                                                                                onChange={(e) => handleInputChange(e, "gender")}
+                                                                                className="border p-2 rounded-2xl w-full mt-2"
+                                                                            />
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+
+                                                                <div className="flex flex-row justify-between mt-2">
+                                                                    <button className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
+                                                                        disabled={isLoading}
+                                                                        onClick={() => {
+                                                                            setIsOpen(false);
+                                                                        }}>
+                                                                        Cancel
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={handleSubmitSubstitution}
+                                                                        disabled={isLoading || !studentId || !groupNumber || !dob || !gender}
+                                                                        className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
+                                                                    >
+                                                                        {isLoading ? "Submitting ..." : "Submit"}
+                                                                    </button>
+                                                                </div>
+                                                            </DialogPanel>
+                                                        </div>
+                                                    </Dialog>
+
+                                                    <button
+                                                        className="bg-[#ffd8a1] text-[#35250b] font-semibold px-4 py-1 rounded-xl mt-2"
+                                                        onClick={() => {
+                                                            let _scoreMode = {};
+                                                            participants.forEach((p) => {
+                                                                _scoreMode[p.studentId] = false;
+                                                            });
+                                                            _scoreMode[participant.studentId] = true;
+                                                            setScoreBuffer(
+                                                                Object.entries(eventMetadata.evalCriteria).map(
+                                                                    ([key, _]) => [key, 0]
+                                                                )
+                                                            );
+                                                            setScoreMode(_scoreMode);
+                                                            setCommentBuffer("");
+                                                        }}
+                                                    >
+                                                        Evaluate
+                                                    </button>
+                                                </div>
                                             ) : (
                                                 <p className="bg-[#a1fffd] text-[#0b3533] font-semibold px-4 py-1 rounded-xl mt-2">
                                                     Evaluating

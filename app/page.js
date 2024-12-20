@@ -17,42 +17,42 @@ export default function Home() {
   const router = useRouter();
 
   // Auto login.
-  // useEffect(() => {
-  //   const user = secureLocalStorage.getItem("user");
-  //   if (user) {
-  //     const data = JSON.parse(user);
-  //     if (data.role == "admin") {
-  //       router.push("/admin");
-  //     } else if (data.role == "judge") {
-  //       data.event.includes("GROUP") ? router.push("/judge/group") : router.push("/judge/individual");
-  //     } else if (Object.keys(reverseDistrictCode).indexOf(data.role.toString().toUpperCase()) != -1) {
-  //       router.push("/district");
-  //     }
-  //   }
-
-  //   setIsLoading(false);
-  // }, [router]);
-
   useEffect(() => {
-    const user = JSON.stringify({
-      role: "admin",
-      name: "SLTS Corrections",
-      email: "Select your district, scroll down, and request for corrections if any by clicking the button.",
-    })
-    secureLocalStorage.setItem("user", user);
+    const user = secureLocalStorage.getItem("user");
     if (user) {
       const data = JSON.parse(user);
       if (data.role == "admin") {
         router.push("/admin");
       } else if (data.role == "judge") {
         data.event.includes("GROUP") ? router.push("/judge/group") : router.push("/judge/individual");
-      } else {
-        alert("Unauthorized. Please contact the SLTS team.");
+      } else if (Object.keys(reverseDistrictCode).indexOf(data.role.toString().toUpperCase()) != -1) {
+        router.push("/district");
       }
     }
 
     setIsLoading(false);
   }, [router]);
+
+  // useEffect(() => {
+  //   const user = JSON.stringify({
+  //     role: "admin",
+  //     name: "SLTS Corrections",
+  //     email: "Select your district, scroll down, and request for corrections if any by clicking the button.",
+  //   })
+  //   secureLocalStorage.setItem("user", user);
+  //   if (user) {
+  //     const data = JSON.parse(user);
+  //     if (data.role == "admin") {
+  //       router.push("/admin");
+  //     } else if (data.role == "judge") {
+  //       data.event.includes("GROUP") ? router.push("/judge/group") : router.push("/judge/individual");
+  //     } else {
+  //       alert("Unauthorized. Please contact the SLTS team.");
+  //     }
+  //   }
+
+  //   setIsLoading(false);
+  // }, [router]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
