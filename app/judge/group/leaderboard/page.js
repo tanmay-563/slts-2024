@@ -20,7 +20,7 @@ export default function GroupEventLeaderboardPage() {
         }
 
         const user = JSON.parse(secureLocalStorage.getItem('user'));
-        const _eventName = searchParams.get('event');
+        const _eventName = decodeURIComponent(searchParams.get('event') ?? "");
         setEventName(_eventName);
 
         if (!_eventName)
@@ -109,7 +109,7 @@ export default function GroupEventLeaderboardPage() {
                 setGroups(groups);
             });
         }
-    }, [router, eventName]);
+    }, [router, eventName, searchParams]);
 
     return eventName && user && eventMetadata && groups ? (
         <>

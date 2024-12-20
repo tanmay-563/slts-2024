@@ -78,7 +78,7 @@ export default function JudgeGroupPage() {
                 onClick={() => {
                   // secureLocalStorage.setItem("event", JSON.stringify(eventMetadata));
                   router.push(
-                    `/judge/${eventMetadata.name.includes("GROUP") ? "group/leaderboard" : "individual/leaderboard"}?event=${(eventMetadata.name)}`
+                    `/judge/${eventMetadata.name.includes("GROUP") ? "group/leaderboard" : "individual/leaderboard"}?event=${encodeURIComponent(eventMetadata.name)}`
                   );
                 }}
               >

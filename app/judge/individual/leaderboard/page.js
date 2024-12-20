@@ -24,7 +24,7 @@ export default function EventLeaderboardIndiPage() {
     }
 
     const user = JSON.parse(secureLocalStorage.getItem('user'));
-    const _eventName = searchParams.get('event');
+    const _eventName = decodeURIComponent(searchParams.get('event') ?? "");
     setEventName(_eventName);
 
     if (user.role !== "judge" || !_eventName) {
@@ -90,7 +90,7 @@ export default function EventLeaderboardIndiPage() {
         setFilteredParticipants(_data[0]);
       });
     }
-  }, [router, eventName]);
+  }, [router, eventName, searchParams]);
 
   return eventName && user && eventMetadata && participants && filteredParticipants ? (
     <>
