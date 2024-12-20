@@ -2,27 +2,30 @@
 
 import { getJudgeEventData } from "@/app/_util/data";
 import { auth } from "@/app/_util/initApp";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 
 export default function GroupEventLeaderboardPage() {
     const router = useRouter();
-
+    const searchParams = useSearchParams();
     const [user, setUser] = useState(null);
     const [eventName, setEventName] = useState(null);
     const [eventMetadata, setEventMetadata] = useState(null);
     const [groups, setGroups] = useState(null);
 
     useEffect(() => {
-        if (!secureLocalStorage.getItem('user') || !secureLocalStorage.getItem('event')) {
+        if (!secureLocalStorage.getItem('user')) {
             router.push('/');
         }
 
         const user = JSON.parse(secureLocalStorage.getItem('user'));
-        const ex = JSON.parse(secureLocalStorage.getItem('event'));
-        const _eventName = ex.name;
-        setEventName(ex.name);
+        const _eventName = searchParams.get('event');
+        setEventName(_eventName);
+
+        if (!_eventName)
+            router.push('/');
+
 
         if (user.role !== 'judge' || !_eventName) {
             router.push('/');
@@ -119,13 +122,7 @@ export default function GroupEventLeaderboardPage() {
                     <div className="flex flex-row">
                         <button
                             className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
-                            onClick={() => router.push('/admin/event')}
-                        >
-                            Events
-                        </button>
-                        <button
-                            className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
-                            onClick={() => router.push('/admin')}
+                            onClick={() => router.push('/judge/group')}
                         >
                             Dashboard
                         </button>

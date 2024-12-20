@@ -2,12 +2,13 @@
 
 import { getJudgeEventData } from "@/app/_util/data";
 import { auth } from "@/app/_util/initApp";
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 
 export default function EventLeaderboardIndiPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [user, setUser] = useState(null);
   const [eventName, setEventName] = useState(null);
@@ -18,14 +19,13 @@ export default function EventLeaderboardIndiPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    if (!secureLocalStorage.getItem('user') || !secureLocalStorage.getItem('event')) {
+    if (!secureLocalStorage.getItem('user')) {
       router.push('/');
     }
 
     const user = JSON.parse(secureLocalStorage.getItem('user'));
-    const ex = JSON.parse(secureLocalStorage.getItem('event'));
-    const _eventName = ex.name;
-    setEventName(ex.name);
+    const _eventName = searchParams.get('event');
+    setEventName(_eventName);
 
     if (user.role !== "judge" || !_eventName) {
       router.push('/');
@@ -103,13 +103,7 @@ export default function EventLeaderboardIndiPage() {
           <div className="flex flex-row">
             <button
               className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
-              onClick={() => router.push('/admin/event')}
-            >
-              Events
-            </button>
-            <button
-              className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
-              onClick={() => router.push('/admin')}
+              onClick={() => router.push('/judge/individual')}
             >
               Dashboard
             </button>
@@ -186,12 +180,12 @@ export default function EventLeaderboardIndiPage() {
                 {filteredParticipants.map((row, index) => (
                   <tr key={index}>
                     <td className="px-4 py-2 border max-w-[160px]">
-                      <p className="font-bold">{row.studentFullName ?? "-"}</p>
-                      <p className="text-xs">{row.gender ?? "-"} - {row.dateOfBirth ?? "-"}</p>
+
                       <div className="flex flex-wrap gap-1">
                         <p className="text-xs font-bold bg-[#c4ffc2] text-[#07210d] p-1 px-2 rounded-2xl w-fit">{row.studentId ?? "-"}</p>
                         <p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">{row.studentGroup ?? "-"}</p>
                       </div>
+                      <p className="text-xs">{row.gender ?? "-"} - {row.dateOfBirth ?? "-"}</p>
                     </td>
                     <td className="px-4 py-2 border max-w-[200px]">
                       {row.studentGroup === 'Group 3' && (
