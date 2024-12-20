@@ -113,8 +113,8 @@ export default function GroupEventLeaderboardPage() {
 
     return eventName && user && eventMetadata && groups ? (
         <>
-            <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
-                <div className="rounded-2xl p-4 m-2 bg-white border overflow-x-auto justify-between flex flex-row">
+            <div className="flex flex-col justify-center w-screen min-w-[95%] ml-auto mr-auto">
+                <div className="rounded-2xl p-4 m-2 bg-white border overflow-x-auto justify-between flex flex-col md:flex-row">
                     <div>
                         <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
                         <p className="text-gray-700 mt-2">{user.email}</p>
@@ -141,7 +141,7 @@ export default function GroupEventLeaderboardPage() {
 
                 <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
                     <div className="rounded-2xl p-4 bg-white border overflow-x-auto">
-                        <h1 className="text-2xl font-bold">{eventMetadata.name}</h1>
+                        <h1 className="text-xl font-bold">{eventMetadata.name}</h1>
                         <p className="text-md">{groups.length} Groups</p>
                         <div className="flex flex-row flex-wrap gap-1 mt-1">
                             {eventMetadata.group.map((group, index) => (
@@ -182,34 +182,35 @@ export default function GroupEventLeaderboardPage() {
                         <table className="table-auto w-full mt-4">
                             <thead>
                                 <tr>
-                                    <th className="border px-4 py-2">District</th>
-                                    <th className="border px-4 py-2">Students</th>
-                                    {eventMetadata.evalCriteria && Object.keys(eventMetadata.evalCriteria).map((criteria, index) => (
+                                    {/* <th className="border px-4 py-2">District</th> */}
+                                    <th className="border px-4 py-1">Students</th>
+                                    {/* {eventMetadata.evalCriteria && Object.keys(eventMetadata.evalCriteria).map((criteria, index) => (
                                         <th key={index} className="border px-4 py-2">{criteria}</th>
-                                    ))}
-                                    <th className="border px-4 py-2">Judge Wise Total</th>
-                                    <th className="border px-4 py-2">Overall Total</th>
-                                    <th className="border px-4 py-2">Comments</th>
+                                    ))} */}
+                                    <th className="border px-4 py-1">Judge Wise Total</th>
+                                    <th className="border px-4 py-1">Total</th>
+                                    <th className="border px-4 py-1">Comments</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {groups.map((group, index) => (
                                     <tr key={index}>
-                                        <td className="px-4 py-2 border font-bold">{group.district ?? "Unknown"}</td>
+                                        {/* <td className="px-4 py-2 border font-bold">{group.district ?? "Unknown"}</td> */}
                                         <td className="px-4 py-2 border">
+                                            <p className="text-sm">{group.district ?? "-"}</p>
                                             {group.members.map((member, i) => (
                                                 <p key={i} className="text-xs mt-2">
                                                     <span className="font-bold bg-gray-100 p-1 rounded-2xl pr-2">{member.id}</span>
                                                 </p>
                                             ))}
                                         </td>
-                                        {eventMetadata.evalCriteria && Object.keys(eventMetadata.evalCriteria).map((criteria, i1) => (
+                                        {/* {eventMetadata.evalCriteria && Object.keys(eventMetadata.evalCriteria).map((criteria, i1) => (
                                             <td key={i1} className="px-4 py-2 border">
                                                 {eventMetadata.judgeIdList.map((judgeId, i2) => (
                                                     <p key={i2} className="text-xs">{group.score[(eventName)][judgeId][criteria]}</p>
                                                 ))}
                                             </td>
-                                        ))}
+                                        ))} */}
                                         <td className="px-4 py-2 border font-bold">
                                             {Object.values(group.judgeWiseTotal).map((total, i) => (
                                                 <p key={i} className="text-xs">{total}</p>
