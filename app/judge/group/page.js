@@ -47,6 +47,7 @@ export default function JudgeGroupPage() {
 
   return user && eventMetadata && participants ? (
     <>
+      {console.log(eventMetadata)}
       <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
         <div className="rounded-2xl p-4 m-2 bg-white border overflow-x-auto justify-between flex flex-row">
           <div>
@@ -75,9 +76,10 @@ export default function JudgeGroupPage() {
               <button
                 className="bg-[#f7ffce] text-[#2c350b] font-bold px-4 py-1 rounded-xl"
                 onClick={() => {
+                  console.log("Leaderboard button clicked")
                   secureLocalStorage.setItem("event", JSON.stringify(eventMetadata));
                   router.push(
-                    `/judge/${eventMetadata.name.includes("GROUP") ? "group" : "individual/leaderboard"
+                    `/judge/${eventMetadata.name.includes("GROUP") ? "group/leaderboard" : "individual/leaderboard"
                     }`
                   );
                 }}

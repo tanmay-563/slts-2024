@@ -24,7 +24,7 @@ export default function GroupEventLeaderboardPage() {
         const _eventName = ex.name;
         setEventName(ex.name);
 
-        if (user.role !== 'admin' || !_eventName) {
+        if (user.role !== 'judge' || !_eventName) {
             router.push('/');
         } else {
             setUser(user);
@@ -202,7 +202,7 @@ export default function GroupEventLeaderboardPage() {
                                         <td className="px-4 py-2 border">
                                             {group.members.map((member, i) => (
                                                 <p key={i} className="text-xs mt-2">
-                                                    <span className="font-bold bg-gray-100 p-1 rounded-2xl pr-2">{member.id}</span>{member.name}
+                                                    <span className="font-bold bg-gray-100 p-1 rounded-2xl pr-2">{member.id}</span>
                                                 </p>
                                             ))}
                                         </td>
