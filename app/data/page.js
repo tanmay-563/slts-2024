@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-// import { auth } from "@/app/_util/initApp";
+import { auth } from "@/app/_util/initApp";
 import { getRegistrationData, submitCorrectionRequest } from "@/app/_util/data";
 import secureLocalStorage from "react-secure-storage";
 import { Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
@@ -124,19 +124,19 @@ export default function AdminDashboard() {
                         <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
                         <p className="text-gray-700">{user.email}</p>
                     </div>
-                    {/*<div className="flex flex-row">
+                    <div className="flex flex-row">
                         <button
                             className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
                             onClick={() => router.push('/admin/event')}
                         >
                             Events
                         </button>
-                        <button
+                        {/* <button
                             className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
                             onClick={() => router.push('/admin/accommodation')}
                         >
                             Accommodation
-                        </button>
+                        </button> */}
                         <button
                             className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
                             onClick={() => {
@@ -147,7 +147,7 @@ export default function AdminDashboard() {
                         >
                             Logout
                         </button>
-                    </div>*/}
+                    </div>
                 </div>
 
                 <div className="flex flex-row flex-wrap gap-4 m-4 justify-center overflow-x-auto">

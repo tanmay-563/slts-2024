@@ -169,25 +169,26 @@ export default function ManageEvents() {
                                     </td>
                                     <td className="border px-4 py-2">
                                         <div className="flex flex-col gap-2">
-                                        <button
-                                            className="bg-[#cefdff] text-[#0b0d35] font-bold px-4 py-1 rounded-xl"
-                                            onClick={() => {
-                                                setEventNameBuffer(event.name);
-                                                setCriteriaBuffer(Object.entries(event.evalCriteria));
-                                                setCIsOpen(true);
-                                            }}
-                                        >
-                                            Update Criteria
-                                        </button>
-                                        <button
-                                            className="bg-[#f7ffce] text-[#2c350b] font-bold px-4 py-1 rounded-xl"
-                                            onClick={() => {
-                                                secureLocalStorage.setItem('event', JSON.stringify(event));
-                                                router.push(`/admin/event/${event.name.includes("GROUP") ? "group" : "individual"}`);
-                                            }}
-                                        >
-                                            View Leaderboard
-                                        </button>
+                                            <button
+                                                className="bg-[#cefdff] text-[#0b0d35] font-bold px-4 py-1 rounded-xl"
+                                                onClick={() => {
+                                                    setEventNameBuffer(event.name);
+                                                    setCriteriaBuffer(Object.entries(event.evalCriteria));
+                                                    setCIsOpen(true);
+                                                }}
+                                            >
+                                                Update Criteria
+                                            </button>
+                                            <button
+                                                className="bg-[#f7ffce] text-[#2c350b] font-bold px-4 py-1 rounded-xl"
+                                                onClick={() => {
+                                                    secureLocalStorage.setItem('event', JSON.stringify(event));
+                                                    router.push(`/admin/event/${event.name.includes("GROUP") ? "group" : "individual"}`);
+                                                    // console.log(event)
+                                                }}
+                                            >
+                                                View Leaderboard
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
