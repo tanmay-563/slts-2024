@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import "@/app/globals.css";
+import { Suspense } from "react";
 
 const gilroy = localFont({
   src: [
@@ -118,7 +119,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${gilroy.className} antialiased`}
       >
-        {children}
+        <Suspense>
+          {children}
+        </Suspense>
       </body>
     </html>
   );

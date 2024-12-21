@@ -131,12 +131,12 @@ export default function AdminDashboard() {
                         >
                             Events
                         </button>
-                        <button
+                        {/* <button
                             className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
                             onClick={() => router.push('/admin/accommodation')}
                         >
                             Accommodation
-                        </button>
+                        </button> */}
                         <button
                             className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
                             onClick={() => {
