@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
-import { getJudgeEventData, markScore } from "@/app/_util/data";
+import { getJudgeEventData, getStudentData, markScore, removeSubstitute, substituteEvent } from "@/app/_util/data";
 import { auth } from "@/app/_util/initApp";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
@@ -23,27 +23,16 @@ export default function JudgePage() {
     const [searchQuery, setSearchQuery] = useState("");
 
     const [isSaving, setIsSaving] = useState(false);
-    const [isOpen, setIsOpen] = useState(false);
-    const [additionalFields, setAdditionalFields] = useState(false); // State to track if additional fields are added
-    const [isNewSelected, setIsNewSelected] = useState(false); // State to track if "New" is clicked
 
+    const [isOpen, setIsOpen] = useState(false);
+    const [isNewSelected, setIsNewSelected] = useState(false); // State to track if "New" is clicked
+    const [reason, setReason] = useState("");
+    const [toRemoveStudentId, setToRemoveStudentId] = useState("");
     const [studentId, setStudentId] = useState("");
     const [studentName, setStudentName] = useState("");
     const [groupNumber, setGroupNumber] = useState("");
     const [dob, setDob] = useState("");
     const [gender, setGender] = useState("");
-
-    const addNewFields = () => {
-        if (!additionalFields) {
-            setAdditionalFields(true); // Add additional fields when clicked
-        }
-        setIsNewSelected(true); // Make "New" button active
-    };
-
-    const handleAlreadyExist = () => {
-        setAdditionalFields(false); // Remove additional fields when clicked
-        setIsNewSelected(false); // Revert "New" button style
-    };
 
     const handleInputChange = (e, field) => {
         switch (field) {
@@ -68,25 +57,99 @@ export default function JudgePage() {
     };
 
     const handleSubmitSubstitution = () => {
-        const updatedParticipants = participants.map((participant) => {
-            if (participant.studentId === studentId) {
-                return {
-                    ...participant,
-                    groupNumber,
-                    dob,
-                    gender,
-                };
+        if (studentId.toString().trim().toLowerCase() === toRemoveStudentId.toString().trim().toLowerCase()) {
+            alert("Student ID cannot be the same as the student to be removed.");
+            return;
+        }
+
+        if (isNewSelected) {
+            if (studentName.trim() === "" || dob.trim() === "" || groupNumber.trim() === "" || gender.trim() === "") {
+                alert("Please fill in all fields.");
+                return;
             }
-            return participant;
-        });
-        setParticipants(updatedParticipants); // Update participants list
-        setIsOpen(false); // Close dialog
+        }
+
+        if (reason.trim() === "") {
+            alert("Please provide a reason.");
+            return;
+        }
+
+        if (!isNewSelected && studentId.trim() === "") {
+            alert("Please provide a student ID.");
+            return;
+        }
+
+        setIsLoading(true);
+        if (isNewSelected) {
+            substituteEvent(
+                eventMetadata.name,
+                toRemoveStudentId,
+                studentId,
+                studentName,
+                groupNumber,
+                gender,
+                dob,
+                reason,
+                user.id
+            ).then((res) => {
+                if (res.toString().length > 0) {
+                    alert(res.toString());
+                } else {
+                    alert("Substitution successful.");
+                    window.location.reload()
+                }
+            }).catch((_) => {
+                alert("An error occurred. Please try again.");
+            }).finally(() => {
+                setIsLoading(false);
+            });
+        } else {
+            // Check if student exists
+            getStudentData(studentId).then((data) => {
+                if (data) {
+                    substituteEvent(
+                        eventMetadata.name,
+                        toRemoveStudentId,
+                        studentId,
+                        studentName,
+                        groupNumber,
+                        gender,
+                        dob,
+                        reason,
+                        user.id
+                    ).then((res) => {
+                        if (res.toString().length > 0) {
+                            alert(res.toString());
+                        } else {
+                            alert("Substitution successful.");
+                            window.location.reload()
+                        }
+                    }).catch((_) => {
+                        alert("An error occurred. Please try again.");
+                    }).finally(() => {
+                        setIsLoading(false);
+                    });
+                } else {
+                    alert("Student does not exist. Please check the ID again.");
+                }
+            }).catch((_) => {
+                alert("An error occurred. Please try again.");
+            }).finally(() => {
+                setIsLoading(false);
+            });
+        }
+    };
+
+    const closeDialog = () => {
         setStudentId("");
         setGroupNumber("");
         setDob("");
         setGender("");
+        setStudentName("");
+        setReason("");
+        setToRemoveStudentId("");
         setIsOpen(false);
-    };
+    }
 
 
     useEffect(() => {
@@ -224,145 +287,79 @@ export default function JudgePage() {
 
                         <div className="grid grid-cols-1 gap-4 mt-4">
                             {filteredParticipants.map((participant, index) => (
-                                <div key={index} className="rounded-2xl p-4 bg-gray-100 border">
+                                <div key={index} className="rounded-2xl p-2 bg-gray-100 border">
                                     <div className="flex flex-row justify-between">
-                                        <div>
-                                            <h2 className="text-xl font-bold">
-                                                {participant.studentId}
-                                            </h2>
-                                            <p className="text-xs">
-                                                {participant.gender ?? "-"} -{" "}
-                                                {participant.dateOfBirth ?? "-"}
-                                            </p>
-                                            <p className="text-xs mt-2 font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
-                                                {participant.studentGroup ?? "-"}
-                                            </p>
-                                        </div>
+                                        {participant.substitute && participant.substitute[eventMetadata.name] ? (
+                                            <div>
+                                                <p className="text-xs font-semibold text-[#32350b] rounded-2xl w-fit">
+                                                    Substituted Student - Original <span className="font-bold">{participant.studentId}</span>
+                                                </p>
+                                                <h2 className="text-xl font-bold">
+                                                    {participant.substitute[eventMetadata.name].newStudentName}
+                                                </h2>
+                                                <p className="text-xs">
+                                                    {participant.substitute[eventMetadata.name].newStudentGender ?? "-"} -{" "}
+                                                    {participant.substitute[eventMetadata.name].newStudentDOB ?? "-"}
+                                                </p>
+                                                <p className="text-xs mt-2 font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
+                                                    {participant.substitute[eventMetadata.name].newStudentGroup ?? "-"}
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <h2 className="text-xl font-bold">
+                                                    {participant.studentId}
+                                                </h2>
+                                                <p className="text-xs">
+                                                    {participant.gender ?? "-"} -{" "}
+                                                    {participant.dateOfBirth ?? "-"}
+                                                </p>
+                                                <p className="text-xs mt-2 font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
+                                                    {participant.studentGroup ?? "-"}
+                                                </p>
+                                            </div>
+                                        )}
+
                                         <div>
                                             {participant.score &&
                                                 participant.score[eventMetadata.name] &&
                                                 participant.score[eventMetadata.name][user.id] ? (
                                                 <div className="mt-2 flex flex-col">
-                                                    <button
-                                                        className="bg-[#cceeff] text-[#003366] font-semibold px-4 py-1 rounded-xl mt-2"
-                                                        onClick={() => setIsOpen(true)}
-                                                    >
-                                                        Substitute
-                                                    </button>
-
-                                                    <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="fixed z-50 shadow-2xl">
-                                                        <div className="fixed inset-0 flex w-screen items-center justify-center p-2 overflow-y-auto backdrop-blur-sm">
-                                                            <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-4 text-left align-middle transition-all border">
-                                                                <div className="flex flex-row justify-between my-2">
-                                                                    <Dialog.Title className="text-sm font-medium text-gray-900 w-[70%]">Reason for not participating in the event</Dialog.Title>
-                                                                    <button
-                                                                        onClick={() => setIsOpen(false)}
-                                                                        className="bg-gray-200 p-1 rounded-full"
-                                                                    >
-                                                                        <svg
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                            className="h-4 w-4"
-                                                                            fill="none"
-                                                                            viewBox="0 0 24 24"
-                                                                            stroke="black"
-                                                                        >
-                                                                            <path
-                                                                                strokeLinecap="round"
-                                                                                strokeLinejoin="round"
-                                                                                strokeWidth={2}
-                                                                                d="M6 18L18 6M6 6l12 12"
-                                                                            />
-                                                                        </svg>
-                                                                    </button>
-                                                                </div>
-                                                                <textarea
-                                                                    placeholder="Type here...."
-                                                                    className="border p-2 rounded-2xl w-full"
-                                                                ></textarea>
-
-                                                                <div className="mt-4">
-                                                                    <p className="font-semibold">Add Substitute</p>
-                                                                    <div className="flex flex-row justify-between">
-                                                                        <button
-                                                                            className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
-                                                                            onClick={addNewFields}
-                                                                        >
-                                                                            New
-                                                                        </button>
-                                                                        <button
-                                                                            className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${!isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
-                                                                            onClick={handleAlreadyExist}
-                                                                        >
-                                                                            Has SLTS ID
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div className="mt-6">
-                                                                    <p className="text-xs mx-2 mt-2">Please enter the student details below</p>
-                                                                    {!additionalFields && <input
-                                                                        type="text"
-                                                                        placeholder="Student ID"
-                                                                        value={studentId}
-                                                                        onChange={(e) => handleInputChange(e, "studentId")}
-                                                                        className="border p-2 rounded-2xl w-full mt-2"
-                                                                    />}
-
-                                                                    {/* Render additional fields dynamically */}
-                                                                    {additionalFields && (
-                                                                        <div>
-                                                                            <input
-                                                                                type="text"
-                                                                                placeholder="Student Name"
-                                                                                value={studentName}
-                                                                                onChange={(e) => handleInputChange(e, "name")}
-                                                                                className="border p-2 rounded-2xl w-full mt-2"
-                                                                            />
-
-                                                                            <input
-                                                                                type="text"
-                                                                                placeholder="Date of Birth"
-                                                                                value={dob}
-                                                                                onChange={(e) => handleInputChange(e, "dob")}
-                                                                                className="border p-2 rounded-2xl w-full mt-2"
-                                                                            />
-
-                                                                            <select className="border p-2 rounded-2xl w-full mt-2" value={groupNumber} onChange={(e) => handleInputChange(e, "groupNumber")}>
-                                                                                <option value="">Select Group Number</option>
-                                                                                <option value="Group 1">Group 1</option>
-                                                                                <option value="Group 2">Group 2</option>
-                                                                                <option value="Group 3">Group 3</option>
-                                                                                <option value="General Category">General Category</option>
-                                                                            </select>
-
-                                                                            <select className="border p-2 rounded-2xl w-full mt-2" value={gender} onChange={(e) => handleInputChange(e, "gender")}>
-                                                                                <option value="">Select Gender</option>
-                                                                                <option value={"Male"}>Male</option>
-                                                                                <option value={"Female"}>Female</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-
-                                                                <div className="flex flex-row justify-between mt-2">
-                                                                    <button className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
-                                                                        disabled={isLoading}
-                                                                        onClick={() => {
-                                                                            setIsOpen(false);
-                                                                        }}>
-                                                                        Cancel
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={handleSubmitSubstitution}
-                                                                        disabled={isLoading || !studentId || !groupNumber || !dob || !gender}
-                                                                        className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
-                                                                    >
-                                                                        {isLoading ? "Submitting ..." : "Submit"}
-                                                                    </button>
-                                                                </div>
-                                                            </DialogPanel>
-                                                        </div>
-                                                    </Dialog>
+                                                    {(participant.substitute && participant.substitute[eventMetadata.name]) ? (
+                                                        <button
+                                                            className="bg-[#ffcccc] text-[#660000] font-semibold px-4 py-1 rounded-xl mt-2"
+                                                            onClick={() => {
+                                                                setIsLoading(true);
+                                                                removeSubstitute(
+                                                                    eventMetadata.name,
+                                                                    participant.studentId,
+                                                                ).then((res) => {
+                                                                    if (res.toString().length > 0) {
+                                                                        alert(res.toString());
+                                                                    } else {
+                                                                        alert("Substitution removed.");
+                                                                        window.location.reload()
+                                                                    }
+                                                                }).catch((_) => {
+                                                                    alert("An error occurred. Please try again.");
+                                                                }).finally(() => {
+                                                                    setIsLoading(false);
+                                                                });
+                                                            }}
+                                                        >
+                                                            Remove Substitute
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            className="bg-[#cceeff] text-[#003366] font-semibold px-4 py-1 rounded-xl mt-2"
+                                                            onClick={() => {
+                                                                setIsOpen(true);
+                                                                setToRemoveStudentId(participant.studentId);
+                                                            }}
+                                                        >
+                                                            Substitute
+                                                        </button>
+                                                    )}
                                                     <button
                                                         className="bg-[#ffcece] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2"
                                                         onClick={() => {
@@ -391,118 +388,41 @@ export default function JudgePage() {
                                                 </div>
                                             ) : scoreMode[participant.studentId] == false ? (
                                                 <div className="flex flex-col justify-between">
-                                                    <button
-                                                        className="bg-[#cceeff] text-[#003366] font-semibold px-4 py-1 rounded-xl mt-2"
-                                                        onClick={() => setIsOpen(true)}
-                                                    >
-                                                        Substitute
-                                                    </button>
-
-                                                    <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="fixed z-50 shadow-2xl">
-                                                        <div className="fixed inset-0 flex w-screen items-center justify-center p-2 overflow-y-auto backdrop-blur-sm">
-                                                            <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-4 text-left align-middle">
-                                                                <div className="flex flex-row justify-between my-2">
-                                                                    <DialogTitle className="text-sm font-medium text-gray-900 w-[70%]">Reason for not participating in the event</DialogTitle>
-                                                                    <button
-                                                                        onClick={() => setIsOpen(false)}
-                                                                        className="bg-gray-200 p-1 rounded-full"
-                                                                    >
-                                                                        <svg
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                            className="h-4 w-4"
-                                                                            fill="none"
-                                                                            viewBox="0 0 24 24"
-                                                                            stroke="black"
-                                                                        >
-                                                                            <path
-                                                                                strokeLinecap="round"
-                                                                                strokeLinejoin="round"
-                                                                                strokeWidth={2}
-                                                                                d="M6 18L18 6M6 6l12 12"
-                                                                            />
-                                                                        </svg>
-                                                                    </button>
-                                                                </div>
-                                                                <textarea
-                                                                    placeholder="Type here...."
-                                                                    className="border p-2 rounded-2xl w-full"
-                                                                ></textarea>
-
-                                                                <div className="mt-4">
-                                                                    <p className="font-semibold">Add Substitute</p>
-                                                                    <div className="flex flex-row justify-between">
-                                                                        <button
-                                                                            className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
-                                                                            onClick={addNewFields}
-                                                                        >
-                                                                            New
-                                                                        </button>
-                                                                        <button
-                                                                            className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${!isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
-                                                                            onClick={handleAlreadyExist}
-                                                                        >
-                                                                            Has SLTS ID
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div className="mt-6">
-                                                                    <p className="text-xs mx-2 mt-2">Please enter the student details below</p>
-                                                                    {!additionalFields && <input
-                                                                        type="text"
-                                                                        placeholder="Student ID"
-                                                                        value={studentId}
-                                                                        onChange={(e) => handleInputChange(e, "studentId")}
-                                                                        className="border p-2 rounded-2xl w-full mt-2"
-                                                                    />}
-
-                                                                    {/* Render additional fields dynamically */}
-                                                                    {additionalFields && (
-                                                                        <div>
-                                                                            <input
-                                                                                type="text"
-                                                                                placeholder="Date of Birth"
-                                                                                value={dob}
-                                                                                onChange={(e) => handleInputChange(e, "dob")}
-                                                                                className="border p-2 rounded-2xl w-full mt-2"
-                                                                            />
-                                                                            <select className="border p-2 rounded-2xl w-full mt-2" value={groupNumber} onChange={(e) => handleInputChange(e, "groupNumber")}>
-                                                                                <option value="">Select Group Number</option>
-                                                                                <option value="Group 1">Group 1</option>
-                                                                                <option value="Group 2">Group 2</option>
-                                                                                <option value="Group 3">Group 3</option>
-                                                                                <option value="General Category">General Category</option>
-                                                                            </select>
-
-                                                                            <select className="border p-2 rounded-2xl w-full mt-2" value={gender} onChange={(e) => handleInputChange(e, "gender")}>
-                                                                                <option value="">Select Gender</option>
-                                                                                <option value={"Male"}>Male</option>
-                                                                                <option value={"Female"}>Female</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-
-                                                                <div className="flex flex-row justify-between mt-2">
-                                                                    <button className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
-                                                                        disabled={isLoading}
-                                                                        onClick={() => {
-                                                                            setIsOpen(false);
-                                                                        }}>
-                                                                        Cancel
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={handleSubmitSubstitution}
-                                                                        disabled={isLoading || !studentId || !groupNumber || !dob || !gender}
-                                                                        className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
-                                                                    >
-                                                                        {isLoading ? "Submitting ..." : "Submit"}
-                                                                    </button>
-                                                                </div>
-                                                            </DialogPanel>
-                                                        </div>
-                                                    </Dialog>
-
+                                                    {(participant.substitute && participant.substitute[eventMetadata.name]) ? (
+                                                        <button
+                                                            className="bg-[#ffcccc] text-[#660000] font-semibold px-4 py-1 rounded-xl mt-2"
+                                                            onClick={() => {
+                                                                setIsLoading(true);
+                                                                removeSubstitute(
+                                                                    eventMetadata.name,
+                                                                    participant.studentId,
+                                                                ).then((res) => {
+                                                                    if (res.toString().length > 0) {
+                                                                        alert(res.toString());
+                                                                    } else {
+                                                                        alert("Substitution removed.");
+                                                                        window.location.reload()
+                                                                    }
+                                                                }).catch((_) => {
+                                                                    alert("An error occurred. Please try again.");
+                                                                }).finally(() => {
+                                                                    setIsLoading(false);
+                                                                });
+                                                            }}
+                                                        >
+                                                            Remove Substitute
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            className="bg-[#cceeff] text-[#003366] font-semibold px-4 py-1 rounded-xl mt-2"
+                                                            onClick={() => {
+                                                                setIsOpen(true);
+                                                                setToRemoveStudentId(participant.studentId);
+                                                            }}
+                                                        >
+                                                            Substitute
+                                                        </button>
+                                                    )}
                                                     <button
                                                         className="bg-[#ffd8a1] text-[#35250b] font-semibold px-4 py-1 rounded-xl mt-2"
                                                         onClick={() => {
@@ -701,6 +621,118 @@ export default function JudgePage() {
                     </div>
                 </div>
             </div>
+
+            <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="fixed z-50 shadow-2xl">
+                <div className="fixed inset-0 flex w-screen items-center justify-center p-2 overflow-y-auto backdrop-blur-sm">
+                    <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-4 text-left align-middle">
+                        <div className="flex flex-row justify-between my-2">
+                            <DialogTitle className="text-sm font-medium text-gray-900 w-[70%]">Reason why student is not participating in the event</DialogTitle>
+                            <button
+                                onClick={() => setIsOpen(false)}
+                                className="bg-gray-200 p-1 rounded-full"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-4 w-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="black"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                        <textarea
+                            placeholder="Type here...."
+                            className="border p-2 rounded-2xl w-full"
+                            onChange={(e) => setReason(e.target.value)}
+                        ></textarea>
+
+                        <div className="mt-4">
+                            <p className="font-semibold">Add Substitute</p>
+                            <div className="flex flex-row justify-between">
+                                <button
+                                    className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
+                                    onClick={() => setIsNewSelected(true)}
+                                >
+                                    New
+                                </button>
+                                <button
+                                    className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${!isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
+                                    onClick={() => setIsNewSelected(false)}
+                                >
+                                    Has SLTS ID
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="mt-6">
+                            <p className="text-xs mx-2 mt-2">Please enter the student details below</p>
+                            {isNewSelected ? (
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Student Name"
+                                        value={studentName}
+                                        onChange={(e) => handleInputChange(e, "name")}
+                                        className="border p-2 rounded-2xl w-full mt-2"
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Date of Birth"
+                                        value={dob}
+                                        onChange={(e) => handleInputChange(e, "dob")}
+                                        className="border p-2 rounded-2xl w-full mt-2"
+                                    />
+                                    <select className="border p-2 rounded-2xl w-full mt-2" value={groupNumber} onChange={(e) => handleInputChange(e, "groupNumber")}>
+                                        <option value="">Select Group Number</option>
+                                        <option value="Group 1">Group 1</option>
+                                        <option value="Group 2">Group 2</option>
+                                        <option value="Group 3">Group 3</option>
+                                        <option value="General Category">General Category</option>
+                                    </select>
+
+                                    <select className="border p-2 rounded-2xl w-full mt-2" value={gender} onChange={(e) => handleInputChange(e, "gender")}>
+                                        <option value="">Select Gender</option>
+                                        <option value={"Male"}>Male</option>
+                                        <option value={"Female"}>Female</option>
+                                    </select>
+                                </div>
+                            ) : (
+                                <input
+                                    type="text"
+                                    placeholder="Student ID"
+                                    value={studentId}
+                                    onChange={(e) => handleInputChange(e, "studentId")}
+                                    className="border p-2 rounded-2xl w-full mt-2"
+                                />
+                            )}
+                        </div>
+
+                        <div className="flex flex-row justify-between mt-2">
+                            <button className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
+                                disabled={isLoading}
+                                onClick={() => {
+                                    setIsOpen(false);
+                                }}>
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSubmitSubstitution}
+                                disabled={isLoading}
+                                className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
+                            >
+                                {isLoading ? "Submitting ..." : "Submit"}
+                            </button>
+                        </div>
+                    </DialogPanel>
+                </div>
+            </Dialog>
         </>
     ) : (
         <div className="flex h-screen items-center justify-center">

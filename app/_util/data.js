@@ -363,3 +363,89 @@ export const submitCorrectionRequest = async (
 
   return true;
 }
+
+export const getStudentData = async (studentId) => {
+  studentId = studentId.toString().toUpperCase().trim();
+  const studentDoc = await getDoc(doc(db, "registrationData", studentId));
+  if (!studentDoc.exists()) {
+    return null;
+  }
+  return studentDoc.data();
+}
+
+export const substituteEvent = async (eventName, oldStudentId, newStudentId, name, group, gender, dob, reason, judgeId) => {
+  try {
+    const oldStudentDoc = await getDoc(doc(db, "registrationData", oldStudentId));
+    if (!oldStudentDoc.exists()) {
+      return "Old Student not found";
+    }
+    const oldStudentData = oldStudentDoc.data();
+
+    if (oldStudentData.registeredEvents.indexOf(eventName) == -1) {
+      return "Old Student is not registered for this event";
+    }
+
+    if (newStudentId != "") {
+      const newStudentDoc = await getDoc(doc(db, "registrationData", newStudentId));
+      if (!newStudentDoc.exists()) {
+        return "New Student not found";
+      }
+      const newStudentData = newStudentDoc.data();
+
+      if (newStudentData.registeredEvents.indexOf(eventName) != -1) {
+        return "New Student is already registered for this event";
+      }
+
+      if (newStudentData.district != oldStudentData.district) {
+        return "District of Old and New Student should be same";
+      }
+
+      await updateDoc(doc(db, "registrationData", oldStudentId), {
+        [`substitute.${eventName}`]: {
+          newStudentId: newStudentData.studentId,
+          newStudentData: newStudentData,
+          newStudentName: newStudentData.studentFullName,
+          newStudentGroup: newStudentData.studentGroup,
+          newStudentGender: newStudentData.gender,
+          newStudentDOB: newStudentData.dateOfBirth,
+          substituteReason: reason,
+          timeStamp: Timestamp.now(),
+          updatedBy: judgeId,
+        },
+      });
+
+      return "";
+    } else {
+      await updateDoc(doc(db, "registrationData", oldStudentId), {
+        [`substitute.${eventName}`]: {
+          newStudentId: null,
+          newStudentName: name,
+          newStudentGroup: group,
+          newStudentGender: gender,
+          newStudentDOB: dob,
+          substituteReason: reason,
+          timeStamp: Timestamp.now(),
+          updatedBy: judgeId,
+        },
+      });
+
+      return "";
+    }
+  } catch (error) {
+    console.error(error);
+    return "Some error occured";
+  }
+}
+
+export const removeSubstitute = async (eventName, studentId) => {
+  try {
+    await updateDoc(doc(db, "registrationData", studentId), {
+      [`substitute.${eventName}`]: null,
+    });
+
+    return "";
+  } catch (error) {
+    console.error(error);
+    return "Some error occured";
+  }
+} 
