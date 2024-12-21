@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 import { getJudgeEventData, markScore } from "@/app/_util/data";
 import { auth } from "@/app/_util/initApp";
-import { Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
 export default function JudgePage() {
     const router = useRouter();
@@ -28,6 +28,7 @@ export default function JudgePage() {
     const [isNewSelected, setIsNewSelected] = useState(false); // State to track if "New" is clicked
 
     const [studentId, setStudentId] = useState("");
+    const [studentName, setStudentName] = useState("");
     const [groupNumber, setGroupNumber] = useState("");
     const [dob, setDob] = useState("");
     const [gender, setGender] = useState("");
@@ -47,7 +48,7 @@ export default function JudgePage() {
     const handleInputChange = (e, field) => {
         switch (field) {
             case "studentId":
-                setStudentId(e.target.value);
+                setStudentId(e.target.value.toString().toUpperCase());
                 break;
             case "groupNumber":
                 setGroupNumber(e.target.value);
@@ -57,6 +58,9 @@ export default function JudgePage() {
                 break;
             case "gender":
                 setGender(e.target.value);
+                break;
+            case "name":
+                setStudentName(e.target.value);
                 break;
             default:
                 break;
@@ -289,31 +293,32 @@ export default function JudgePage() {
                                                                             className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${!isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
                                                                             onClick={handleAlreadyExist}
                                                                         >
-                                                                            Already Exist
+                                                                            Has SLTS ID
                                                                         </button>
                                                                     </div>
                                                                 </div>
 
                                                                 <div className="mt-6">
                                                                     <p className="text-xs mx-2 mt-2">Please enter the student details below</p>
-                                                                    <input
+                                                                    {!additionalFields && <input
                                                                         type="text"
                                                                         placeholder="Student ID"
                                                                         value={studentId}
                                                                         onChange={(e) => handleInputChange(e, "studentId")}
                                                                         className="border p-2 rounded-2xl w-full mt-2"
-                                                                    />
-                                                                    <input
-                                                                        type="text"
-                                                                        placeholder="Group Number"
-                                                                        value={groupNumber}
-                                                                        onChange={(e) => handleInputChange(e, "groupNumber")}
-                                                                        className="border p-2 rounded-2xl w-full mt-2"
-                                                                    />
+                                                                    />}
 
                                                                     {/* Render additional fields dynamically */}
                                                                     {additionalFields && (
                                                                         <div>
+                                                                            <input
+                                                                                type="text"
+                                                                                placeholder="Student Name"
+                                                                                value={studentName}
+                                                                                onChange={(e) => handleInputChange(e, "name")}
+                                                                                className="border p-2 rounded-2xl w-full mt-2"
+                                                                            />
+
                                                                             <input
                                                                                 type="text"
                                                                                 placeholder="Date of Birth"
@@ -321,13 +326,20 @@ export default function JudgePage() {
                                                                                 onChange={(e) => handleInputChange(e, "dob")}
                                                                                 className="border p-2 rounded-2xl w-full mt-2"
                                                                             />
-                                                                            <input
-                                                                                type="text"
-                                                                                placeholder="Gender"
-                                                                                value={gender}
-                                                                                onChange={(e) => handleInputChange(e, "gender")}
-                                                                                className="border p-2 rounded-2xl w-full mt-2"
-                                                                            />
+
+                                                                            <select className="border p-2 rounded-2xl w-full mt-2" value={groupNumber} onChange={(e) => handleInputChange(e, "groupNumber")}>
+                                                                                <option value="">Select Group Number</option>
+                                                                                <option value="Group 1">Group 1</option>
+                                                                                <option value="Group 2">Group 2</option>
+                                                                                <option value="Group 3">Group 3</option>
+                                                                                <option value="General Category">General Category</option>
+                                                                            </select>
+
+                                                                            <select className="border p-2 rounded-2xl w-full mt-2" value={gender} onChange={(e) => handleInputChange(e, "gender")}>
+                                                                                <option value="">Select Gender</option>
+                                                                                <option value={"Male"}>Male</option>
+                                                                                <option value={"Female"}>Female</option>
+                                                                            </select>
                                                                         </div>
                                                                     )}
                                                                 </div>
@@ -429,27 +441,20 @@ export default function JudgePage() {
                                                                             className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${!isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
                                                                             onClick={handleAlreadyExist}
                                                                         >
-                                                                            Already Exist
+                                                                            Has SLTS ID
                                                                         </button>
                                                                     </div>
                                                                 </div>
 
                                                                 <div className="mt-6">
                                                                     <p className="text-xs mx-2 mt-2">Please enter the student details below</p>
-                                                                    <input
+                                                                    {!additionalFields && <input
                                                                         type="text"
                                                                         placeholder="Student ID"
                                                                         value={studentId}
                                                                         onChange={(e) => handleInputChange(e, "studentId")}
                                                                         className="border p-2 rounded-2xl w-full mt-2"
-                                                                    />
-                                                                    <input
-                                                                        type="text"
-                                                                        placeholder="Group Number"
-                                                                        value={groupNumber}
-                                                                        onChange={(e) => handleInputChange(e, "groupNumber")}
-                                                                        className="border p-2 rounded-2xl w-full mt-2"
-                                                                    />
+                                                                    />}
 
                                                                     {/* Render additional fields dynamically */}
                                                                     {additionalFields && (
@@ -461,13 +466,19 @@ export default function JudgePage() {
                                                                                 onChange={(e) => handleInputChange(e, "dob")}
                                                                                 className="border p-2 rounded-2xl w-full mt-2"
                                                                             />
-                                                                            <input
-                                                                                type="text"
-                                                                                placeholder="Gender"
-                                                                                value={gender}
-                                                                                onChange={(e) => handleInputChange(e, "gender")}
-                                                                                className="border p-2 rounded-2xl w-full mt-2"
-                                                                            />
+                                                                            <select className="border p-2 rounded-2xl w-full mt-2" value={groupNumber} onChange={(e) => handleInputChange(e, "groupNumber")}>
+                                                                                <option value="">Select Group Number</option>
+                                                                                <option value="Group 1">Group 1</option>
+                                                                                <option value="Group 2">Group 2</option>
+                                                                                <option value="Group 3">Group 3</option>
+                                                                                <option value="General Category">General Category</option>
+                                                                            </select>
+
+                                                                            <select className="border p-2 rounded-2xl w-full mt-2" value={gender} onChange={(e) => handleInputChange(e, "gender")}>
+                                                                                <option value="">Select Gender</option>
+                                                                                <option value={"Male"}>Male</option>
+                                                                                <option value={"Female"}>Female</option>
+                                                                            </select>
                                                                         </div>
                                                                     )}
                                                                 </div>

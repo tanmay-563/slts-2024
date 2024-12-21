@@ -12,7 +12,6 @@ export default function AdminDashboard() {
     const [user, setUser] = useState(null);
     const [data, setData] = useState(null);
     const [filteredData, setFilteredData] = useState(null);
-    const [isOpen, setIsOpen] = useState(false);
 
     // filters.
     const [districts, setDistricts] = useState([

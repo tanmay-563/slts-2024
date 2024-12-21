@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-// import { auth } from "@/app/_util/initApp";
+import { auth } from "@/app/_util/initApp";
 import { getRegistrationData, submitCorrectionRequest } from "@/app/_util/data";
 import secureLocalStorage from "react-secure-storage";
 import { Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
