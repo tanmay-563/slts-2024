@@ -54,7 +54,7 @@ export default function ManageEvents() {
 
     return !isLoading && user && filteredData ? (
         <>
-            <div className={"flex flex-col justify-center w-screen ml-auto mr-auto" + (cIsOpen ? " blur-sm" : "")}>
+            <div className={"flex flex-col justify-center w-screen ml-auto mr-auto"}>
                 <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-row">
                     <div>
                         <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
@@ -199,7 +199,7 @@ export default function ManageEvents() {
             </div>
 
             <Dialog open={cIsOpen} onClose={() => setCIsOpen(false)} className="relative z-50 shadow-2xl">
-                <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+                <div className="fixed inset-0 flex w-screen items-center justify-center p-4 backdrop-blur-sm">
                     <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
 
                         <div className="flex flex-row justify-between">

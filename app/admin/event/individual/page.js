@@ -185,13 +185,33 @@ export default function EventLeaderboardIndiPage() {
                             <tbody>
                                 {filteredParticipants.map((row, index) => (
                                     <tr key={index}>
-                                        <td className="px-4 py-2 border max-w-[160px]">
-                                            <p className="font-bold">{row.studentFullName ?? "-"}</p>
-                                            <p className="text-xs">{row.gender ?? "-"} - {row.dateOfBirth ?? "-"}</p>
-                                            <div className="flex flex-wrap gap-1">
-                                                <p className="text-xs font-bold bg-[#c4ffc2] text-[#07210d] p-1 px-2 rounded-2xl w-fit">{row.studentId ?? "-"}</p>
-                                                <p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">{row.studentGroup ?? "-"}</p>
-                                            </div>
+                                        <td className={"px-4 py-2 border max-w-[160px]" + (row.substitute && row.substitute[eventMetadata.name] ? " bg-[#ffcece]" : "")}>
+                                            {row.substitute && row.substitute[eventMetadata.name] ? (
+                                                <div>
+                                                    <p className="text-xs font-semibold text-[#32350b] rounded-2xl w-fit">
+                                                        Substituted Student - Original <span className="font-bold">{row.studentId}</span>
+                                                    </p>
+                                                    <p className="font-bold">
+                                                        {row.substitute[eventMetadata.name].newStudentName}
+                                                    </p>
+                                                    <p className="text-xs">
+                                                        {row.substitute[eventMetadata.name].newStudentGender ?? "-"} -{" "}
+                                                        {row.substitute[eventMetadata.name].newStudentDOB ?? "-"}
+                                                    </p>
+                                                    <p className="text-xs mt-2 font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
+                                                        {row.substitute[eventMetadata.name].newStudentGroup ?? "-"}
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    <p className="font-bold">{row.studentFullName ?? "-"}</p>
+                                                    <p className="text-xs">{row.gender ?? "-"} - {row.dateOfBirth ?? "-"}</p>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        <p className="text-xs font-bold bg-[#c4ffc2] text-[#07210d] p-1 px-2 rounded-2xl w-fit">{row.studentId ?? "-"}</p>
+                                                        <p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">{row.studentGroup ?? "-"}</p>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </td>
                                         <td className="px-4 py-2 border max-w-[200px]">
                                             <p className="font-bold">{row.district ?? "-"}</p>
