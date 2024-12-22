@@ -2,7 +2,7 @@
 
 import { getJudgeEventData } from "@/app/_util/data";
 import { auth } from "@/app/_util/initApp";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 
@@ -13,6 +13,9 @@ export default function GroupEventLeaderboardPage() {
     const [eventName, setEventName] = useState(null);
     const [eventMetadata, setEventMetadata] = useState(null);
     const [groups, setGroups] = useState(null);
+
+    const searchParams = useSearchParams();
+    const _eventName = decodeURIComponent(searchParams.get('event') ?? "");
 
     useEffect(() => {
         if (!secureLocalStorage.getItem('user') || !secureLocalStorage.getItem('event')) {

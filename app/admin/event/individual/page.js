@@ -2,18 +2,19 @@
 
 import { getJudgeEventData } from "@/app/_util/data";
 import { auth } from "@/app/_util/initApp";
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 
 export default function EventLeaderboardIndiPage() {
     const router = useRouter();
-
+    const [eventName, setEventName] = useState('');
     const [user, setUser] = useState(null);
-    const [eventName, setEventName] = useState(null);
     const [eventMetadata, setEventMetadata] = useState(null);
     const [participants, setParticipants] = useState(null);
     const [filteredParticipants, setFilteredParticipants] = useState(null);
+    const searchParams = useSearchParams();
+    const _eventName = decodeURIComponent(searchParams.get('event') ?? "");
 
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -25,7 +26,7 @@ export default function EventLeaderboardIndiPage() {
         const user = JSON.parse(secureLocalStorage.getItem('user'));
         const ex = JSON.parse(secureLocalStorage.getItem('event'));
         const _eventName = ex.name;
-        setEventName(ex.name);
+        setEventName(_eventName);
 
         if (user.role !== 'admin' || !_eventName) {
             router.push('/');
@@ -90,9 +91,9 @@ export default function EventLeaderboardIndiPage() {
                 setFilteredParticipants(_data[0]);
             });
         }
-    }, [router, eventName]);
+    }, [router, _eventName]);
 
-    return eventName && user && eventMetadata && participants && filteredParticipants ? (
+    return _eventName && user && eventMetadata && participants && filteredParticipants ? (
         <>
             <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
                 <div className="rounded-2xl p-4 m-2 bg-white border overflow-x-auto justify-between flex flex-row">

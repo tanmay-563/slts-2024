@@ -183,7 +183,7 @@ export default function ManageEvents() {
                                                 className="bg-[#f7ffce] text-[#2c350b] font-bold px-4 py-1 rounded-xl"
                                                 onClick={() => {
                                                     secureLocalStorage.setItem('event', JSON.stringify(event));
-                                                    router.push(`/admin/event/${event.name.includes("GROUP") ? "group" : "individual"}`);
+                                                    router.push(`/admin/event/${event.name.includes("GROUP") ? "group" : "individual"}?event=${encodeURIComponent(event.name)}`);
                                                     // console.log(event)
                                                 }}
                                             >
