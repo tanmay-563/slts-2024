@@ -140,18 +140,6 @@ export default function JudgePage() {
         }
     };
 
-    const closeDialog = () => {
-        setStudentId("");
-        setGroupNumber("");
-        setDob("");
-        setGender("");
-        setStudentName("");
-        setReason("");
-        setToRemoveStudentId("");
-        setIsOpen(false);
-    }
-
-
     useEffect(() => {
         if (participants) {
             setFilteredParticipants(
@@ -188,8 +176,32 @@ export default function JudgePage() {
                 });
                 setScoreMode(_scoreMode);
                 setEventMetadata(_data[1]);
-                setParticipants(_data[0]);
-                setFilteredParticipants(_data[0]);
+
+                let _participants = _data[0];
+                // Sort paricipants based on registeredEvents.length.
+                // If a participant is in a group event, they should be evaluated first.
+                _participants.sort((a, b) => {
+                    if (a.registeredEvents.some((x) => x.includes("GROUP")) && !b.registeredEvents.some((x) => x.includes("GROUP"))) {
+                        return -1;
+                    }
+
+                    if (!a.registeredEvents.some((x) => x.includes("GROUP")) && b.registeredEvents.some((x) => x.includes("GROUP"))) {
+                        return 1;
+                    }
+
+                    if (a.registeredEvents.length > b.registeredEvents.length) {
+                        return -1;
+                    }
+
+                    if (a.registeredEvents.length < b.registeredEvents.length) {
+                        return 1
+                    }
+
+                    return 0;
+                });
+
+                setParticipants(_participants);
+                setFilteredParticipants(_participants);
             });
         }
     }, [router]);
@@ -325,7 +337,15 @@ export default function JudgePage() {
                                                 <h2 className="text-xl font-bold">
                                                     {participant.studentId}
                                                 </h2>
-                                                <p className="text-xs">
+                                                <p className="text-sm">
+                                                    Participating in <span className="font-bold">{participant.registeredEvents.length}</span> event{participant.registeredEvents.length > 1 ? 's' : ''}.
+                                                </p>
+                                                {participant.registeredEvents.some((x) => x.includes("GROUP")) && (
+                                                    <p className="text-xs">
+                                                        Also in a group event. Please evaluate first.
+                                                    </p>
+                                                )}
+                                                <p className="text-xs text-gray-700">
                                                     {participant.gender ?? "-"} -{" "}
                                                     {participant.dateOfBirth ?? "-"}
                                                 </p>
