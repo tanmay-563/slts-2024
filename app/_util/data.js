@@ -7,6 +7,7 @@ import {
   where,
   updateDoc,
   Timestamp,
+  deleteField,
 } from "firebase/firestore";
 import { auth, db } from "@/app/_util/initApp";
 
@@ -448,4 +449,118 @@ export const removeSubstitute = async (eventName, studentId) => {
     console.error(error);
     return "Some error occured";
   }
-} 
+}
+
+export const markEntry = async (studentId) => {
+  await updateDoc(doc(db, "registrationData", studentId), {
+    entryMarked: true,
+    entryTimeStamp: Timestamp.now(),
+  });
+  return true;
+}
+
+export const unmarkEntry = async (studentId) => {
+  await updateDoc(doc(db, "registrationData", studentId), {
+    entryMarked: false,
+    entryTimeStamp: deleteField(),
+  });
+  return true;
+}
+
+export const submitComment = async (studentId, comment) => {
+  await updateDoc(doc(db, "registrationData", studentId), {
+    entryComment: comment,
+    entryCommentTimeStamp: Timestamp.now(),
+  });
+  return true;
+}
+
+export const removeComment = async (studentId) => {
+  await updateDoc(doc(db, "registrationData", studentId), {
+    entryComment: deleteField(),
+    entryCommentTimeStamp: deleteField(),
+  });
+  return true;
+}
+
+export const getLiveData = async () => {
+  const registrationDataCollectionRef = query(collection(db, "registrationData"), where("entryMarked", "==", true));
+  const querySnapshot = await getDocs(registrationDataCollectionRef);
+  const data = [];
+  querySnapshot.forEach((doc) => {
+    data.push(doc.data());
+  });
+
+  if (data.length == 0) {
+    return [[], [], [], [], [], [], [], []];
+  }
+
+  data.forEach((row) => {
+    for (const key in row) {
+      if (typeof row[key] === "number" && isNaN(row[key])) {
+        row[key] = null;
+      }
+    }
+  });
+
+  data.sort((a, b) => {
+    if (a.district < b.district) {
+      return -1;
+    }
+    if (a.district > b.district) {
+      return 1;
+    }
+    return 0;
+  });
+
+  // Collect unique district names, event names, group names.
+  const districtSet = new Set();
+  const eventNameSet = new Set();
+  const groupNameSet = new Set();
+  const modeOfTravelSet = new Set();
+  const modeOfTravelForDropSet = new Set();
+  const checkInDateSet = new Set();
+  const checkOutDateSet = new Set();
+
+  data.forEach((row) => {
+    districtSet.add(row.district);
+    row.registeredEvents.forEach((event) => {
+      eventNameSet.add(event);
+    });
+    groupNameSet.add(row.studentGroup);
+
+    if (row.modeOfTravel != "" && row.modeOfTravel != null) {
+      modeOfTravelSet.add(row.modeOfTravel);
+    }
+
+    if (row.modeOfTravelForDrop != "" && row.modeOfTravelForDrop != null) {
+      modeOfTravelForDropSet.add(row.modeOfTravelForDrop);
+    }
+
+    if (row.checkInDate != "" && row.checkInDate != null) {
+      checkInDateSet.add(row.checkInDate);
+    }
+
+    if (row.checkOutDate != "" && row.checkOutDate != null) {
+      checkOutDateSet.add(row.checkOutDate);
+    }
+  });
+
+  const checkInDate = Array.from(checkInDateSet).sort(
+    (a, b) => new Date(a) - new Date(b)
+  );
+  const checkOutDate = Array.from(checkOutDateSet).sort(
+    (a, b) => new Date(a) - new Date(b)
+  );
+
+  return [
+    data,
+    Array.from(districtSet),
+    Array.from(eventNameSet),
+    Array.from(groupNameSet),
+    Array.from(modeOfTravelSet),
+    Array.from(modeOfTravelForDropSet),
+    checkInDate,
+    checkOutDate,
+  ];
+}
