@@ -39,7 +39,39 @@ export default function JudgeGroupPage() {
           router.push("/");
         }
 
-        setParticipants(_data[0]);
+        let _participants = _data[0];
+
+        // Transform the data to an array of objects, 
+        // where each object represents a district and the number of participants with multiple registered events.
+        let districtData = Object.entries(_participants)
+          .map(([district, participants]) => ({
+            district: district,
+            numParticipantsWithMultipleEvents: participants.filter(
+              (participant) => participant.registeredEvents.length > 1
+            ).length,
+          }));
+
+        // Sort the districts based on the number of participants with multiple events in descending order.
+        districtData.sort((a, b) => b.numParticipantsWithMultipleEvents - a.numParticipantsWithMultipleEvents);
+
+        // Create a new object to store the participants, where the districts are sorted based on the number of participants with multiple events.
+        let sortedParticipants = {};
+        districtData.forEach((districtData) => {
+          _participants[districtData.district].sort((a, b) => {
+            if (a.registeredEvents.length > b.registeredEvents.length) {
+              return -1;
+            }
+
+            if (a.registeredEvents.length < b.registeredEvents.length) {
+              return 1
+            }
+
+            return 0;
+          })
+          sortedParticipants[districtData.district] = _participants[districtData.district];
+        });
+
+        setParticipants(sortedParticipants);
         setEventMetadata(_data[1]);
       });
     }
@@ -148,6 +180,9 @@ export default function JudgeGroupPage() {
                               <h2 className="text-xl font-bold">
                                 {participant.studentId}
                               </h2>
+                              <p className="text-sm">
+                                Participating in <span className="font-bold">{participant.registeredEvents.length}</span> event{participant.registeredEvents.length > 1 ? 's' : ''}.
+                              </p>
                               <p className="text-xs">
                                 {participant.gender ?? "-"} -{" "}
                                 {participant.dateOfBirth ?? "-"}
