@@ -7,6 +7,7 @@ import {
   where,
   updateDoc,
   Timestamp,
+  deleteField,
 } from "firebase/firestore";
 import { auth, db } from "@/app/_util/initApp";
 
@@ -448,4 +449,36 @@ export const removeSubstitute = async (eventName, studentId) => {
     console.error(error);
     return "Some error occured";
   }
-} 
+}
+
+export const markEntry = async (studentId) => {
+  await updateDoc(doc(db, "registrationData", studentId), {
+    entryMarked: true,
+    entryTimeStamp: Timestamp.now(),
+  });
+  return true;
+}
+
+export const unmarkEntry = async (studentId) => {
+  await updateDoc(doc(db, "registrationData", studentId), {
+    entryMarked: false,
+    entryTimeStamp: deleteField(),
+  });
+  return true;
+}
+
+export const submitComment = async (studentId, comment) => {
+  await updateDoc(doc(db, "registrationData", studentId), {
+    entryComment: comment,
+    entryCommentTimeStamp: Timestamp.now(),
+  });
+  return true;
+}
+
+export const removeComment = async (studentId) => {
+  await updateDoc(doc(db, "registrationData", studentId), {
+    entryComment: deleteField(),
+    entryCommentTimeStamp: deleteField(),
+  });
+  return true;
+}
