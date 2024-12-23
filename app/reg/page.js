@@ -67,11 +67,10 @@ export default function AdminDashboard() {
     const [editLoading, setEditLoading] = useState(false);
 
     useEffect(() => {
-        if (!secureLocalStorage.getItem('user')) {
-            router.push('/');
+        const user = {
+            name: "Registration Desk",
+            email: "regdesk@slts.cbe"
         }
-
-        const user = JSON.parse(secureLocalStorage.getItem('user'));
         setUser(user);
     }, [router]);
 

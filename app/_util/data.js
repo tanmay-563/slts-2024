@@ -8,6 +8,7 @@ import {
   updateDoc,
   Timestamp,
   deleteField,
+  or,
 } from "firebase/firestore";
 import { auth, db } from "@/app/_util/initApp";
 
@@ -484,7 +485,13 @@ export const removeComment = async (studentId) => {
 }
 
 export const getLiveData = async () => {
-  const registrationDataCollectionRef = query(collection(db, "registrationData"), where("entryMarked", "==", true));
+  const registrationDataCollectionRef = query(
+    collection(db, "registrationData"),
+    or(
+      where("entryMarked", "==", true),
+      where("entryComment", "!=", null)
+    )
+  );
   const querySnapshot = await getDocs(registrationDataCollectionRef);
   const data = [];
   querySnapshot.forEach((doc) => {
