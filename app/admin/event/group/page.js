@@ -15,7 +15,6 @@ export default function GroupEventLeaderboardPage() {
     const [groups, setGroups] = useState(null);
 
     const searchParams = useSearchParams();
-    const _eventName = decodeURIComponent(searchParams.get('event') ?? "");
 
     useEffect(() => {
         if (!secureLocalStorage.getItem('user') || !secureLocalStorage.getItem('event')) {
@@ -23,9 +22,8 @@ export default function GroupEventLeaderboardPage() {
         }
 
         const user = JSON.parse(secureLocalStorage.getItem('user'));
-        const ex = JSON.parse(secureLocalStorage.getItem('event'));
-        const _eventName = ex.name;
-        setEventName(ex.name);
+        const _eventName = decodeURIComponent(searchParams.get('event') ?? "");
+        setEventName(_eventName);
 
         if (user.role !== 'admin' || !_eventName) {
             router.push('/');
@@ -107,9 +105,13 @@ export default function GroupEventLeaderboardPage() {
 
                 setEventMetadata(_data[1]);
                 setGroups(groups);
-            });
+            }).catch((err) => {
+                console.error(err);
+                alert("Invalid Link");
+                router.push('/admin/event')
+            })
         }
-    }, [router, eventName]);
+    }, [router, eventName, searchParams]);
 
     return eventName && user && eventMetadata && groups ? (
         <>

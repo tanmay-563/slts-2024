@@ -14,18 +14,16 @@ export default function EventLeaderboardIndiPage() {
     const [participants, setParticipants] = useState(null);
     const [filteredParticipants, setFilteredParticipants] = useState(null);
     const searchParams = useSearchParams();
-    const _eventName = decodeURIComponent(searchParams.get('event') ?? "");
 
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
-        if (!secureLocalStorage.getItem('user') || !secureLocalStorage.getItem('event')) {
+        if (!secureLocalStorage.getItem('user')) {
             router.push('/');
         }
 
         const user = JSON.parse(secureLocalStorage.getItem('user'));
-        const ex = JSON.parse(secureLocalStorage.getItem('event'));
-        const _eventName = ex.name;
+        const _eventName = decodeURIComponent(searchParams.get('event') ?? "");
         setEventName(_eventName);
 
         if (user.role !== 'admin' || !_eventName) {
@@ -89,11 +87,16 @@ export default function EventLeaderboardIndiPage() {
                 setEventMetadata(_data[1]);
                 setParticipants(_data[0]);
                 setFilteredParticipants(_data[0]);
-            });
+            }).catch((err) => {
+                console.error(err);
+                alert("Invalid Link");
+                router.push('/admin/event')
+            })
         }
-    }, [router, _eventName]);
 
-    return _eventName && user && eventMetadata && participants && filteredParticipants ? (
+    }, [router, searchParams]);
+
+    return eventName && user && eventMetadata && participants && filteredParticipants ? (
         <>
             <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
                 <div className="rounded-2xl p-4 m-2 bg-white border overflow-x-auto justify-between flex flex-row">
