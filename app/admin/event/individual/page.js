@@ -2,30 +2,29 @@
 
 import { getJudgeEventData } from "@/app/_util/data";
 import { auth } from "@/app/_util/initApp";
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 
 export default function EventLeaderboardIndiPage() {
     const router = useRouter();
-
+    const [eventName, setEventName] = useState('');
     const [user, setUser] = useState(null);
-    const [eventName, setEventName] = useState(null);
     const [eventMetadata, setEventMetadata] = useState(null);
     const [participants, setParticipants] = useState(null);
     const [filteredParticipants, setFilteredParticipants] = useState(null);
+    const searchParams = useSearchParams();
 
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
-        if (!secureLocalStorage.getItem('user') || !secureLocalStorage.getItem('event')) {
+        if (!secureLocalStorage.getItem('user')) {
             router.push('/');
         }
 
         const user = JSON.parse(secureLocalStorage.getItem('user'));
-        const ex = JSON.parse(secureLocalStorage.getItem('event'));
-        const _eventName = ex.name;
-        setEventName(ex.name);
+        const _eventName = decodeURIComponent(searchParams.get('event') ?? "");
+        setEventName(_eventName);
 
         if (user.role !== 'admin' || !_eventName) {
             router.push('/');
@@ -88,9 +87,14 @@ export default function EventLeaderboardIndiPage() {
                 setEventMetadata(_data[1]);
                 setParticipants(_data[0]);
                 setFilteredParticipants(_data[0]);
-            });
+            }).catch((err) => {
+                console.error(err);
+                alert("Invalid Link");
+                router.push('/admin/event')
+            })
         }
-    }, [router, eventName]);
+
+    }, [router, searchParams]);
 
     return eventName && user && eventMetadata && participants && filteredParticipants ? (
         <>

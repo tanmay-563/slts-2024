@@ -179,16 +179,12 @@ export default function ManageEvents() {
                                             >
                                                 Update Criteria
                                             </button>
-                                            <button
-                                                className="bg-[#f7ffce] text-[#2c350b] font-bold px-4 py-1 rounded-xl"
-                                                onClick={() => {
-                                                    secureLocalStorage.setItem('event', JSON.stringify(event));
-                                                    router.push(`/admin/event/${event.name.includes("GROUP") ? "group" : "individual"}`);
-                                                    // console.log(event)
-                                                }}
+                                            <a
+                                                className="bg-[#f7ffce] text-[#2c350b] font-bold px-4 py-1 rounded-xl text-center decoration-none"
+                                                href={`/admin/event/${event.name.includes("GROUP") ? "group" : "individual"}?event=${encodeURIComponent(event.name)}`}
                                             >
                                                 View Leaderboard
-                                            </button>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
