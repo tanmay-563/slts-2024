@@ -487,15 +487,33 @@ export const removeComment = async (studentId) => {
 export const getLiveData = async () => {
   const registrationDataCollectionRef = query(
     collection(db, "registrationData"),
-    or(
-      where("entryMarked", "==", true),
-      where("entryComment", "!=", null)
-    )
+    where("entryMarked", "==", true),
   );
   const querySnapshot = await getDocs(registrationDataCollectionRef);
-  const data = [];
+  let data_1 = [];
   querySnapshot.forEach((doc) => {
-    data.push(doc.data());
+    data_1.push(doc.data());
+  });
+
+  const dataTwoRef = query(
+    collection(db, "registrationData"),
+    where("entryComment", '!=', ""),
+  );
+  const querySnapshotTwo = await getDocs(dataTwoRef);
+  let dataTwo = [];
+  querySnapshotTwo.forEach((doc) => {
+    dataTwo.push(doc.data());
+  });
+  let data = [];
+  let seen = {};
+  data_1.forEach((row) => {
+    seen[row.studentId] = true;
+    data.push(row);
+  });
+  dataTwo.forEach((row) => {
+    if (!seen[row.studentId]) {
+      data.push(row);
+    }
   });
 
   if (data.length == 0) {
