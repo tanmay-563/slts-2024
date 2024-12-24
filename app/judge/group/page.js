@@ -341,6 +341,30 @@ export default function JudgeGroupPage() {
                             disabled={isSaving}
                             onClick={() => {
                               setIsSaving(true);
+
+                              // Check if marks are within the range.
+                              for (let i = 0; i < scoreBuffer.length; i++) {
+                                // Check if the marks are present and within the range.
+                                if (scoreBuffer[i][1] == "") {
+                                  alert(
+                                    `Marks for ${scoreBuffer[i][0]} is not entered.`
+                                  );
+                                  setIsSaving(false);
+                                  return;
+                                }
+
+                                if (
+                                  scoreBuffer[i][1] < 0 ||
+                                  scoreBuffer[i][1] > eventMetadata.evalCriteria[scoreBuffer[i][0]]
+                                ) {
+                                  alert(
+                                    `Marks for ${scoreBuffer[i][0]} should be between 0 and ${eventMetadata.evalCriteria[scoreBuffer[i][0]]}.`
+                                  );
+                                  setIsSaving(false);
+                                  return;
+                                }
+                              }
+
                               markGroupScore(
                                 val.map((p) => p.studentId),
                                 eventMetadata.name,
