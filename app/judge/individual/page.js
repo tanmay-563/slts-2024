@@ -504,6 +504,12 @@ export default function JudgePage() {
                                                             min={0}
                                                             value={val}
                                                             onChange={(e) => {
+                                                                if (e.target.value < 0) {
+                                                                    e.target.value = 0;
+                                                                } else if (e.target.value > eventMetadata.evalCriteria[key]) {
+                                                                    e.target.value = eventMetadata.evalCriteria[key];
+                                                                }
+
                                                                 const newBuffer = [...scoreBuffer];
                                                                 newBuffer[index][1] = e.target.value;
                                                                 setScoreBuffer(newBuffer);
@@ -556,6 +562,30 @@ export default function JudgePage() {
                                                         disabled={isSaving}
                                                         onClick={() => {
                                                             setIsSaving(true);
+
+                                                            // Check if the marks are within the range.
+                                                            for (let i = 0; i < scoreBuffer.length; i++) {
+                                                                // Check if marks are present.
+                                                                if (scoreBuffer[i][1] == "") {
+                                                                    alert(
+                                                                        `Please provide marks for ${scoreBuffer[i][0]}.`
+                                                                    );
+                                                                    setIsSaving(false);
+                                                                    return;
+                                                                }
+
+                                                                if (
+                                                                    scoreBuffer[i][1] < 0 ||
+                                                                    scoreBuffer[i][1] > eventMetadata.evalCriteria[scoreBuffer[i][0]]
+                                                                ) {
+                                                                    alert(
+                                                                        `Marks for ${scoreBuffer[i][0]} should be between 0 and ${eventMetadata.evalCriteria[scoreBuffer[i][0]]}.`
+                                                                    );
+                                                                    setIsSaving(false);
+                                                                    return;
+                                                                }
+                                                            }
+
                                                             markScore(
                                                                 participant.studentId,
                                                                 eventMetadata.name,

@@ -284,8 +284,8 @@ export default function JudgeGroupPage() {
                               onChange={(e) => {
                                 if (e.target.value < 0) {
                                   e.target.value = 0;
-                                } else if (e.target.value > 10) {
-                                  e.target.value = 10;
+                                } else if (e.target.value > eventMetadata.evalCriteria[key]) {
+                                  e.target.value = eventMetadata.evalCriteria[key];
                                 }
                                 const newBuffer = [...scoreBuffer];
                                 newBuffer[index][1] = e.target.value;
@@ -347,7 +347,7 @@ export default function JudgeGroupPage() {
                                 // Check if the marks are present and within the range.
                                 if (scoreBuffer[i][1] == "") {
                                   alert(
-                                    `Marks for ${scoreBuffer[i][0]} is not entered.`
+                                    `Please provide marks for ${scoreBuffer[i][0]}.`
                                   );
                                   setIsSaving(false);
                                   return;
