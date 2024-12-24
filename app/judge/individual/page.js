@@ -574,6 +574,14 @@ export default function JudgePage() {
                                                                     return;
                                                                 }
 
+                                                                if (isNaN(scoreBuffer[i][1])) {
+                                                                    alert(
+                                                                        `Marks for ${scoreBuffer[i][0]} should be a number.`
+                                                                    );
+                                                                    setIsSaving(false);
+                                                                    return;
+                                                                }
+
                                                                 if (
                                                                     scoreBuffer[i][1] < 0 ||
                                                                     scoreBuffer[i][1] > eventMetadata.evalCriteria[scoreBuffer[i][0]]
