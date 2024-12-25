@@ -20,7 +20,9 @@ Firebase powered web app to view and analyze registrations of SLTS-2024.
 - [x] Admin can update the marking criteria of events.
 - [x] Dynamic routes were optimized for cost through caching.
 - [x] Admin dashboard, filter by needsPickup, needsDrop, arrivalDate, departureDate, checkInDate, checkOutDate.
-- [x] Judge can grade participants for group events. 
+- [x] Judge can grade participants for group events.
+- [x] Judges can access curated-leaderboard.
+- [x] Participants sorted in the judge view list to ensure that any student participating in 2 events gets more priority as the judges might be waiting for the student in other event. 
  
 
 `Ashwin Narayanan S`
