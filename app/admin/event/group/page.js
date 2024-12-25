@@ -17,7 +17,7 @@ export default function GroupEventLeaderboardPage() {
     const searchParams = useSearchParams();
 
     useEffect(() => {
-        if (!secureLocalStorage.getItem('user') || !secureLocalStorage.getItem('event')) {
+        if (!secureLocalStorage.getItem('user')) {
             router.push('/');
         }
 
