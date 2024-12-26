@@ -31,7 +31,7 @@ export const getRegistrationData = async () => {
   //     return null;
   // }
 
-  const registrationDataCollectionRef = collection(db, "registrationData");
+  const registrationDataCollectionRef = collection(db, "regData");
   const querySnapshot = await getDocs(registrationDataCollectionRef);
   const data = [];
   querySnapshot.forEach((doc) => {
@@ -114,7 +114,7 @@ export const getDistrictData = async (district) => {
   // }
 
   const registrationDataCollectionRef = query(
-    collection(db, "registrationData"),
+    collection(db, "regData"),
     where("district", "==", district)
   );
   const querySnapshot = await getDocs(registrationDataCollectionRef);
@@ -233,7 +233,7 @@ export const getJudgeGroupEventData = async (eventName) => {
   const eventMetaData = eventDoc.data();
 
   const participantRef = query(
-    collection(db, "registrationData"),
+    collection(db, "regData"),
     where("registeredEvents", "array-contains", eventMetaData.name)
   );
   const participantSnapshot = await getDocs(participantRef);
@@ -271,7 +271,7 @@ export const getJudgeEventData = async (eventName) => {
   const eventMetaData = eventDoc.data();
 
   const participantRef = query(
-    collection(db, "registrationData"),
+    collection(db, "regData"),
     where("registeredEvents", "array-contains", eventMetaData.name)
   );
   const participantSnapshot = await getDocs(participantRef);
@@ -314,7 +314,7 @@ export const markScore = async (
     score[key] = parseFloat(score[key]);
   });
 
-  await updateDoc(doc(db, "registrationData", studentId), {
+  await updateDoc(doc(db, "regData", studentId), {
     [`score.${eventName}.${judgeId}`]: score,
     [`comment.${eventName}.${judgeId}`]: comment == "" ? "-" : comment ?? "-",
   });
@@ -335,7 +335,7 @@ export const markGroupScore = async (
   });
 
   for (const studentId of studentIds) {
-    await updateDoc(doc(db, "registrationData", studentId), {
+    await updateDoc(doc(db, "regData", studentId), {
       [`score.${eventName}.${judgeId}`]: score,
       [`comment.${eventName}.${judgeId}`]: comment == "" ? "-" : comment ?? "-",
     });
@@ -353,7 +353,7 @@ export const submitCorrectionRequest = async (
   correctedByName,
   correctedByPhoneNumber,
 ) => {
-  await updateDoc(doc(db, "registrationData", studentId), {
+  await updateDoc(doc(db, "regData", studentId), {
     [`correctionRequest.${type}`]: {
       correctionMessage: correctionMessage,
       correctedByName: correctedByName,
@@ -368,7 +368,7 @@ export const submitCorrectionRequest = async (
 
 export const getStudentData = async (studentId) => {
   studentId = studentId.toString().toUpperCase().trim();
-  const studentDoc = await getDoc(doc(db, "registrationData", studentId));
+  const studentDoc = await getDoc(doc(db, "regData", studentId));
   if (!studentDoc.exists()) {
     return null;
   }
@@ -377,7 +377,7 @@ export const getStudentData = async (studentId) => {
 
 export const substituteEvent = async (eventName, oldStudentId, newStudentId, name, group, gender, dob, reason, judgeId) => {
   try {
-    const oldStudentDoc = await getDoc(doc(db, "registrationData", oldStudentId));
+    const oldStudentDoc = await getDoc(doc(db, "regData", oldStudentId));
     if (!oldStudentDoc.exists()) {
       return "Old Student not found";
     }
@@ -388,7 +388,7 @@ export const substituteEvent = async (eventName, oldStudentId, newStudentId, nam
     }
 
     if (newStudentId != "") {
-      const newStudentDoc = await getDoc(doc(db, "registrationData", newStudentId));
+      const newStudentDoc = await getDoc(doc(db, "regData", newStudentId));
       if (!newStudentDoc.exists()) {
         return "New Student not found";
       }
@@ -402,7 +402,7 @@ export const substituteEvent = async (eventName, oldStudentId, newStudentId, nam
         return "District of Old and New Student should be same";
       }
 
-      await updateDoc(doc(db, "registrationData", oldStudentId), {
+      await updateDoc(doc(db, "regData", oldStudentId), {
         [`substitute.${eventName}`]: {
           newStudentId: newStudentData.studentId,
           newStudentData: newStudentData,
@@ -418,7 +418,7 @@ export const substituteEvent = async (eventName, oldStudentId, newStudentId, nam
 
       return "";
     } else {
-      await updateDoc(doc(db, "registrationData", oldStudentId), {
+      await updateDoc(doc(db, "regData", oldStudentId), {
         [`substitute.${eventName}`]: {
           newStudentId: null,
           newStudentName: name,
@@ -441,7 +441,7 @@ export const substituteEvent = async (eventName, oldStudentId, newStudentId, nam
 
 export const removeSubstitute = async (eventName, studentId) => {
   try {
-    await updateDoc(doc(db, "registrationData", studentId), {
+    await updateDoc(doc(db, "regData", studentId), {
       [`substitute.${eventName}`]: null,
     });
 
@@ -453,7 +453,7 @@ export const removeSubstitute = async (eventName, studentId) => {
 }
 
 export const markEntry = async (studentId) => {
-  await updateDoc(doc(db, "registrationData", studentId), {
+  await updateDoc(doc(db, "regData", studentId), {
     entryMarked: true,
     entryTimeStamp: Timestamp.now(),
   });
@@ -461,7 +461,7 @@ export const markEntry = async (studentId) => {
 }
 
 export const unmarkEntry = async (studentId) => {
-  await updateDoc(doc(db, "registrationData", studentId), {
+  await updateDoc(doc(db, "regData", studentId), {
     entryMarked: false,
     entryTimeStamp: deleteField(),
   });
@@ -469,7 +469,7 @@ export const unmarkEntry = async (studentId) => {
 }
 
 export const submitComment = async (studentId, comment) => {
-  await updateDoc(doc(db, "registrationData", studentId), {
+  await updateDoc(doc(db, "regData", studentId), {
     entryComment: comment,
     entryCommentTimeStamp: Timestamp.now(),
   });
@@ -477,7 +477,7 @@ export const submitComment = async (studentId, comment) => {
 }
 
 export const removeComment = async (studentId) => {
-  await updateDoc(doc(db, "registrationData", studentId), {
+  await updateDoc(doc(db, "regData", studentId), {
     entryComment: deleteField(),
     entryCommentTimeStamp: deleteField(),
   });
@@ -486,7 +486,7 @@ export const removeComment = async (studentId) => {
 
 export const getLiveData = async () => {
   const registrationDataCollectionRef = query(
-    collection(db, "registrationData"),
+    collection(db, "regData"),
     where("entryMarked", "==", true),
   );
   const querySnapshot = await getDocs(registrationDataCollectionRef);
@@ -496,7 +496,7 @@ export const getLiveData = async () => {
   });
 
   const dataTwoRef = query(
-    collection(db, "registrationData"),
+    collection(db, "regData"),
     where("entryComment", '!=', ""),
   );
   const querySnapshotTwo = await getDocs(dataTwoRef);
