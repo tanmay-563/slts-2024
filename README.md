@@ -37,24 +37,31 @@ Laptop View for Dashboard Page
 
 ![dashboard-laptop-mockup](https://github.com/user-attachments/assets/e7803f44-d240-475f-ae2a-e8b5982e63dc)
 
-## Event Page
+## Events Dashboard
 
 ![slts-events](https://github.com/user-attachments/assets/134cab0a-3809-4e70-9ba8-26fa0f1506a7)
 
-### Event- Update Criteria Page
+### Event - Update Criteria
 
 ![slts-events-updateCriteria](https://github.com/user-attachments/assets/02e1ab9e-55b7-4220-b477-7e50ec2f434a)
 
-### Event- Leaderboard Page
+### Event - Leaderboard
 
 ![slts-events-leaderboard](https://github.com/user-attachments/assets/7bd964e2-0060-48bd-9b57-c92b10d9e290)
 
-## Accomodation Page
+## Accomodations Dashboard
 
 ![slts-accommodation](https://github.com/user-attachments/assets/89505ed6-605c-41dc-90e3-126529fb93e6)
 
-## Live Entry Page
+## Live Entry Dashboard
 
+### Mark Entry/Add comments from Registration Desk
+
+![image](https://github.com/user-attachments/assets/e0c4582c-7e57-4178-91b4-8deed011c664)
+![image](https://github.com/user-attachments/assets/1ec76010-95e6-4149-8fe6-9d0d95cca27d)
+![image](https://github.com/user-attachments/assets/d8a7ae80-a617-420d-b09d-8cc579fe25ed)
+
+### Registration Entries/Comments View Live
 ![slts-live](https://github.com/user-attachments/assets/7a75d378-81c5-4f65-9da9-a3ef400426b5)
 
 # Developers
