@@ -42,6 +42,7 @@ Laptop View for Dashboard Page
 
 # Screenshots
 Event Page
+
 ![slts-events](https://github.com/user-attachments/assets/134cab0a-3809-4e70-9ba8-26fa0f1506a7)
 
 Event- Update Criteria Page
