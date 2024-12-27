@@ -52,15 +52,17 @@ Laptop View for Dashboard Page
 
 ![slts-accommodation](https://github.com/user-attachments/assets/89505ed6-605c-41dc-90e3-126529fb93e6)
 
-## Live Entry Dashboard
+## Registration Desk
+
+### Select District
+![image](https://github.com/user-attachments/assets/3310b321-e6c1-444a-b874-976d28419a8f)
 
 ### Mark Entry/Add comments from Registration Desk
+<img width="1407" alt="Screenshot 2024-12-27 at 13 17 33" src="https://github.com/user-attachments/assets/0194f702-1a1d-4a83-bc87-5909e193ec6e" />
 
-![image](https://github.com/user-attachments/assets/e0c4582c-7e57-4178-91b4-8deed011c664)
-![image](https://github.com/user-attachments/assets/1ec76010-95e6-4149-8fe6-9d0d95cca27d)
 ![image](https://github.com/user-attachments/assets/d8a7ae80-a617-420d-b09d-8cc579fe25ed)
 
-### Registration Entries/Comments View Live
+## Registration Entries/Comments View Live
 ![slts-live](https://github.com/user-attachments/assets/7a75d378-81c5-4f65-9da9-a3ef400426b5)
 
 # Developers
