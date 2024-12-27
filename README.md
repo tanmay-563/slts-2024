@@ -5,7 +5,6 @@
 
 Firebase powered app to view, analyze registrations and judge(grade) participants for different events of SLTS-2024.
 
-
 - [x] Firebase Auth with email password.
 - [x] Dashboard for district wise DEC's and admin.
 - [x] Filter by group, event name, district. 
