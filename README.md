@@ -29,39 +29,40 @@ Firebase powered app to view, analyze registrations and judge participants for d
 # Mobile Mockups
 Mobile View for Judge-related Pages
 
-![image alt](https://github.com/Ashrockzzz2003/slts-2024/blob/b6f283ff63101d4d680ea32a731246c8c1e40e12/judge-phone-mockup.png)
+![judge-phone-mockup](https://github.com/user-attachments/assets/e050a12d-6678-4b5e-a824-56f25732fa22)
 
 Mobile View for Student Data Page
 
-![image alt](https://github.com/Ashrockzzz2003/slts-2024/blob/b6f283ff63101d4d680ea32a731246c8c1e40e12/data-phone-mockup.png)
+![data-phone-mockup](https://github.com/user-attachments/assets/87706b24-485c-4036-b63b-2212b4352961)
 
 # Laptop Mockups
 Laptop View for Dashboard Page
 
-![image alt](https://github.com/Ashrockzzz2003/slts-2024/blob/b6f283ff63101d4d680ea32a731246c8c1e40e12/dashboard-laptop-mockup.png)
+![dashboard-laptop-mockup](https://github.com/user-attachments/assets/e7803f44-d240-475f-ae2a-e8b5982e63dc)
 
 # Screenshots
 Event Page
-![image alt](https://github.com/Ashrockzzz2003/slts-2024/blob/b6f283ff63101d4d680ea32a731246c8c1e40e12/slts-events.png)
+![slts-events](https://github.com/user-attachments/assets/134cab0a-3809-4e70-9ba8-26fa0f1506a7)
 
 Event- Update Criteria Page
 
-![image alt](https://github.com/Ashrockzzz2003/slts-2024/blob/b6f283ff63101d4d680ea32a731246c8c1e40e12/slts-events-updateCriteria.png)
+![slts-events-updateCriteria](https://github.com/user-attachments/assets/02e1ab9e-55b7-4220-b477-7e50ec2f434a)
 
 Event- Leaderboard Page
 
-![image alt](https://github.com/Ashrockzzz2003/slts-2024/blob/b6f283ff63101d4d680ea32a731246c8c1e40e12/slts-events-leaderboard.png)
+![slts-events-leaderboard](https://github.com/user-attachments/assets/7bd964e2-0060-48bd-9b57-c92b10d9e290)
 
 Accomodation Page
 
-![image alt](https://github.com/Ashrockzzz2003/slts-2024/blob/b6f283ff63101d4d680ea32a731246c8c1e40e12/slts-accommodation.png)
+![slts-accommodation](https://github.com/user-attachments/assets/89505ed6-605c-41dc-90e3-126529fb93e6)
 
 Live Entry Page
 
-![image alt](https://github.com/Ashrockzzz2003/slts-2024/blob/b6f283ff63101d4d680ea32a731246c8c1e40e12/slts-live.png)
+![slts-live](https://github.com/user-attachments/assets/7a75d378-81c5-4f65-9da9-a3ef400426b5)
 
 # Developers
 `Ashwin Narayanan S`
+`Gokula Krishnan`
 `Vaibav V`
 `Hari S K`
 `Thilagan Iniyavan`
