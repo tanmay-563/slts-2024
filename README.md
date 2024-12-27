@@ -3,7 +3,7 @@
 
 # SLTS 2024
 
-Firebase powered app to view, analyze registrations and judge participants for different events of SLTS-2024.
+Firebase powered app to view, analyze registrations and judge(grade) participants for different events of SLTS-2024.
 
 
 - [x] Firebase Auth with email password.
