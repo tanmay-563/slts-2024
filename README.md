@@ -1,6 +1,9 @@
 > [!Important]
 > The web app is deployed at https://slts-8e29d.web.app
 
+> [!Note]
+> This web app was used by 70+ judges concurrently to judge over 750 participants across 36 events, with each it’s unique criteria to grade!
+
 # SLTS 2024
 
 Firebase powered app to view, analyze registrations and judge(grade) participants for different events of SLTS-2024.
@@ -24,7 +27,6 @@ Firebase powered app to view, analyze registrations and judge(grade) participant
 - [x] Participants sorted in the judge view list to ensure that any student participating in 2 events gets more priority as the judges might be waiting for the student in other event.
 - [x] On the day of actual event, registration desk can mark entry, report any corrections through corrections. Load optimized here by loading only one district data at a time as the participants are expected to arrive in a district-clustered manner.
 - [x] Accomodation details well formatted and accessible where data is grouped by arrival time, and district wise count inside each arrival time for precise logistics preparation. 
-
 
 ## Judging (a.k.a Grading)
 Mobile View for Judge-related Pages
