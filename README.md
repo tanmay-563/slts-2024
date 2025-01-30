@@ -67,6 +67,30 @@ Laptop View for Dashboard Page
 ## Registration Entries/Comments View Live
 ![slts-live](https://github.com/user-attachments/assets/7a75d378-81c5-4f65-9da9-a3ef400426b5)
 
+# Setup Development
+
+0. Fork the repo and clone the forked repo.
+1. Install the latest LTS version of Node.js from https://nodejs.org/en in your machine.
+2. Create a new project in [firebase](https://firebase.google.com) console with `Firestore, Email/Password Authentication, Web App` added.
+3. Create a `.env` file in the root directory of the project in the below format and enter proper values. The values will be available in firebase console settings of the web app created.
+
+   ```env
+   NEXT_PUBLIC_FIREBASE_API_KEY=""
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=""
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=""
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=""
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=""
+   NEXT_PUBLIC_APP_ID=""
+   ```
+4. In the root directory, run the below command to install dependencies.
+   ```sh
+   npm i
+   ```
+5. In the root directory, to run the app in dev mode, run the below command.
+   ```sh
+   npm run dev
+   ```
+
 # Developers
 `Ashwin Narayanan S`
 `Gokula Krishnan`
