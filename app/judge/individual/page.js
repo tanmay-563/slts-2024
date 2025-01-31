@@ -3,7 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
-import { getJudgeEventData, getStudentData, markScore, removeSubstitute, substituteEvent } from "@/app/_util/data";
+import {
+    getJudgeEventData,
+    getStudentData,
+    markScore,
+    removeSubstitute,
+    substituteEvent,
+} from "@/app/_util/data";
 import { auth } from "@/app/_util/initApp";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
@@ -57,13 +63,23 @@ export default function JudgePage() {
     };
 
     const handleSubmitSubstitution = () => {
-        if (studentId.toString().trim().toLowerCase() === toRemoveStudentId.toString().trim().toLowerCase()) {
-            alert("Student ID cannot be the same as the student to be removed.");
+        if (
+            studentId.toString().trim().toLowerCase() ===
+            toRemoveStudentId.toString().trim().toLowerCase()
+        ) {
+            alert(
+                "Student ID cannot be the same as the student to be removed.",
+            );
             return;
         }
 
         if (isNewSelected) {
-            if (studentName.trim() === "" || dob.trim() === "" || groupNumber.trim() === "" || gender.trim() === "") {
+            if (
+                studentName.trim() === "" ||
+                dob.trim() === "" ||
+                groupNumber.trim() === "" ||
+                gender.trim() === ""
+            ) {
                 alert("Please fill in all fields.");
                 return;
             }
@@ -90,53 +106,64 @@ export default function JudgePage() {
                 gender,
                 dob,
                 reason,
-                user.id
-            ).then((res) => {
-                if (res.toString().length > 0) {
-                    alert(res.toString());
-                } else {
-                    alert("Substitution successful.");
-                    window.location.reload()
-                }
-            }).catch((_) => {
-                alert("An error occurred. Please try again.");
-            }).finally(() => {
-                setIsLoading(false);
-            });
+                user.id,
+            )
+                .then((res) => {
+                    if (res.toString().length > 0) {
+                        alert(res.toString());
+                    } else {
+                        alert("Substitution successful.");
+                        window.location.reload();
+                    }
+                })
+                .catch((_) => {
+                    alert("An error occurred. Please try again.");
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
         } else {
             // Check if student exists
-            getStudentData(studentId).then((data) => {
-                if (data) {
-                    substituteEvent(
-                        eventMetadata.name,
-                        toRemoveStudentId,
-                        studentId,
-                        studentName,
-                        groupNumber,
-                        gender,
-                        dob,
-                        reason,
-                        user.id
-                    ).then((res) => {
-                        if (res.toString().length > 0) {
-                            alert(res.toString());
-                        } else {
-                            alert("Substitution successful.");
-                            window.location.reload()
-                        }
-                    }).catch((_) => {
-                        alert("An error occurred. Please try again.");
-                    }).finally(() => {
-                        setIsLoading(false);
-                    });
-                } else {
-                    alert("Student does not exist. Please check the ID again.");
-                }
-            }).catch((_) => {
-                alert("An error occurred. Please try again.");
-            }).finally(() => {
-                setIsLoading(false);
-            });
+            getStudentData(studentId)
+                .then((data) => {
+                    if (data) {
+                        substituteEvent(
+                            eventMetadata.name,
+                            toRemoveStudentId,
+                            studentId,
+                            studentName,
+                            groupNumber,
+                            gender,
+                            dob,
+                            reason,
+                            user.id,
+                        )
+                            .then((res) => {
+                                if (res.toString().length > 0) {
+                                    alert(res.toString());
+                                } else {
+                                    alert("Substitution successful.");
+                                    window.location.reload();
+                                }
+                            })
+                            .catch((_) => {
+                                alert("An error occurred. Please try again.");
+                            })
+                            .finally(() => {
+                                setIsLoading(false);
+                            });
+                    } else {
+                        alert(
+                            "Student does not exist. Please check the ID again.",
+                        );
+                    }
+                })
+                .catch((_) => {
+                    alert("An error occurred. Please try again.");
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
         }
     };
 
@@ -150,7 +177,7 @@ export default function JudgePage() {
                             .toLowerCase()
                             .includes(searchQuery.toLowerCase())
                     );
-                })
+                }),
             );
         }
     }, [searchQuery, participants]);
@@ -181,11 +208,17 @@ export default function JudgePage() {
                 // Sort paricipants based on registeredEvents.length.
                 // If a participant is in a group event, they should be evaluated first.
                 _participants.sort((a, b) => {
-                    if (a.registeredEvents.some((x) => x.includes("GROUP")) && !b.registeredEvents.some((x) => x.includes("GROUP"))) {
+                    if (
+                        a.registeredEvents.some((x) => x.includes("GROUP")) &&
+                        !b.registeredEvents.some((x) => x.includes("GROUP"))
+                    ) {
                         return -1;
                     }
 
-                    if (!a.registeredEvents.some((x) => x.includes("GROUP")) && b.registeredEvents.some((x) => x.includes("GROUP"))) {
+                    if (
+                        !a.registeredEvents.some((x) => x.includes("GROUP")) &&
+                        b.registeredEvents.some((x) => x.includes("GROUP"))
+                    ) {
                         return 1;
                     }
 
@@ -194,7 +227,7 @@ export default function JudgePage() {
                     }
 
                     if (a.registeredEvents.length < b.registeredEvents.length) {
-                        return 1
+                        return 1;
                     }
 
                     return 0;
@@ -211,10 +244,13 @@ export default function JudgePage() {
             <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
                 <div className="rounded-2xl p-4 m-2 bg-white border overflow-x-auto justify-between flex flex-row">
                     <div>
-                        <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
+                        <h1 className="text-2xl font-bold">
+                            Welcome, {user.name}
+                        </h1>
                         <p className="text-gray-700 mt-2">{user.email}</p>
                         <p className="text-gray-700">
-                            Judge for <span className="font-bold">{user.event}</span>
+                            Judge for{" "}
+                            <span className="font-bold">{user.event}</span>
                         </p>
                     </div>
                     <div>
@@ -236,21 +272,28 @@ export default function JudgePage() {
                 <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
                     <div className="rounded-2xl p-4 bg-white border overflow-x-auto">
                         <div className="flex flex-row justify-between">
-                            <h1 className="text-2xl font-bold">{eventMetadata.name}</h1>
+                            <h1 className="text-2xl font-bold">
+                                {eventMetadata.name}
+                            </h1>
                             <button
                                 className="bg-[#f7ffce] text-[#2c350b] font-bold px-4 py-1 rounded-xl"
                                 onClick={() => {
                                     //    secureLocalStorage.setItem("event", JSON.stringify(eventMetadata));
                                     router.push(
-                                        `/judge/${eventMetadata.name.includes("GROUP") ? "group/leaderboard" : "individual/leaderboard"
-                                        }?event=${encodeURIComponent(eventMetadata.name)}`
+                                        `/judge/${
+                                            eventMetadata.name.includes("GROUP")
+                                                ? "group/leaderboard"
+                                                : "individual/leaderboard"
+                                        }?event=${encodeURIComponent(eventMetadata.name)}`,
                                     );
                                 }}
                             >
                                 View Leaderboard
                             </button>
                         </div>
-                        <p className="text-md">{participants.length} Participants</p>
+                        <p className="text-md">
+                            {participants.length} Participants
+                        </p>
                         <div className="flex flex-row flex-wrap gap-1 mt-1">
                             {eventMetadata.group.map((group, index) => (
                                 <p
@@ -263,30 +306,41 @@ export default function JudgePage() {
                         </div>
 
                         {/* Evaluation Criteria */}
-                        <h2 className="text-xl font-bold mt-6">Evaluation Criteria</h2>
+                        <h2 className="text-xl font-bold mt-6">
+                            Evaluation Criteria
+                        </h2>
                         <table className="table-auto w-full">
                             <thead>
                                 <tr>
-                                    <th className="border px-4 py-2">Criteria</th>
-                                    <th className="border px-4 py-2">Max Marks</th>
+                                    <th className="border px-4 py-2">
+                                        Criteria
+                                    </th>
+                                    <th className="border px-4 py-2">
+                                        Max Marks
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {Object.entries(eventMetadata.evalCriteria).map(
                                     ([key, value], index) => (
                                         <tr key={index}>
-                                            <td className="border px-4 py-2">{key}</td>
-                                            <td className="border px-4 py-2">{value}</td>
+                                            <td className="border px-4 py-2">
+                                                {key}
+                                            </td>
+                                            <td className="border px-4 py-2">
+                                                {value}
+                                            </td>
                                         </tr>
-                                    )
+                                    ),
                                 )}
                                 <tr>
-                                    <td className="border px-4 py-2 font-semibold">Total</td>
                                     <td className="border px-4 py-2 font-semibold">
-                                        {Object.values(eventMetadata.evalCriteria).reduce(
-                                            (a, b) => a + b,
-                                            0
-                                        )}
+                                        Total
+                                    </td>
+                                    <td className="border px-4 py-2 font-semibold">
+                                        {Object.values(
+                                            eventMetadata.evalCriteria,
+                                        ).reduce((a, b) => a + b, 0)}
                                     </td>
                                 </tr>
                             </tbody>
@@ -314,22 +368,44 @@ export default function JudgePage() {
 
                         <div className="grid grid-cols-1 gap-4 mt-4">
                             {filteredParticipants.map((participant, index) => (
-                                <div key={index} className="rounded-2xl p-2 bg-gray-100 border">
+                                <div
+                                    key={index}
+                                    className="rounded-2xl p-2 bg-gray-100 border"
+                                >
                                     <div className="flex flex-row justify-between">
-                                        {participant.substitute && participant.substitute[eventMetadata.name] ? (
+                                        {participant.substitute &&
+                                        participant.substitute[
+                                            eventMetadata.name
+                                        ] ? (
                                             <div>
                                                 <p className="text-xs font-semibold text-[#32350b] rounded-2xl w-fit">
-                                                    Substituted Student - Original <span className="font-bold">{participant.studentId}</span>
+                                                    Substituted Student -
+                                                    Original{" "}
+                                                    <span className="font-bold">
+                                                        {participant.studentId}
+                                                    </span>
                                                 </p>
                                                 <h2 className="text-xl font-bold">
-                                                    {participant.substitute[eventMetadata.name].newStudentName}
+                                                    {
+                                                        participant.substitute[
+                                                            eventMetadata.name
+                                                        ].newStudentName
+                                                    }
                                                 </h2>
                                                 <p className="text-xs">
-                                                    {participant.substitute[eventMetadata.name].newStudentGender ?? "-"} -{" "}
-                                                    {participant.substitute[eventMetadata.name].newStudentDOB ?? "-"}
+                                                    {participant.substitute[
+                                                        eventMetadata.name
+                                                    ].newStudentGender ??
+                                                        "-"}{" "}
+                                                    -{" "}
+                                                    {participant.substitute[
+                                                        eventMetadata.name
+                                                    ].newStudentDOB ?? "-"}
                                                 </p>
                                                 <p className="text-xs mt-2 font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
-                                                    {participant.substitute[eventMetadata.name].newStudentGroup ?? "-"}
+                                                    {participant.substitute[
+                                                        eventMetadata.name
+                                                    ].newStudentGroup ?? "-"}
                                                 </p>
                                             </div>
                                         ) : (
@@ -338,48 +414,100 @@ export default function JudgePage() {
                                                     {participant.studentId}
                                                 </h2>
                                                 <p className="text-sm">
-                                                    Participating in <span className="font-bold">{participant.registeredEvents.length}</span> event{participant.registeredEvents.length > 1 ? 's' : ''}.
+                                                    Participating in{" "}
+                                                    <span className="font-bold">
+                                                        {
+                                                            participant
+                                                                .registeredEvents
+                                                                .length
+                                                        }
+                                                    </span>{" "}
+                                                    event
+                                                    {participant
+                                                        .registeredEvents
+                                                        .length > 1
+                                                        ? "s"
+                                                        : ""}
+                                                    .
                                                 </p>
-                                                {participant.registeredEvents.some((x) => x.includes("GROUP")) && (
+                                                {participant.registeredEvents.some(
+                                                    (x) => x.includes("GROUP"),
+                                                ) && (
                                                     <p className="text-xs">
-                                                        Also in a group event. Please evaluate first.
+                                                        Also in a group event.
+                                                        Please evaluate first.
                                                     </p>
                                                 )}
                                                 <p className="text-xs text-gray-700">
-                                                    {participant.gender ?? "-"} -{" "}
-                                                    {participant.dateOfBirth ?? "-"}
+                                                    {participant.gender ?? "-"}{" "}
+                                                    -{" "}
+                                                    {participant.dateOfBirth ??
+                                                        "-"}
                                                 </p>
                                                 <p className="text-xs mt-2 font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
-                                                    {participant.studentGroup ?? "-"}
+                                                    {participant.studentGroup ??
+                                                        "-"}
                                                 </p>
                                             </div>
                                         )}
 
                                         <div>
                                             {participant.score &&
-                                                participant.score[eventMetadata.name] &&
-                                                participant.score[eventMetadata.name][user.id] ? (
+                                            participant.score[
+                                                eventMetadata.name
+                                            ] &&
+                                            participant.score[
+                                                eventMetadata.name
+                                            ][user.id] ? (
                                                 <div className="mt-2 flex flex-col">
-                                                    {(participant.substitute && participant.substitute[eventMetadata.name]) ? (
+                                                    {participant.substitute &&
+                                                    participant.substitute[
+                                                        eventMetadata.name
+                                                    ] ? (
                                                         <button
                                                             className="bg-[#ffcccc] text-[#660000] font-semibold px-4 py-1 rounded-xl mt-2"
                                                             onClick={() => {
-                                                                setIsLoading(true);
+                                                                setIsLoading(
+                                                                    true,
+                                                                );
                                                                 removeSubstitute(
                                                                     eventMetadata.name,
                                                                     participant.studentId,
-                                                                ).then((res) => {
-                                                                    if (res.toString().length > 0) {
-                                                                        alert(res.toString());
-                                                                    } else {
-                                                                        alert("Substitution removed.");
-                                                                        window.location.reload()
-                                                                    }
-                                                                }).catch((_) => {
-                                                                    alert("An error occurred. Please try again.");
-                                                                }).finally(() => {
-                                                                    setIsLoading(false);
-                                                                });
+                                                                )
+                                                                    .then(
+                                                                        (
+                                                                            res,
+                                                                        ) => {
+                                                                            if (
+                                                                                res.toString()
+                                                                                    .length >
+                                                                                0
+                                                                            ) {
+                                                                                alert(
+                                                                                    res.toString(),
+                                                                                );
+                                                                            } else {
+                                                                                alert(
+                                                                                    "Substitution removed.",
+                                                                                );
+                                                                                window.location.reload();
+                                                                            }
+                                                                        },
+                                                                    )
+                                                                    .catch(
+                                                                        (_) => {
+                                                                            alert(
+                                                                                "An error occurred. Please try again.",
+                                                                            );
+                                                                        },
+                                                                    )
+                                                                    .finally(
+                                                                        () => {
+                                                                            setIsLoading(
+                                                                                false,
+                                                                            );
+                                                                        },
+                                                                    );
                                                             }}
                                                         >
                                                             Remove Substitute
@@ -389,7 +517,9 @@ export default function JudgePage() {
                                                             className="bg-[#cceeff] text-[#003366] font-semibold px-4 py-1 rounded-xl mt-2"
                                                             onClick={() => {
                                                                 setIsOpen(true);
-                                                                setToRemoveStudentId(participant.studentId);
+                                                                setToRemoveStudentId(
+                                                                    participant.studentId,
+                                                                );
                                                             }}
                                                         >
                                                             Substitute
@@ -399,50 +529,103 @@ export default function JudgePage() {
                                                         className="bg-[#ffcece] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2"
                                                         onClick={() => {
                                                             let _scoreMode = {};
-                                                            participants.forEach((p) => {
-                                                                _scoreMode[p.studentId] = false;
-                                                            });
-                                                            _scoreMode[participant.studentId] = true;
+                                                            participants.forEach(
+                                                                (p) => {
+                                                                    _scoreMode[
+                                                                        p.studentId
+                                                                    ] = false;
+                                                                },
+                                                            );
+                                                            _scoreMode[
+                                                                participant.studentId
+                                                            ] = true;
 
                                                             setScoreBuffer(
                                                                 Object.entries(
-                                                                    participant.score[eventMetadata.name][user.id]
-                                                                ).map(([key, val]) => [key, val])
+                                                                    participant
+                                                                        .score[
+                                                                        eventMetadata
+                                                                            .name
+                                                                    ][user.id],
+                                                                ).map(
+                                                                    ([
+                                                                        key,
+                                                                        val,
+                                                                    ]) => [
+                                                                        key,
+                                                                        val,
+                                                                    ],
+                                                                ),
                                                             );
 
-                                                            setScoreMode(_scoreMode);
+                                                            setScoreMode(
+                                                                _scoreMode,
+                                                            );
                                                             setCommentBuffer(
-                                                                participant.comment[eventMetadata.name][
-                                                                user.id
-                                                                ] ?? ""
+                                                                participant
+                                                                    .comment[
+                                                                    eventMetadata
+                                                                        .name
+                                                                ][user.id] ??
+                                                                    "",
                                                             );
                                                         }}
                                                     >
                                                         Edit Score
                                                     </button>
                                                 </div>
-                                            ) : scoreMode[participant.studentId] == false ? (
+                                            ) : scoreMode[
+                                                  participant.studentId
+                                              ] == false ? (
                                                 <div className="flex flex-col justify-between">
-                                                    {(participant.substitute && participant.substitute[eventMetadata.name]) ? (
+                                                    {participant.substitute &&
+                                                    participant.substitute[
+                                                        eventMetadata.name
+                                                    ] ? (
                                                         <button
                                                             className="bg-[#ffcccc] text-[#660000] font-semibold px-4 py-1 rounded-xl mt-2"
                                                             onClick={() => {
-                                                                setIsLoading(true);
+                                                                setIsLoading(
+                                                                    true,
+                                                                );
                                                                 removeSubstitute(
                                                                     eventMetadata.name,
                                                                     participant.studentId,
-                                                                ).then((res) => {
-                                                                    if (res.toString().length > 0) {
-                                                                        alert(res.toString());
-                                                                    } else {
-                                                                        alert("Substitution removed.");
-                                                                        window.location.reload()
-                                                                    }
-                                                                }).catch((_) => {
-                                                                    alert("An error occurred. Please try again.");
-                                                                }).finally(() => {
-                                                                    setIsLoading(false);
-                                                                });
+                                                                )
+                                                                    .then(
+                                                                        (
+                                                                            res,
+                                                                        ) => {
+                                                                            if (
+                                                                                res.toString()
+                                                                                    .length >
+                                                                                0
+                                                                            ) {
+                                                                                alert(
+                                                                                    res.toString(),
+                                                                                );
+                                                                            } else {
+                                                                                alert(
+                                                                                    "Substitution removed.",
+                                                                                );
+                                                                                window.location.reload();
+                                                                            }
+                                                                        },
+                                                                    )
+                                                                    .catch(
+                                                                        (_) => {
+                                                                            alert(
+                                                                                "An error occurred. Please try again.",
+                                                                            );
+                                                                        },
+                                                                    )
+                                                                    .finally(
+                                                                        () => {
+                                                                            setIsLoading(
+                                                                                false,
+                                                                            );
+                                                                        },
+                                                                    );
                                                             }}
                                                         >
                                                             Remove Substitute
@@ -452,7 +635,9 @@ export default function JudgePage() {
                                                             className="bg-[#cceeff] text-[#003366] font-semibold px-4 py-1 rounded-xl mt-2"
                                                             onClick={() => {
                                                                 setIsOpen(true);
-                                                                setToRemoveStudentId(participant.studentId);
+                                                                setToRemoveStudentId(
+                                                                    participant.studentId,
+                                                                );
                                                             }}
                                                         >
                                                             Substitute
@@ -462,17 +647,35 @@ export default function JudgePage() {
                                                         className="bg-[#ffd8a1] text-[#35250b] font-semibold px-4 py-1 rounded-xl mt-2"
                                                         onClick={() => {
                                                             let _scoreMode = {};
-                                                            participants.forEach((p) => {
-                                                                _scoreMode[p.studentId] = false;
-                                                            });
-                                                            _scoreMode[participant.studentId] = true;
-                                                            setScoreBuffer(
-                                                                Object.entries(eventMetadata.evalCriteria).map(
-                                                                    ([key, _]) => [key, 0]
-                                                                )
+                                                            participants.forEach(
+                                                                (p) => {
+                                                                    _scoreMode[
+                                                                        p.studentId
+                                                                    ] = false;
+                                                                },
                                                             );
-                                                            setScoreMode(_scoreMode);
-                                                            setCommentBuffer("");
+                                                            _scoreMode[
+                                                                participant.studentId
+                                                            ] = true;
+                                                            setScoreBuffer(
+                                                                Object.entries(
+                                                                    eventMetadata.evalCriteria,
+                                                                ).map(
+                                                                    ([
+                                                                        key,
+                                                                        _,
+                                                                    ]) => [
+                                                                        key,
+                                                                        0,
+                                                                    ],
+                                                                ),
+                                                            );
+                                                            setScoreMode(
+                                                                _scoreMode,
+                                                            );
+                                                            setCommentBuffer(
+                                                                "",
+                                                            );
                                                         }}
                                                     >
                                                         Evaluate
@@ -487,57 +690,104 @@ export default function JudgePage() {
                                     </div>
 
                                     {scoreMode[participant.studentId] &&
-                                        eventMetadata.evalCriteria ? (
+                                    eventMetadata.evalCriteria ? (
                                         <>
                                             <hr className="my-4" />
                                             <div className="flex flex-col gap-2 justify-center items-stretch align-middle">
-                                                {scoreBuffer.map(([key, val], index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="flex flex-row justify-between items-center"
-                                                    >
-                                                        <label className="text-sm">{key}</label>
-                                                        <input
-                                                            type="number"
-                                                            className="border p-2 rounded-lg text-md"
-                                                            max={eventMetadata.evalCriteria[key]}
-                                                            min={0}
-                                                            value={val}
-                                                            onChange={(e) => {
-                                                                if (e.target.value < 0) {
-                                                                    e.target.value = 0;
-                                                                } else if (e.target.value > eventMetadata.evalCriteria[key]) {
-                                                                    e.target.value = eventMetadata.evalCriteria[key];
+                                                {scoreBuffer.map(
+                                                    ([key, val], index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="flex flex-row justify-between items-center"
+                                                        >
+                                                            <label className="text-sm">
+                                                                {key}
+                                                            </label>
+                                                            <input
+                                                                type="number"
+                                                                className="border p-2 rounded-lg text-md"
+                                                                max={
+                                                                    eventMetadata
+                                                                        .evalCriteria[
+                                                                        key
+                                                                    ]
                                                                 }
+                                                                min={0}
+                                                                value={val}
+                                                                onChange={(
+                                                                    e,
+                                                                ) => {
+                                                                    if (
+                                                                        e.target
+                                                                            .value <
+                                                                        0
+                                                                    ) {
+                                                                        e.target.value = 0;
+                                                                    } else if (
+                                                                        e.target
+                                                                            .value >
+                                                                        eventMetadata
+                                                                            .evalCriteria[
+                                                                            key
+                                                                        ]
+                                                                    ) {
+                                                                        e.target.value =
+                                                                            eventMetadata.evalCriteria[
+                                                                                key
+                                                                            ];
+                                                                    }
 
-                                                                const newBuffer = [...scoreBuffer];
-                                                                newBuffer[index][1] = e.target.value;
-                                                                setScoreBuffer(newBuffer);
-                                                            }}
-                                                        />
-                                                    </div>
-                                                ))}
+                                                                    const newBuffer =
+                                                                        [
+                                                                            ...scoreBuffer,
+                                                                        ];
+                                                                    newBuffer[
+                                                                        index
+                                                                    ][1] =
+                                                                        e.target.value;
+                                                                    setScoreBuffer(
+                                                                        newBuffer,
+                                                                    );
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    ),
+                                                )}
 
                                                 <hr className="border-dashed mt-2" />
                                                 <div className="flex flex-row justify-between align-middle">
-                                                    <label className="text-sm">Total</label>
+                                                    <label className="text-sm">
+                                                        Total
+                                                    </label>
                                                     <p className="text-md font-semibold">
                                                         {scoreBuffer.reduce(
                                                             (a, b) =>
-                                                                (a == "" ? 0 : a) +
-                                                                parseInt(b[1] == "" ? 0 : b[1]),
-                                                            0
+                                                                (a == ""
+                                                                    ? 0
+                                                                    : a) +
+                                                                parseInt(
+                                                                    b[1] == ""
+                                                                        ? 0
+                                                                        : b[1],
+                                                                ),
+                                                            0,
                                                         )}
                                                     </p>
                                                 </div>
 
                                                 <hr className="border-dashed" />
                                                 <div className="flex flex-col gap-2">
-                                                    <label className="text-sm">Comments (Optional)</label>
+                                                    <label className="text-sm">
+                                                        Comments (Optional)
+                                                    </label>
                                                     <textarea
                                                         className="border p-2 rounded-lg"
                                                         value={commentBuffer}
-                                                        onChange={(e) => setCommentBuffer(e.target.value)}
+                                                        onChange={(e) =>
+                                                            setCommentBuffer(
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                     />
                                                 </div>
 
@@ -549,10 +799,16 @@ export default function JudgePage() {
                                                             setScoreBuffer([]);
 
                                                             let _scoreMode = {};
-                                                            participants.forEach((p) => {
-                                                                _scoreMode[p.studentId] = false;
-                                                            });
-                                                            setScoreMode(_scoreMode);
+                                                            participants.forEach(
+                                                                (p) => {
+                                                                    _scoreMode[
+                                                                        p.studentId
+                                                                    ] = false;
+                                                                },
+                                                            );
+                                                            setScoreMode(
+                                                                _scoreMode,
+                                                            );
                                                         }}
                                                     >
                                                         Cancel
@@ -564,32 +820,63 @@ export default function JudgePage() {
                                                             setIsSaving(true);
 
                                                             // Check if the marks are within the range.
-                                                            for (let i = 0; i < scoreBuffer.length; i++) {
+                                                            for (
+                                                                let i = 0;
+                                                                i <
+                                                                scoreBuffer.length;
+                                                                i++
+                                                            ) {
                                                                 // Check if marks are present.
-                                                                if (scoreBuffer[i][1] == "") {
+                                                                if (
+                                                                    scoreBuffer[
+                                                                        i
+                                                                    ][1] == ""
+                                                                ) {
                                                                     alert(
-                                                                        `Please provide marks for ${scoreBuffer[i][0]}.`
+                                                                        `Please provide marks for ${scoreBuffer[i][0]}.`,
                                                                     );
-                                                                    setIsSaving(false);
-                                                                    return;
-                                                                }
-
-                                                                if (isNaN(scoreBuffer[i][1])) {
-                                                                    alert(
-                                                                        `Marks for ${scoreBuffer[i][0]} should be a number.`
+                                                                    setIsSaving(
+                                                                        false,
                                                                     );
-                                                                    setIsSaving(false);
                                                                     return;
                                                                 }
 
                                                                 if (
-                                                                    scoreBuffer[i][1] < 0 ||
-                                                                    scoreBuffer[i][1] > eventMetadata.evalCriteria[scoreBuffer[i][0]]
+                                                                    isNaN(
+                                                                        scoreBuffer[
+                                                                            i
+                                                                        ][1],
+                                                                    )
                                                                 ) {
                                                                     alert(
-                                                                        `Marks for ${scoreBuffer[i][0]} should be between 0 and ${eventMetadata.evalCriteria[scoreBuffer[i][0]]}.`
+                                                                        `Marks for ${scoreBuffer[i][0]} should be a number.`,
                                                                     );
-                                                                    setIsSaving(false);
+                                                                    setIsSaving(
+                                                                        false,
+                                                                    );
+                                                                    return;
+                                                                }
+
+                                                                if (
+                                                                    scoreBuffer[
+                                                                        i
+                                                                    ][1] < 0 ||
+                                                                    scoreBuffer[
+                                                                        i
+                                                                    ][1] >
+                                                                        eventMetadata
+                                                                            .evalCriteria[
+                                                                            scoreBuffer[
+                                                                                i
+                                                                            ][0]
+                                                                        ]
+                                                                ) {
+                                                                    alert(
+                                                                        `Marks for ${scoreBuffer[i][0]} should be between 0 and ${eventMetadata.evalCriteria[scoreBuffer[i][0]]}.`,
+                                                                    );
+                                                                    setIsSaving(
+                                                                        false,
+                                                                    );
                                                                     return;
                                                                 }
                                                             }
@@ -598,96 +885,196 @@ export default function JudgePage() {
                                                                 participant.studentId,
                                                                 eventMetadata.name,
                                                                 user.id,
-                                                                Object.fromEntries(scoreBuffer),
-                                                                commentBuffer
+                                                                Object.fromEntries(
+                                                                    scoreBuffer,
+                                                                ),
+                                                                commentBuffer,
                                                             )
                                                                 .then((res) => {
                                                                     if (res) {
-                                                                        let _scoreMode = {};
-                                                                        participants.forEach((p) => {
-                                                                            _scoreMode[p.studentId] = false;
-                                                                        });
-                                                                        setScoreMode(_scoreMode);
-
-                                                                        let _participants = [...participants];
-                                                                        const i = _participants.findIndex(
-                                                                            (p) =>
-                                                                                p.studentId == participant.studentId
+                                                                        let _scoreMode =
+                                                                            {};
+                                                                        participants.forEach(
+                                                                            (
+                                                                                p,
+                                                                            ) => {
+                                                                                _scoreMode[
+                                                                                    p.studentId
+                                                                                ] =
+                                                                                    false;
+                                                                            },
                                                                         );
-                                                                        _participants[i].score =
-                                                                            _participants[i].score ?? {};
-                                                                        _participants[i].score[eventMetadata.name] =
-                                                                            _participants[i].score[
-                                                                            eventMetadata.name
-                                                                            ] ?? {};
-                                                                        _participants[i].score[eventMetadata.name][
-                                                                            user.id
-                                                                        ] = {};
-                                                                        scoreBuffer.forEach(([key, val]) => {
-                                                                            _participants[i].score[
-                                                                                eventMetadata.name
-                                                                            ][user.id][key] = val;
-                                                                        });
+                                                                        setScoreMode(
+                                                                            _scoreMode,
+                                                                        );
 
-                                                                        _participants[i].comment =
-                                                                            _participants[i].comment ?? {};
-                                                                        _participants[i].comment[
+                                                                        let _participants =
+                                                                            [
+                                                                                ...participants,
+                                                                            ];
+                                                                        const i =
+                                                                            _participants.findIndex(
+                                                                                (
+                                                                                    p,
+                                                                                ) =>
+                                                                                    p.studentId ==
+                                                                                    participant.studentId,
+                                                                            );
+                                                                        _participants[
+                                                                            i
+                                                                        ].score =
+                                                                            _participants[
+                                                                                i
+                                                                            ]
+                                                                                .score ??
+                                                                            {};
+                                                                        _participants[
+                                                                            i
+                                                                        ].score[
                                                                             eventMetadata.name
                                                                         ] =
-                                                                            _participants[i].comment[
+                                                                            _participants[
+                                                                                i
+                                                                            ]
+                                                                                .score[
+                                                                                eventMetadata
+                                                                                    .name
+                                                                            ] ??
+                                                                            {};
+                                                                        _participants[
+                                                                            i
+                                                                        ].score[
                                                                             eventMetadata.name
-                                                                            ] ?? {};
-                                                                        _participants[i].comment[
-                                                                            eventMetadata.name
-                                                                        ][user.id] = commentBuffer;
+                                                                        ][
+                                                                            user.id
+                                                                        ] = {};
+                                                                        scoreBuffer.forEach(
+                                                                            ([
+                                                                                key,
+                                                                                val,
+                                                                            ]) => {
+                                                                                _participants[
+                                                                                    i
+                                                                                ].score[
+                                                                                    eventMetadata.name
+                                                                                ][
+                                                                                    user.id
+                                                                                ][
+                                                                                    key
+                                                                                ] =
+                                                                                    val;
+                                                                            },
+                                                                        );
 
-                                                                        setParticipants(_participants);
+                                                                        _participants[
+                                                                            i
+                                                                        ].comment =
+                                                                            _participants[
+                                                                                i
+                                                                            ]
+                                                                                .comment ??
+                                                                            {};
+                                                                        _participants[
+                                                                            i
+                                                                        ].comment[
+                                                                            eventMetadata.name
+                                                                        ] =
+                                                                            _participants[
+                                                                                i
+                                                                            ]
+                                                                                .comment[
+                                                                                eventMetadata
+                                                                                    .name
+                                                                            ] ??
+                                                                            {};
+                                                                        _participants[
+                                                                            i
+                                                                        ].comment[
+                                                                            eventMetadata.name
+                                                                        ][
+                                                                            user.id
+                                                                        ] =
+                                                                            commentBuffer;
+
+                                                                        setParticipants(
+                                                                            _participants,
+                                                                        );
                                                                     }
 
-                                                                    setIsSaving(false);
-                                                                }).catch((_) => {
-                                                                    alert("An error occurred. Please try again.");
-                                                                    setIsSaving(false);
+                                                                    setIsSaving(
+                                                                        false,
+                                                                    );
+                                                                })
+                                                                .catch((_) => {
+                                                                    alert(
+                                                                        "An error occurred. Please try again.",
+                                                                    );
+                                                                    setIsSaving(
+                                                                        false,
+                                                                    );
                                                                 });
                                                         }}
                                                     >
-                                                        {isSaving ? "Saving..." : "Save"}
+                                                        {isSaving
+                                                            ? "Saving..."
+                                                            : "Save"}
                                                     </button>
                                                 </div>
                                             </div>
                                         </>
                                     ) : participant.score &&
-                                        participant.score[eventMetadata.name] &&
-                                        participant.score[eventMetadata.name][user.id] ? (
+                                      participant.score[eventMetadata.name] &&
+                                      participant.score[eventMetadata.name][
+                                          user.id
+                                      ] ? (
                                         <div className="flex flex-col gap-2 mt-4">
                                             <hr />
-                                            <h2 className="text-lg font-bold">Score</h2>
+                                            <h2 className="text-lg font-bold">
+                                                Score
+                                            </h2>
                                             {Object.entries(
-                                                participant.score[eventMetadata.name][user.id]
+                                                participant.score[
+                                                    eventMetadata.name
+                                                ][user.id],
                                             ).map(([key, val], index) => (
                                                 <div
                                                     key={index}
                                                     className="flex flex-row justify-between items-center"
                                                 >
-                                                    <label className="text-sm">{key}</label>
-                                                    <p className="text-md font-semibold">{val}</p>
+                                                    <label className="text-sm">
+                                                        {key}
+                                                    </label>
+                                                    <p className="text-md font-semibold">
+                                                        {val}
+                                                    </p>
                                                 </div>
                                             ))}
                                             <hr className="border-dashed" />
                                             <div className="flex flex-row justify-between items-center">
-                                                <label className="text-sm">Total</label>
+                                                <label className="text-sm">
+                                                    Total
+                                                </label>
                                                 <p className="text-md font-semibold">
                                                     {Object.values(
-                                                        participant.score[eventMetadata.name][user.id]
-                                                    ).reduce((a, b) => a + parseInt(b), 0)}
+                                                        participant.score[
+                                                            eventMetadata.name
+                                                        ][user.id],
+                                                    ).reduce(
+                                                        (a, b) =>
+                                                            a + parseInt(b),
+                                                        0,
+                                                    )}
                                                 </p>
                                             </div>
                                             <hr className="border-dashed" />
                                             <div className="flex flex-col gap-2">
-                                                <label className="text-sm font-bold">Comments</label>
+                                                <label className="text-sm font-bold">
+                                                    Comments
+                                                </label>
                                                 <p className="text-md">
-                                                    {participant.comment[eventMetadata.name][user.id] ??
-                                                        "-"}
+                                                    {participant.comment[
+                                                        eventMetadata.name
+                                                    ][user.id] ?? "-"}
                                                 </p>
                                             </div>
                                         </div>
@@ -699,11 +1086,18 @@ export default function JudgePage() {
                 </div>
             </div>
 
-            <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="fixed z-50 shadow-2xl">
+            <Dialog
+                open={isOpen}
+                onClose={() => setIsOpen(false)}
+                className="fixed z-50 shadow-2xl"
+            >
                 <div className="fixed inset-0 flex w-screen items-center justify-center p-2 overflow-y-auto backdrop-blur-sm">
                     <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-4 text-left align-middle">
                         <div className="flex flex-row justify-between my-2">
-                            <DialogTitle className="text-sm font-medium text-gray-900 w-[70%]">Reason why student is not participating in the event</DialogTitle>
+                            <DialogTitle className="text-sm font-medium text-gray-900 w-[70%]">
+                                Reason why student is not participating in the
+                                event
+                            </DialogTitle>
                             <button
                                 onClick={() => setIsOpen(false)}
                                 className="bg-gray-200 p-1 rounded-full"
@@ -734,13 +1128,13 @@ export default function JudgePage() {
                             <p className="font-semibold">Add Substitute</p>
                             <div className="flex flex-row justify-between">
                                 <button
-                                    className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
+                                    className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${isNewSelected ? "bg-black text-white" : "border border-black"}`}
                                     onClick={() => setIsNewSelected(true)}
                                 >
                                     New
                                 </button>
                                 <button
-                                    className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${!isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
+                                    className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${!isNewSelected ? "bg-black text-white" : "border border-black"}`}
                                     onClick={() => setIsNewSelected(false)}
                                 >
                                     Has SLTS ID
@@ -749,32 +1143,54 @@ export default function JudgePage() {
                         </div>
 
                         <div className="mt-6">
-                            <p className="text-xs mx-2 mt-2">Please enter the student details below</p>
+                            <p className="text-xs mx-2 mt-2">
+                                Please enter the student details below
+                            </p>
                             {isNewSelected ? (
                                 <div>
                                     <input
                                         type="text"
                                         placeholder="Student Name"
                                         value={studentName}
-                                        onChange={(e) => handleInputChange(e, "name")}
+                                        onChange={(e) =>
+                                            handleInputChange(e, "name")
+                                        }
                                         className="border p-2 rounded-2xl w-full mt-2"
                                     />
                                     <input
                                         type="text"
                                         placeholder="Date of Birth"
                                         value={dob}
-                                        onChange={(e) => handleInputChange(e, "dob")}
+                                        onChange={(e) =>
+                                            handleInputChange(e, "dob")
+                                        }
                                         className="border p-2 rounded-2xl w-full mt-2"
                                     />
-                                    <select className="border p-2 rounded-2xl w-full mt-2" value={groupNumber} onChange={(e) => handleInputChange(e, "groupNumber")}>
-                                        <option value="">Select Group Number</option>
+                                    <select
+                                        className="border p-2 rounded-2xl w-full mt-2"
+                                        value={groupNumber}
+                                        onChange={(e) =>
+                                            handleInputChange(e, "groupNumber")
+                                        }
+                                    >
+                                        <option value="">
+                                            Select Group Number
+                                        </option>
                                         <option value="Group 1">Group 1</option>
                                         <option value="Group 2">Group 2</option>
                                         <option value="Group 3">Group 3</option>
-                                        <option value="General Category">General Category</option>
+                                        <option value="General Category">
+                                            General Category
+                                        </option>
                                     </select>
 
-                                    <select className="border p-2 rounded-2xl w-full mt-2" value={gender} onChange={(e) => handleInputChange(e, "gender")}>
+                                    <select
+                                        className="border p-2 rounded-2xl w-full mt-2"
+                                        value={gender}
+                                        onChange={(e) =>
+                                            handleInputChange(e, "gender")
+                                        }
+                                    >
                                         <option value="">Select Gender</option>
                                         <option value={"Male"}>Male</option>
                                         <option value={"Female"}>Female</option>
@@ -785,18 +1201,22 @@ export default function JudgePage() {
                                     type="text"
                                     placeholder="Student ID"
                                     value={studentId}
-                                    onChange={(e) => handleInputChange(e, "studentId")}
+                                    onChange={(e) =>
+                                        handleInputChange(e, "studentId")
+                                    }
                                     className="border p-2 rounded-2xl w-full mt-2"
                                 />
                             )}
                         </div>
 
                         <div className="flex flex-row justify-between mt-2">
-                            <button className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
+                            <button
+                                className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
                                 disabled={isLoading}
                                 onClick={() => {
                                     setIsOpen(false);
-                                }}>
+                                }}
+                            >
                                 Cancel
                             </button>
                             <button

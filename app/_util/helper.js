@@ -7,7 +7,7 @@ export const convertAMPMTo24HourDate = (time) => {
     }
 
     return `${hours}:${minutes}`;
-}
+};
 
 export const time24hrTo12hr = (time) => {
     let [hours, minutes] = time.split(":");
@@ -28,4 +28,4 @@ export const time24hrTo12hr = (time) => {
     }
 
     return `${hours}:${minutes} ${period}`;
-}
+};
