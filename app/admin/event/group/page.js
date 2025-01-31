@@ -17,99 +17,114 @@ export default function GroupEventLeaderboardPage() {
     const searchParams = useSearchParams();
 
     useEffect(() => {
-        if (!secureLocalStorage.getItem('user')) {
-            router.push('/');
+        if (!secureLocalStorage.getItem("user")) {
+            router.push("/");
         }
 
-        const user = JSON.parse(secureLocalStorage.getItem('user'));
-        const _eventName = decodeURIComponent(searchParams.get('event') ?? "");
+        const user = JSON.parse(secureLocalStorage.getItem("user"));
+        const _eventName = decodeURIComponent(searchParams.get("event") ?? "");
         setEventName(_eventName);
 
-        if (user.role !== 'admin' || !_eventName) {
-            router.push('/');
+        if (user.role !== "admin" || !_eventName) {
+            router.push("/");
         } else {
             setUser(user);
-            getJudgeEventData((_eventName)).then((_data) => {
-                if (_data == null || _data.length != 2) {
-                    router.push('/');
-                }
-
-                // Group participants by district (Balvikas)
-                const groupedData = _data[0].reduce((acc, participant) => {
-                    const key = participant.district || "Unknown";
-                    if (!acc[key]) {
-                        acc[key] = {
-                            ...participant,
-                            members: [],
-                        };
+            getJudgeEventData(_eventName)
+                .then((_data) => {
+                    if (_data == null || _data.length != 2) {
+                        router.push("/");
                     }
-                    acc[key].members.push({
-                        name: participant.studentFullName || "Unknown",
-                        id: participant.studentId || "Unknown ID",
-                    });
-                    return acc;
-                }, {});
 
-
-                const groups = Object.values(groupedData).map((group) => {
-                    const { members, ...rest } = group;
-                    return { members, ...rest };
-                });
-
-                // Calculate scores (same for all members)
-                groups.forEach((group) => {
-                    group.judgeWiseTotal = {};
-                    Object.keys(_data[1].evalCriteria).forEach((criteria) => {
-                        _data[1].judgeIdList.forEach((judgeId) => {
-                            if (!group.score) {
-                                group.score = {};
-                            }
-                            if (!group.score[(_eventName)]) {
-                                group.score[(_eventName)] = {};
-                            }
-                            if (!group.score[(_eventName)][judgeId]) {
-                                group.score[(_eventName)][judgeId] = {};
-                            }
-                            if (!group.score[(_eventName)][judgeId][criteria]) {
-                                group.score[(_eventName)][judgeId][criteria] = 0;
-                            }
-
-                            if (!group.judgeWiseTotal[judgeId]) {
-                                group.judgeWiseTotal[judgeId] = 0;
-                            }
-
-                            group.judgeWiseTotal[judgeId] += parseInt(group.score[(_eventName)][judgeId][criteria]);
+                    // Group participants by district (Balvikas)
+                    const groupedData = _data[0].reduce((acc, participant) => {
+                        const key = participant.district || "Unknown";
+                        if (!acc[key]) {
+                            acc[key] = {
+                                ...participant,
+                                members: [],
+                            };
+                        }
+                        acc[key].members.push({
+                            name: participant.studentFullName || "Unknown",
+                            id: participant.studentId || "Unknown ID",
                         });
-                        group.overallTotal = Object.values(group.judgeWiseTotal).reduce((a, b) => a + b, 0);
+                        return acc;
+                    }, {});
+
+                    const groups = Object.values(groupedData).map((group) => {
+                        const { members, ...rest } = group;
+                        return { members, ...rest };
                     });
-                });
 
-                groups.forEach((group) => {
-                    _data[1].judgeIdList.forEach((judgeId) => {
-                        if (!group.comment) {
-                            group.comment = {};
-                        }
+                    // Calculate scores (same for all members)
+                    groups.forEach((group) => {
+                        group.judgeWiseTotal = {};
+                        Object.keys(_data[1].evalCriteria).forEach(
+                            (criteria) => {
+                                _data[1].judgeIdList.forEach((judgeId) => {
+                                    if (!group.score) {
+                                        group.score = {};
+                                    }
+                                    if (!group.score[_eventName]) {
+                                        group.score[_eventName] = {};
+                                    }
+                                    if (!group.score[_eventName][judgeId]) {
+                                        group.score[_eventName][judgeId] = {};
+                                    }
+                                    if (
+                                        !group.score[_eventName][judgeId][
+                                            criteria
+                                        ]
+                                    ) {
+                                        group.score[_eventName][judgeId][
+                                            criteria
+                                        ] = 0;
+                                    }
 
-                        if (!group.comment[eventName]) {
-                            group.comment[eventName] = {};
-                        }
+                                    if (!group.judgeWiseTotal[judgeId]) {
+                                        group.judgeWiseTotal[judgeId] = 0;
+                                    }
 
-                        if (!group.comment[eventName][judgeId]) {
-                            group.comment[eventName][judgeId] = "-";
-                        }
+                                    group.judgeWiseTotal[judgeId] += parseInt(
+                                        group.score[_eventName][judgeId][
+                                            criteria
+                                        ],
+                                    );
+                                });
+                                group.overallTotal = Object.values(
+                                    group.judgeWiseTotal,
+                                ).reduce((a, b) => a + b, 0);
+                            },
+                        );
                     });
+
+                    groups.forEach((group) => {
+                        _data[1].judgeIdList.forEach((judgeId) => {
+                            if (!group.comment) {
+                                group.comment = {};
+                            }
+
+                            if (!group.comment[eventName]) {
+                                group.comment[eventName] = {};
+                            }
+
+                            if (!group.comment[eventName][judgeId]) {
+                                group.comment[eventName][judgeId] = "-";
+                            }
+                        });
+                    });
+
+                    // Sort groups by overallTotal
+                    groups.sort((a, b) => b.overallTotal - a.overallTotal);
+
+                    setEventMetadata(_data[1]);
+                    setGroups(groups);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    alert("Invalid Link");
+                    router.push("/admin/event");
                 });
-
-                // Sort groups by overallTotal
-                groups.sort((a, b) => b.overallTotal - a.overallTotal);
-
-                setEventMetadata(_data[1]);
-                setGroups(groups);
-            }).catch((err) => {
-                console.error(err);
-                alert("Invalid Link");
-                router.push('/admin/event')
-            })
         }
     }, [router, eventName, searchParams]);
 
@@ -118,19 +133,21 @@ export default function GroupEventLeaderboardPage() {
             <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
                 <div className="rounded-2xl p-4 m-2 bg-white border overflow-x-auto justify-between flex flex-row">
                     <div>
-                        <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
+                        <h1 className="text-2xl font-bold">
+                            Welcome, {user.name}
+                        </h1>
                         <p className="text-gray-700 mt-2">{user.email}</p>
                     </div>
                     <div className="flex flex-row">
                         <button
                             className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
-                            onClick={() => router.push('/admin/event')}
+                            onClick={() => router.push("/admin/event")}
                         >
                             Events
                         </button>
                         <button
                             className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
-                            onClick={() => router.push('/admin')}
+                            onClick={() => router.push("/admin")}
                         >
                             Dashboard
                         </button>
@@ -139,7 +156,7 @@ export default function GroupEventLeaderboardPage() {
                             onClick={() => {
                                 auth.signOut();
                                 secureLocalStorage.clear();
-                                router.push('/');
+                                router.push("/");
                             }}
                         >
                             Logout
@@ -149,35 +166,58 @@ export default function GroupEventLeaderboardPage() {
 
                 <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
                     <div className="rounded-2xl p-4 bg-white border overflow-x-auto">
-                        <h1 className="text-2xl font-bold">{eventMetadata.name}</h1>
+                        <h1 className="text-2xl font-bold">
+                            {eventMetadata.name}
+                        </h1>
                         <p className="text-md">{groups.length} Groups</p>
                         <div className="flex flex-row flex-wrap gap-1 mt-1">
                             {eventMetadata.group.map((group, index) => (
-                                <p key={index} className="bg-gray-200 text-gray-800 font-semibold px-2 py-1 rounded-xl w-fit">
+                                <p
+                                    key={index}
+                                    className="bg-gray-200 text-gray-800 font-semibold px-2 py-1 rounded-xl w-fit"
+                                >
                                     {group}
                                 </p>
                             ))}
                         </div>
 
                         {/* Evaluation Criteria */}
-                        <h2 className="text-xl font-bold mt-6">Evaluation Criteria</h2>
+                        <h2 className="text-xl font-bold mt-6">
+                            Evaluation Criteria
+                        </h2>
                         <table className="table-auto w-full">
                             <thead>
                                 <tr>
-                                    <th className="border px-4 py-2">Criteria</th>
-                                    <th className="border px-4 py-2">Max Marks</th>
+                                    <th className="border px-4 py-2">
+                                        Criteria
+                                    </th>
+                                    <th className="border px-4 py-2">
+                                        Max Marks
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {Object.entries(eventMetadata.evalCriteria).map(([key, value], index) => (
-                                    <tr key={index}>
-                                        <td className="border px-4 py-2">{key}</td>
-                                        <td className="border px-4 py-2">{value}</td>
-                                    </tr>
-                                ))}
+                                {Object.entries(eventMetadata.evalCriteria).map(
+                                    ([key, value], index) => (
+                                        <tr key={index}>
+                                            <td className="border px-4 py-2">
+                                                {key}
+                                            </td>
+                                            <td className="border px-4 py-2">
+                                                {value}
+                                            </td>
+                                        </tr>
+                                    ),
+                                )}
                                 <tr>
-                                    <td className="border px-4 py-2 font-semibold">Total</td>
-                                    <td className="border px-4 py-2 font-semibold">{Object.values(eventMetadata.evalCriteria).reduce((a, b) => a + b, 0)}</td>
+                                    <td className="border px-4 py-2 font-semibold">
+                                        Total
+                                    </td>
+                                    <td className="border px-4 py-2 font-semibold">
+                                        {Object.values(
+                                            eventMetadata.evalCriteria,
+                                        ).reduce((a, b) => a + b, 0)}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -190,44 +230,106 @@ export default function GroupEventLeaderboardPage() {
                         <table className="table-auto w-full mt-4">
                             <thead>
                                 <tr>
-                                    <th className="border px-4 py-2">District</th>
-                                    <th className="border px-4 py-2">Students</th>
-                                    {eventMetadata.evalCriteria && Object.keys(eventMetadata.evalCriteria).map((criteria, index) => (
-                                        <th key={index} className="border px-4 py-2">{criteria}</th>
-                                    ))}
-                                    <th className="border px-4 py-2">Judge Wise Total</th>
-                                    <th className="border px-4 py-2">Overall Total</th>
-                                    <th className="border px-4 py-2">Comments</th>
+                                    <th className="border px-4 py-2">
+                                        District
+                                    </th>
+                                    <th className="border px-4 py-2">
+                                        Students
+                                    </th>
+                                    {eventMetadata.evalCriteria &&
+                                        Object.keys(
+                                            eventMetadata.evalCriteria,
+                                        ).map((criteria, index) => (
+                                            <th
+                                                key={index}
+                                                className="border px-4 py-2"
+                                            >
+                                                {criteria}
+                                            </th>
+                                        ))}
+                                    <th className="border px-4 py-2">
+                                        Judge Wise Total
+                                    </th>
+                                    <th className="border px-4 py-2">
+                                        Overall Total
+                                    </th>
+                                    <th className="border px-4 py-2">
+                                        Comments
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {groups.map((group, index) => (
                                     <tr key={index}>
-                                        <td className="px-4 py-2 border font-bold">{group.district ?? "Unknown"}</td>
+                                        <td className="px-4 py-2 border font-bold">
+                                            {group.district ?? "Unknown"}
+                                        </td>
                                         <td className="px-4 py-2 border">
                                             {group.members.map((member, i) => (
-                                                <p key={i} className="text-xs mt-2">
-                                                    <span className="font-bold bg-gray-100 p-1 rounded-2xl pr-2">{member.id}</span>{member.name}
+                                                <p
+                                                    key={i}
+                                                    className="text-xs mt-2"
+                                                >
+                                                    <span className="font-bold bg-gray-100 p-1 rounded-2xl pr-2">
+                                                        {member.id}
+                                                    </span>
+                                                    {member.name}
                                                 </p>
                                             ))}
                                         </td>
-                                        {eventMetadata.evalCriteria && Object.keys(eventMetadata.evalCriteria).map((criteria, i1) => (
-                                            <td key={i1} className="px-4 py-2 border">
-                                                {eventMetadata.judgeIdList.map((judgeId, i2) => (
-                                                    <p key={i2} className="text-xs">{group.score[(eventName)][judgeId][criteria]}</p>
-                                                ))}
-                                            </td>
-                                        ))}
+                                        {eventMetadata.evalCriteria &&
+                                            Object.keys(
+                                                eventMetadata.evalCriteria,
+                                            ).map((criteria, i1) => (
+                                                <td
+                                                    key={i1}
+                                                    className="px-4 py-2 border"
+                                                >
+                                                    {eventMetadata.judgeIdList.map(
+                                                        (judgeId, i2) => (
+                                                            <p
+                                                                key={i2}
+                                                                className="text-xs"
+                                                            >
+                                                                {
+                                                                    group.score[
+                                                                        eventName
+                                                                    ][judgeId][
+                                                                        criteria
+                                                                    ]
+                                                                }
+                                                            </p>
+                                                        ),
+                                                    )}
+                                                </td>
+                                            ))}
                                         <td className="px-4 py-2 border font-bold">
-                                            {Object.values(group.judgeWiseTotal).map((total, i) => (
-                                                <p key={i} className="text-xs">{total}</p>
+                                            {Object.values(
+                                                group.judgeWiseTotal,
+                                            ).map((total, i) => (
+                                                <p key={i} className="text-xs">
+                                                    {total}
+                                                </p>
                                             ))}
                                         </td>
-                                        <td className="px-4 py-2 border font-bold">{group.overallTotal}</td>
+                                        <td className="px-4 py-2 border font-bold">
+                                            {group.overallTotal}
+                                        </td>
                                         <td className="px-4 py-2 border">
-                                            {eventMetadata.judgeIdList.map((judgeId, i2) => (
-                                                <p key={i2} className="text-xs">{group.comment[eventName][judgeId]}</p>
-                                            ))}
+                                            {eventMetadata.judgeIdList.map(
+                                                (judgeId, i2) => (
+                                                    <p
+                                                        key={i2}
+                                                        className="text-xs"
+                                                    >
+                                                        {
+                                                            group.comment[
+                                                                eventName
+                                                            ][judgeId]
+                                                        }
+                                                    </p>
+                                                ),
+                                            )}
                                         </td>
                                     </tr>
                                 ))}

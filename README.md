@@ -10,7 +10,7 @@ Firebase powered app to view, analyze registrations and judge(grade) participant
 
 - [x] Firebase Auth with email password.
 - [x] Dashboard for district wise DEC's and admin.
-- [x] Filter by group, event name, district. 
+- [x] Filter by group, event name, district.
 - [x] Search by student id and name.
 - [x] Cached Login.
 - [x] Data being read from Firestore.
@@ -26,14 +26,16 @@ Firebase powered app to view, analyze registrations and judge(grade) participant
 - [x] Judges can access curated-leaderboard.
 - [x] Participants sorted in the judge view list to ensure that any student participating in 2 events gets more priority as the judges might be waiting for the student in other event.
 - [x] On the day of actual event, registration desk can mark entry, report any corrections through corrections. Load optimized here by loading only one district data at a time as the participants are expected to arrive in a district-clustered manner.
-- [x] Accomodation details well formatted and accessible where data is grouped by arrival time, and district wise count inside each arrival time for precise logistics preparation. 
+- [x] Accomodation details well formatted and accessible where data is grouped by arrival time, and district wise count inside each arrival time for precise logistics preparation.
 
 ## Judging (a.k.a Grading)
+
 Mobile View for Judge-related Pages
 
 ![judge-phone-mockup](https://github.com/user-attachments/assets/e050a12d-6678-4b5e-a824-56f25732fa22)
 
 ## Admin Dashboard
+
 Laptop View for Dashboard Page
 
 ![dashboard-laptop-mockup](https://github.com/user-attachments/assets/e7803f44-d240-475f-ae2a-e8b5982e63dc)
@@ -57,41 +59,67 @@ Laptop View for Dashboard Page
 ## Registration Desk
 
 ### Select District
+
 ![image](https://github.com/user-attachments/assets/3310b321-e6c1-444a-b874-976d28419a8f)
 
 ### Mark Entry/Add comments from Registration Desk
+
 <img width="1407" alt="Screenshot 2024-12-27 at 13 17 33" src="https://github.com/user-attachments/assets/0194f702-1a1d-4a83-bc87-5909e193ec6e" />
 
 ![image](https://github.com/user-attachments/assets/d8a7ae80-a617-420d-b09d-8cc579fe25ed)
 
 ## Registration Entries/Comments View Live
+
 ![slts-live](https://github.com/user-attachments/assets/7a75d378-81c5-4f65-9da9-a3ef400426b5)
 
 # Setup Development
 
-0. Fork the repo and clone the forked repo.
-1. Install the latest LTS version of Node.js from https://nodejs.org/en in your machine.
-2. Create a new project in [firebase](https://firebase.google.com) console with `Firestore, Email/Password Authentication, Web App` added.
-3. Create a `.env` file in the root directory of the project in the below format and enter proper values. The values will be available in firebase console settings of the web app created.
+## Tech Setup
 
-   ```env
-   NEXT_PUBLIC_FIREBASE_API_KEY=""
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=""
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=""
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=""
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=""
-   NEXT_PUBLIC_APP_ID=""
-   ```
-4. In the root directory, run the below command to install dependencies.
-   ```sh
-   npm i
-   ```
-5. In the root directory, to run the app in dev mode, run the below command.
-   ```sh
-   npm run dev
-   ```
+1. Fork the repo and clone the forked repo.
+2. Install the latest LTS version of Node.js from https://nodejs.org/en in your machine.
+
+## Initialize Firebase
+
+3. Create a new project in [firebase](https://firebase.google.com) console.
+4. Enable `Firestore(test mode)`, `Email/Password Authentication`, `Web App`.
+5. Follow the steps in this [link](https://firebase.google.com/docs/admin/setup#initialize_the_sdk_in_non-google_environments) to setup Firebase Admin SDK which will be used to initially populate the Firestore database with test data.
+6. Place the downloaded service account JSON file in the root directory of the project.
+7. Rename the service account JSON file to `serviceAccountKey.json`.
+
+## Run the app
+
+8. Create a `.env` file in the root directory of the project in the below format and enter proper values. The values will be available in firebase console settings of the web app created.
+
+    ```env
+    NEXT_PUBLIC_FIREBASE_API_KEY=""
+    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=""
+    NEXT_PUBLIC_FIREBASE_PROJECT_ID=""
+    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=""
+    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=""
+    NEXT_PUBLIC_APP_ID=""
+    ```
+
+9. In the root directory, run the below command to install dependencies.
+
+    ```sh
+    npm i
+    ```
+
+10. In the root directory, run the below command to populate your Firestore database and auth with test data.
+
+    ```sh
+    npm run firebase:init
+    ```
+
+11. In the root directory, to run the app in dev mode, run the below command.
+
+```sh
+npm run dev
+```
 
 # Developers
+
 `Ashwin Narayanan S`
 `Gokula Krishnan`
 `Vaibav V`
