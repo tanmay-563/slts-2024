@@ -23,6 +23,11 @@ export default function Register()
         setFormData({...formData,[e.target.name]:e.target.value});
     };
 
+    const parseDate = (dateStr) => {
+        const [year,month,day] = dateStr.split('-').map(Number);
+        return new Date(year,month-1,day);
+    };
+
     //field validation
     const validateForms = () => {
         let newErrors = {};
@@ -35,11 +40,12 @@ export default function Register()
             newErrors.dob = "Date of Birth is mandatory";
         else
         {
-            if (formData.group == "Group 1" && (formData.dob<"25-12-2015" || formData.dob>"24-12-2019"))
+            const dob = parseDate(formData.dob);
+            if (formData.group == "Group 1" && (dob<parseDate("25-12-2015") || dob>parseDate("24-12-2019")))
                 newErrors.dob = "For Group 1, DOB should be between 25-12-2015 and 24-12-2019"
-            else if (formData.group == "Group 2" && (formData.dob<"25-12-2012" || formData.dob>"24-12-2015"))
+            else if (formData.group == "Group 2" && (dob<parseDate("25-12-2012") || dob>parseDate("24-12-2015")))
                 newErrors.dob = "For Group 2, DOB should be between 25-12-2012 and 24-12-2015"
-            else if (formData.group == "Group 3" && (formData.dob<"25-12-2008" || formData.dob>"24-12-2012"))
+            else if (formData.group == "Group 3" && (dob<parseDate("2008-12-25") || dob>parseDate("2012-12-24")))
                 newErrors.dob = "For Group 3, DOB should be between 25-12-2008 and 24-12-2012"
         }
         if (!formData.gender)
