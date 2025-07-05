@@ -139,7 +139,7 @@ export default function Step1({nextStep,setSelectedGroup,setGuru})
                         </div>
 
                         <div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-                            <h2 className="text-xl text-black text-left">Student's Full Name</h2>
+                            <h2 className="text-xl text-black text-left">Student&aposs Full Name</h2>
                             <div className="flex flex-col gap-2">
                                 <input type="text" name="fullName" placeholder="Student's Full Name" value={formData.fullName.toUpperCase()} onChange={handleChange} required className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"></input>
                                 {errors.fullName && <span className="text-red-500 text-sm">{errors.fullName}</span>}
@@ -147,7 +147,7 @@ export default function Step1({nextStep,setSelectedGroup,setGuru})
                         </div>
 
                         <div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-                            <h2 className="text-xl text-black text-left">Student's Date of Birth (DOB)</h2>
+                            <h2 className="text-xl text-black text-left">Student&aposs Date of Birth (DOB)</h2>
                             <div className="flex flex-col gap-2">
                                 <input type="date" name="dob" value={formData.dob} onChange={handleChange} required className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"></input>
                                 {errors.dob && <span className="text-red-500 text-sm">{errors.dob}</span>}
@@ -155,7 +155,7 @@ export default function Step1({nextStep,setSelectedGroup,setGuru})
                         </div>
 
                         <div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-                            <h2 className="text-xl text-black text-left">Student's Gender</h2>
+                            <h2 className="text-xl text-black text-left">Student&aposs Gender</h2>
                             <label className="flex items-center gap-2">
                                     <input type="radio" name="gender" value="Male" onChange={handleChange} required className="w-4 h-4 mt-2" />
                                     <span className="text-xl text-gray-700 mt-2">Male</span>
@@ -222,7 +222,7 @@ export default function Step1({nextStep,setSelectedGroup,setGuru})
                         </div>
 
                         <div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-                            <h2 className="text-xl text-black text-left">Student's Year of Joining Balvikas</h2>
+                            <h2 className="text-xl text-black text-left">Student&aposs Year of Joining Balvikas</h2>
                             <div className="flex flex-col gap-2">
                                 <input type="number" name="yoj" onChange={handleChange} placeholder="YOJ (2024,2023,etc,..)" required className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"></input>
                                 {errors.yoj && <span className="text-red-500 text-sm">{errors.yoj}</span>}
@@ -245,7 +245,7 @@ export default function Step1({nextStep,setSelectedGroup,setGuru})
                         </div>
 
                         <div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-                            <h2 className="text-xl text-black text-left">Student's Date of Joining Balvikas (Optional)</h2>
+                            <h2 className="text-xl text-black text-left">Student&aposs Date of Joining Balvikas (Optional)</h2>
                             <div className="flex flex-col gap-2">
                                 <input type="date" name="doj" onChange={handleChange} className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"></input>
                             </div>
