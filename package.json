@@ -13,13 +13,12 @@
 		"max-lint": "biome check --write --config-path=./biome.json --files-ignore-unknown=true --max-diagnostics=1000"
 	},
 	"lint-staged": {
-		"*.{js,jsx,ts,tsx,json,css,md}": [
+		"*.{js,jsx,ts,tsx,css,md}": [
 			"biome check --write --config-path=./biome.json --files-ignore-unknown=true"
 		]
 	},
 	"dependencies": {
 		"@headlessui/react": "^2.2.4",
-
 		"@tailwindcss/postcss": "^4.1.11",
 		"firebase": "^11.10.0",
 		"firebase-admin": "^13.4.0",
