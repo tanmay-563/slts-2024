@@ -13,7 +13,7 @@
 		"max-lint": "biome check --write --config-path=./biome.json --files-ignore-unknown=true --max-diagnostics=1000"
 	},
 	"lint-staged": {
-		"*.{js,jsx,ts,tsx,css,md}": [
+		"*.{js,jsx,ts,tsx,css,md,json}": [
 			"biome check --write --config-path=./biome.json --files-ignore-unknown=true"
 		]
 	},
