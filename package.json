@@ -9,11 +9,11 @@
 		"start": "next start",
 		"lint": "next lint",
 		"firebase:init": "node scripts/initFirestore.js",
-		"format": "prettier --write ."
+		"format": "biome check --write --config-path=./biome.json --files-ignore-unknown=true"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx,json,css,md}": [
-			"npx @biomejs/biome check --write --config-path=./biome.json --files-ignore-unknown=true"
+			"biome check --write --config-path=./biome.json --files-ignore-unknown=true"
 		]
 	},
 	"dependencies": {
