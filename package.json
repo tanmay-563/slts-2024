@@ -1,6 +1,6 @@
 {
 	"name": "slts-2024",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"private": true,
 	"scripts": {
 		"prepare": "husky",
@@ -9,7 +9,8 @@
 		"start": "next start",
 		"lint": "next lint",
 		"firebase:init": "node scripts/initFirestore.js",
-		"format": "biome check --write --config-path=./biome.json --files-ignore-unknown=true"
+		"format": "biome format --write --config-path=./biome.json --files-ignore-unknown=true",
+		"max-lint": "biome check --write --config-path=./biome.json --files-ignore-unknown=true --max-diagnostics=1000"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx,json,css,md}": [
@@ -35,7 +36,6 @@
 		"husky": "^9.1.7",
 		"lint-staged": "^16.1.2",
 		"postcss": "^8.5.6",
-		"prettier": "^3.6.2",
 		"tailwindcss": "^4.1.11"
 	}
 }
