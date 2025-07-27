@@ -118,6 +118,22 @@ Laptop View for Dashboard Page
 npm run dev
 ```
 
+12. Credentials
+
+```
+# Admin
+admin@slts.cbe
+password
+
+# Judge Group Event Test Creds
+judge1grag@slts.cbe
+judge1grag
+
+# Judge Individual Event Test Creds
+judge4g3sg@slts.cbe
+judge4g3sg
+```
+
 # Developers
 
 `Ashwin Narayanan S`

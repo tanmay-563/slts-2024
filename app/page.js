@@ -85,7 +85,7 @@ export default function Home() {
 				? <div className="flex h-screen items-center justify-center">
 						<p className="text-xl font-semibold">Loading....</p>
 					</div>
-				: <div className="absolute left-50vh top-1/2 transform -translate-y-1/2 border border-gray-200 rounded-3xl w-full md:w-[500px] bg-white shadow-lg">
+				: <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 border border-gray-200 rounded-3xl w-full md:w-[500px] bg-white shadow-lg">
 						<h1 className="text-2xl font-semibold text-center pt-2">Sign In</h1>
 						<p className="text-center text-gray-500 pb-2">
 							SLBTS 2024, Tamil Nadu

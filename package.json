@@ -9,12 +9,12 @@
 		"start": "next start",
 		"lint": "next lint",
 		"firebase:init": "node scripts/initFirestore.js",
-		"format": "biome format --write --config-path=./biome.json --files-ignore-unknown=true",
-		"max-lint": "biome check --write --config-path=./biome.json --files-ignore-unknown=true --max-diagnostics=1000"
+		"format": "biome format --write --files-ignore-unknown=true",
+		"max-lint": "biome check --write --files-ignore-unknown=true --max-diagnostics=1000"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx,css,md,json}": [
-			"biome check --write --config-path=./biome.json --files-ignore-unknown=true"
+			"biome check --write --files-ignore-unknown=true"
 		]
 	},
 	"dependencies": {

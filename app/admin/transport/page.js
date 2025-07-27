@@ -184,7 +184,7 @@ export default function Transport() {
 								</div>
 
 								<div className="flex flex-row gap-8 items-center">
-									<div className="flex flex-col flex-grow">
+									<div className="flex flex-col grow">
 										<label htmlFor="district" className="mb-2">
 											<b>District</b>
 										</label>
@@ -202,7 +202,7 @@ export default function Transport() {
 											))}
 										</select>
 									</div>
-									<div className="flex flex-col flex-grow">
+									<div className="flex flex-col grow">
 										<label htmlFor="event" className="mb-2">
 											<b>Event</b>
 										</label>
@@ -220,7 +220,7 @@ export default function Transport() {
 											))}
 										</select>
 									</div>
-									<div className="flex flex-col flex-grow">
+									<div className="flex flex-col grow">
 										<label htmlFor="group" className="mb-2">
 											<b>Group</b>
 										</label>
@@ -244,7 +244,7 @@ export default function Transport() {
 					</div>
 
 					<div className="flex flex-row m-4 gap-4 items-center">
-						<div className="bg-white p-4 rounded-2xl border flex-grow">
+						<div className="bg-white p-4 rounded-2xl border grow">
 							<div className="flex flex-col gap-2">
 								<label htmlFor="modeOfTravel">
 									<b>Mode Of Transport</b>
@@ -264,7 +264,7 @@ export default function Transport() {
 								</select>
 							</div>
 						</div>
-						<div className="bg-white p-4 rounded-2xl border flex-grow">
+						<div className="bg-white p-4 rounded-2xl border grow">
 							<div className="flex flex-col gap-2">
 								<label htmlFor="arrivalDate">
 									<b>Arrival Date</b>
@@ -278,7 +278,7 @@ export default function Transport() {
 								/>
 							</div>
 						</div>
-						<div className="bg-white p-4 rounded-2xl border flex-grow">
+						<div className="bg-white p-4 rounded-2xl border grow">
 							<div className="flex flex-col gap-2">
 								<label htmlFor="departureDate">
 									<b>Departure Date</b>

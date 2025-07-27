@@ -132,7 +132,7 @@ export default function AdminDashboard() {
 					</div>
 
 					<div className="bg-white p-4 rounded-2xl border w-auto m-4">
-						<div className="flex flex-col flex-grow w-full md:w-auto">
+						<div className="flex flex-col grow w-full md:w-auto">
 							<label htmlFor="district" className="mb-2">
 								<b>District</b>
 							</label>
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
 								</div>
 
 								<div className="flex flex-col md:flex-row gap-8 items-center">
-									<div className="flex flex-col flex-grow w-full">
+									<div className="flex flex-col grow w-full">
 										<label htmlFor="event" className="mb-2">
 											<b>Event</b>
 										</label>
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
 											))}
 										</select>
 									</div>
-									<div className="flex flex-col flex-grow w-full">
+									<div className="flex flex-col grow w-full">
 										<label htmlFor="group" className="mb-2">
 											<b>Group</b>
 										</label>
@@ -936,7 +936,7 @@ export default function AdminDashboard() {
 						</div>
 					</div>
 					<div className="bg-white p-4 rounded-2xl border w-auto m-4">
-						<div className="flex flex-col flex-grow w-full md:w-auto">
+						<div className="flex flex-col grow w-full md:w-auto">
 							<label htmlFor="district" className="mb-2">
 								<b>District</b>
 							</label>
