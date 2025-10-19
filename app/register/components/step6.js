@@ -2,80 +2,40 @@
 
 import { useState } from "react";
 
-export default function Step6({ previousStep, nextStep }) {
-	const [step6Data, setStep6Data] = useState({
-		accomodation: "",
-		noma: "",
-		nowa: "",
-		fa: "",
-		cinDate: "",
-		cinTime: "",
-		coutDate: "",
-		coutTime: "",
-	});
-
+export default function Step6({ previousStep, formData, setFormData }) {
 	const [step6Error, setStep6Error] = useState({});
 
-	const handleChange = (e) => {
-		setStep6Data({ ...step6Data, [e.target.name]: e.target.value });
-	};
-
-	const handlePrevious21 = () => {
+	const handlePrevious = () => {
 		previousStep();
 	};
 
-	const validateForms = () => {
+	const handleChange = (e) => {
+		const { name, value, type, checked } = e.target;
+		setFormData((prev) => ({
+			...prev,
+			[name]: type === "checkbox" ? checked : value,
+		}));
+	};
+
+	const validateForm = () => {
 		const errors = {};
-		if (!step6Data.accomodation) {
-			errors.accomodation = "This field is mandatory";
-			alert("Select whether the student need accomodation");
+
+		if (!formData.declaration) {
+			errors.declaration =
+				"You must agree to the declaration before submitting.";
+			alert("You must agree to the declaration before submitting.");
 		}
-		if (step6Data.accomodation === "Yes") {
-			if (!step6Data.noma) {
-				errors.noma = "This field is mandatory";
-				alert("Number of gents is mandatory");
-			}
-			if (!step6Data.nowa) {
-				errors.nowa = "This field is mandatory";
-				alert("Number of gents is mandatory");
-			}
-			if (!step6Data.cinDate) {
-				errors.cinDate = "This field is mandatory";
-				alert("Checj-in date is mandatory");
-			}
-			if (!step6Data.cinTime) {
-				errors.cinTime = "This field is mandatory";
-				alert("Check-in time is mandatory");
-			}
-			if (!step6Data.coutDate) {
-				errors.coutDate = "This field is mandatory";
-				alert("Check-out date is mandatory");
-			}
-			if (!step6Data.coutTime) {
-				errors.coutTime = "This field is mandatory";
-				alert("Check-out time is mandatory");
-			}
-			if (parseInt(step6Data.noma) < 0) {
-				errors.noma = "Invalid number";
-				alert("Invalid number of gents");
-			}
-			if (parseInt(step6Data.nowa) < 0) {
-				errors.nowa = "Invalid number";
-				alert("Invalid number of mahilas");
-			}
-			if (step6Data.coutDate < step6Data.cinDate) {
-				errors.coutDate = "Check-out date must be after check-in date";
-				alert("Check-out date must be after check-in date");
-			}
-		}
+
 		setStep6Error(errors);
 		return Object.keys(errors).length === 0;
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (validateForms()) {
-			alert("Registered Successfully");
+		if (validateForm()) {
+			alert("Form submitted successfully!");
+			console.log("✅ Final Submitted Data:", formData);
+			// You can integrate API submission logic here
 		}
 	};
 
@@ -83,190 +43,139 @@ export default function Step6({ previousStep, nextStep }) {
 		<>
 			<div className="flex flex-col justify-center w-screen md:fit ml-auto mr-auto">
 				<form onSubmit={handleSubmit}>
-					<div className="rounded-2xl p-6 mt-8 mb-8 w-11/12 sm:w-8/12 mx-auto bg-gray-200 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-4 md:gap-0">
-						<div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-							<h2 className="text-xl text-black text-left">
-								Does the student need accomodation facility?
-							</h2>
-							<div className="flex flex-col gap-2">
-								<label className="flex items-center gap-2">
-									<input
-										type="radio"
-										name="accomodation"
-										value="Yes"
-										onChange={handleChange}
-										required
-										className="w-4 h-4 mt-2"
-									/>
-									<span className="text-xl text-gray-700 mt-2">Yes</span>
-								</label>
+					<div className="rounded-2xl p-6 mt-8 mb-8 w-11/12 sm:w-8/12 mx-auto bg-gray-200 shadow-lg border border-gray-300 flex flex-col gap-6">
+						{/* Confirmation Header */}
+						<h2 className="text-2xl font-bold text-center text-gray-900 mt-4">
+							Step 6: Review & Confirm
+						</h2>
 
-								<label className="flex items-center gap-2">
-									<input
-										type="radio"
-										name="accomodation"
-										value="No"
-										onChange={handleChange}
-										className="w-4 h-4"
-									/>
-									<span className="text-xl text-gray-700">No</span>
-								</label>
-								{step6Error.accomodation && (
-									<span className="text-red-500 text-sm">
-										{step6Error.accomodation}
-									</span>
-								)}
+						{/* Review Section */}
+						<div className="rounded-2xl bg-gray-100 p-6 border border-gray-300 shadow-inner">
+							<h3 className="text-xl font-semibold mb-3">
+								Please review your details:
+							</h3>
+							<div className="text-lg text-gray-800 space-y-1">
+								<p>
+									<strong>Name:</strong> {formData.fullName}
+								</p>
+								<p>
+									<strong>Group:</strong> {formData.group}
+								</p>
+								<p>
+									<strong>Date of Birth:</strong> {formData.dob}
+								</p>
+								<p>
+									<strong>Gender:</strong> {formData.gender}
+								</p>
+								<p>
+									<strong>District:</strong> {formData.district}
+								</p>
+								<p>
+									<strong>Samithi Name:</strong> {formData.samithiName}
+								</p>
+								<p>
+									<strong>Year of Joining:</strong> {formData.yoj}
+								</p>
+								<p>
+									<strong>Guru Accompanying:</strong> {formData.guru}
+								</p>
+
+								<p className="mt-4">
+									<strong>Event 1:</strong> {formData.event1}
+								</p>
+								<p>
+									<strong>Event 2:</strong> {formData.event2}
+								</p>
+								<p>
+									<strong>Group Event:</strong> {formData.grpsinging}
+								</p>
+
+								<p className="mt-4">
+									<strong>Date of Arrival:</strong> {formData.doa}
+								</p>
+								<p>
+									<strong>Time of Arrival:</strong> {formData.toa}
+								</p>
+								<p>
+									<strong>Pickup Facility:</strong> {formData.pickup}
+								</p>
+								<p>
+									<strong>Mode of Travel:</strong> {formData.mot}
+								</p>
+								<p>
+									<strong>Pickup Point:</strong> {formData.pp}
+								</p>
+
+								<p className="mt-4">
+									<strong>Date of Departure:</strong> {formData.dod}
+								</p>
+								<p>
+									<strong>Time of Departure:</strong> {formData.tod}
+								</p>
+								<p>
+									<strong>Drop Facility:</strong> {formData.drop}
+								</p>
+								<p>
+									<strong>Drop Point:</strong> {formData.dp}
+								</p>
+
+								<p className="mt-4">
+									<strong>Guru Name:</strong> {formData.guruName}
+								</p>
+								<p>
+									<strong>Guru Gender:</strong> {formData.guruGender}
+								</p>
+								<p>
+									<strong>Guru Mobile:</strong> {formData.guruMobile}
+								</p>
+								<p>
+									<strong>Guru Email:</strong> {formData.guruMail}
+								</p>
+								<p>
+									<strong>Number of Accompanying Persons:</strong>{" "}
+									{formData.numPersons}
+								</p>
 							</div>
 						</div>
 
-						<div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-							<h2 className="text-xl text-black text-left">
-								Number of Gents(Men) need accomodation facility
-							</h2>
-							<div className="flex flex-col gap-2">
+						{/* Declaration */}
+						<div className="rounded-2xl bg-gray-100 p-6 border border-gray-300 shadow-inner flex flex-col gap-3">
+							<label className="flex items-start gap-3">
 								<input
-									type="number"
-									name="noma"
-									placeholder="No. of Gents"
+									type="checkbox"
+									name="declaration"
+									checked={!!formData.declaration}
 									onChange={handleChange}
-									className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"
-								></input>
-								{step6Error.noma && (
-									<span className="text-red-500 text-sm">
-										{step6Error.noma}
-									</span>
-								)}
-							</div>
+									className="w-5 h-5 mt-1"
+								/>
+								<span className="text-gray-800 text-lg">
+									I hereby declare that all the information provided above is
+									true to the best of my knowledge. I agree to abide by the
+									rules and regulations of the event.
+								</span>
+							</label>
+							{step6Error.declaration && (
+								<span className="text-red-500 text-sm">
+									{step6Error.declaration}
+								</span>
+							)}
 						</div>
 
-						<div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-							<h2 className="text-xl text-black text-left">
-								Number of Mahilas(Women) need accomodation facility
-							</h2>
-							<div className="flex flex-col gap-2">
-								<input
-									type="number"
-									name="nowa"
-									placeholder="No. of Mahilas"
-									onChange={handleChange}
-									className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"
-								></input>
-								{step6Error.nowa && (
-									<span className="text-red-500 text-sm">
-										{step6Error.nowa}
-									</span>
-								)}
-							</div>
-						</div>
-
-						<div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-							<h2 className="text-xl text-black text-left">
-								Any food alergies for the student? (Optional)
-							</h2>
-							<div className="flex flex-col gap-2">
-								<input
-									type="text"
-									name="fa"
-									placeholder="Food alergies for the student"
-									value={step6Data.fa}
-									onChange={handleChange}
-									className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"
-								></input>
-								{step6Error.fa && (
-									<span className="text-red-500 text-sm">{step6Error.fa}</span>
-								)}
-							</div>
-						</div>
-
-						<div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-							<h2 className="text-xl text-black text-left">Check-in Date</h2>
-							<div className="flex flex-col gap-2">
-								<input
-									type="date"
-									name="cinDate"
-									value={step6Data.cinDate}
-									onChange={handleChange}
-									className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"
-								></input>
-								{step6Error.cinDate && (
-									<span className="text-red-500 text-sm">
-										{step6Error.cinDate}
-									</span>
-								)}
-							</div>
-						</div>
-
-						<div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-							<h2 className="text-xl text-black text-left">Check-in Time</h2>
-							<div className="flex flex-col gap-2">
-								<input
-									type="time"
-									name="cinTime"
-									value={step6Data.cinTime}
-									onChange={handleChange}
-									className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"
-								></input>
-								{step6Error.cinTime && (
-									<span className="text-red-500 text-sm">
-										{step6Error.cinTime}
-									</span>
-								)}
-							</div>
-						</div>
-
-						<div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-							<h2 className="text-xl text-black text-left">Check-out Date</h2>
-							<div className="flex flex-col gap-2">
-								<input
-									type="date"
-									name="coutDate"
-									value={step6Data.coutDate}
-									onChange={handleChange}
-									className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"
-								></input>
-								{step6Error.coutDate && (
-									<span className="text-red-500 text-sm">
-										{step6Error.coutDate}
-									</span>
-								)}
-							</div>
-						</div>
-
-						<div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
-							<h2 className="text-xl text-black text-left">Check-out Time</h2>
-							<div className="flex flex-col gap-2">
-								<input
-									type="time"
-									name="coutTime"
-									value={step6Data.coutTime}
-									onChange={handleChange}
-									className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"
-								></input>
-								{step6Error.coutTime && (
-									<span className="text-red-500 text-sm">
-										{step6Error.coutTime}
-									</span>
-								)}
-							</div>
-						</div>
-
-						<div className="flex justify-between items-center w-full px-6 sm:px-20">
+						{/* Buttons */}
+						<div className="flex justify-between items-center w-full px-6 sm:px-20 mt-6">
 							<button
-								onClick={handlePrevious21}
+								onClick={handlePrevious}
 								type="button"
-								className="text-2xl font-bold mt-6 sm:mt-12 mb-4 sm:mb-7"
+								className="text-2xl font-bold mb-4"
 							>
-								<span className="bg-white p-4 rounded-2xl hover:bg-slate-900 hover:text-white hover:border-blue border border-black transition">
+								<span className="bg-white p-4 rounded-2xl hover:bg-slate-900 hover:text-white border border-black transition">
 									Previous
 								</span>
 							</button>
 
-							<button
-								type="submit"
-								className="text-2xl font-bold mt-6 sm:mt-12 mb-4 sm:mb-7"
-							>
-								<span className="bg-white p-4 rounded-2xl hover:bg-slate-900 hover:text-white hover:border-blue border border-black transition">
-									Next
+							<button type="submit" className="text-2xl font-bold mb-4">
+								<span className="bg-green-600 text-white p-4 rounded-2xl hover:bg-green-700 border border-green-700 transition">
+									Submit
 								</span>
 							</button>
 						</div>

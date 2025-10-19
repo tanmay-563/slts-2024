@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import secureStorage from "@/app/_util/secureLocalStorage";
+
 import GeneralStep2 from "./components/generalcatstep2";
 import Grp2Step2 from "./components/grp2step2";
 import Grp3Step2 from "./components/grp3step2";
@@ -15,6 +17,26 @@ const RegisterPage = () => {
 	const [completedSteps, setCompletedSteps] = useState([1]);
 	const [selectedGroup, setSelectedGroup] = useState("");
 	const [guru, setGuru] = useState("");
+	const [formData, setFormData] = useState({});
+
+	// Load saved form data on mount
+	useEffect(() => {
+		const savedData = secureStorage?.getItem("registrationData");
+		if (savedData) {
+			try {
+				setFormData(JSON.parse(savedData));
+			} catch (e) {
+				console.error("Error loading saved form data", e);
+			}
+		}
+	}, []);
+
+	// Save form data on every change
+	useEffect(() => {
+		if (Object.keys(formData).length > 0) {
+			secureStorage?.setItem("registrationData", JSON.stringify(formData));
+		}
+	}, [formData]);
 
 	const nextStep = () => {
 		if (!completedSteps.includes(step + 1)) {
@@ -51,7 +73,11 @@ const RegisterPage = () => {
 							key={s.id}
 							onClick={() => setStep(s.id)}
 							disabled={!completedSteps.includes(s.id)}
-							className={`${step === s.id ? "rounded-2xl text-xl px-4 py-2 font-bold transition-all bg-gray-500 text-white font-bold" : "text-xl px-4 py-2 transition-all text-black"}${!completedSteps.includes(s.id) ? "opacity-50 cursor-not-allowed text-gray-500" : ""}`}
+							className={`${
+								step === s.id
+									? "rounded-2xl text-xl px-4 py-2 font-bold transition-all bg-gray-500 text-white font-bold"
+									: "text-xl px-4 py-2 transition-all text-black"
+							}${!completedSteps.includes(s.id) ? "opacity-50 cursor-not-allowed text-gray-500" : ""}`}
 						>
 							{s.name}
 						</button>
@@ -65,31 +91,74 @@ const RegisterPage = () => {
 						nextStep={nextStep}
 						setSelectedGroup={setSelectedGroup}
 						setGuru={setGuru}
+						formData={formData}
+						setFormData={setFormData}
 					/>
 				)}
 				{step === 2 && selectedGroup === "Group 1" && (
-					<Step2 nextStep={nextStep} previousStep={previousStep} />
+					<Step2
+						nextStep={nextStep}
+						previousStep={previousStep}
+						formData={formData}
+						setFormData={setFormData}
+					/>
 				)}
 				{step === 2 && selectedGroup === "Group 2" && (
-					<Grp2Step2 nextStep={nextStep} previousStep={previousStep} />
+					<Grp2Step2
+						nextStep={nextStep}
+						previousStep={previousStep}
+						formData={formData}
+						setFormData={setFormData}
+					/>
 				)}
 				{step === 2 && selectedGroup === "Group 3" && (
-					<Grp3Step2 nextStep={nextStep} previousStep={previousStep} />
+					<Grp3Step2
+						nextStep={nextStep}
+						previousStep={previousStep}
+						formData={formData}
+						setFormData={setFormData}
+					/>
 				)}
 				{step === 2 && selectedGroup === "General Category" && (
-					<GeneralStep2 nextStep={nextStep} previousStep={previousStep} />
+					<GeneralStep2
+						nextStep={nextStep}
+						previousStep={previousStep}
+						formData={formData}
+						setFormData={setFormData}
+					/>
 				)}
 				{step === 3 && (
-					<Step3 nextStep={nextStep} previousStep={previousStep} />
+					<Step3
+						nextStep={nextStep}
+						previousStep={previousStep}
+						formData={formData}
+						setFormData={setFormData}
+					/>
 				)}
 				{step === 4 && (
-					<Step4 nextStep={nextStep} previousStep={previousStep} />
+					<Step4
+						nextStep={nextStep}
+						previousStep={previousStep}
+						formData={formData}
+						setFormData={setFormData}
+					/>
 				)}
 				{step === 5 && (
-					<Step5 nextStep={nextStep} previousStep={previousStep} guru={guru} />
+					<Step5
+						nextStep={nextStep}
+						previousStep={previousStep}
+						guru={guru}
+						formData={formData}
+						setFormData={setFormData}
+					/>
 				)}
 				{step === 6 && (
-					<Step6 nextStep={nextStep} previousStep={previousStep} />
+					<Step6
+						nextStep={nextStep}
+						previousStep={previousStep}
+						formData={formData}
+						setFormData={setFormData}
+					/>
 				)}
 			</div>
 		</>

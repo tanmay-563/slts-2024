@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 
-export default function Step2({ previousStep, nextStep }) {
-	const [grp1Data, setgrp1Data] = useState({
-		event1: "",
-		event2: "",
-		grpsinging: "",
-	});
-
+export default function Step2({
+	previousStep,
+	nextStep,
+	formData,
+	setFormData,
+}) {
 	const [error, setError] = useState({});
 
 	const handlePrevious21 = () => {
@@ -20,23 +19,27 @@ export default function Step2({ previousStep, nextStep }) {
 	};
 
 	const handleChange = (e) => {
-		setgrp1Data({ ...grp1Data, [e.target.name]: e.target.value });
+		const { name, value } = e.target;
+		setFormData((prev) => ({
+			...prev,
+			[name]: value,
+		}));
 	};
 
 	//form validation
 	const validateGrp1 = () => {
 		const newError = {};
-		if (!grp1Data.event1) {
+		if (!formData.event1) {
 			newError.event1 = "Event 1 is mandatory";
 			alert("Event 1 is mandatory");
 		}
-		if (grp1Data.event1 === grp1Data.event2) {
+		if (formData.event1 === formData.event2) {
 			newError.event2 = "Event 1 and Event 2 cannot be the same";
 			alert("Event 1 and Event 2 cannot be the same");
 		}
 		if (
-			(grp1Data.event1 === "Tamizh Chants" && grp1Data.event2 === "Bhajans") ||
-			(grp1Data.event1 === "Bhajans" && grp1Data.event2 === "Tamizh Chants")
+			(formData.event1 === "Tamizh Chants" && formData.event2 === "Bhajans") ||
+			(formData.event1 === "Bhajans" && formData.event2 === "Tamizh Chants")
 		) {
 			newError.event2 =
 				"Student cannot participate in Tamizh Chants and Bhajans at the same time";
@@ -61,6 +64,7 @@ export default function Step2({ previousStep, nextStep }) {
 			<div className="flex flex-col justify-center w-screen md:fit ml-auto mr-auto">
 				<form onSubmit={handleSubmit}>
 					<div className="rounded-2xl p-6 mt-8 mb-8 w-11/12 sm:w-8/12 mx-auto bg-gray-200 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-4 md:gap-0">
+						{/* Event 1 */}
 						<div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
 							<h2 className="text-xl text-black text-left">
 								Pick to register for 1st event
@@ -68,7 +72,7 @@ export default function Step2({ previousStep, nextStep }) {
 							<div className="flex flex-col gap-2">
 								<select
 									name="event1"
-									value={grp1Data.event1}
+									value={formData.event1 || ""}
 									onChange={handleChange}
 									required
 									className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"
@@ -94,6 +98,7 @@ export default function Step2({ previousStep, nextStep }) {
 							</div>
 						</div>
 
+						{/* Event 2 */}
 						<div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
 							<h2 className="text-xl text-black text-left">
 								Pick to register for 2nd event (optional)
@@ -101,7 +106,7 @@ export default function Step2({ previousStep, nextStep }) {
 							<div className="flex flex-col gap-2">
 								<select
 									name="event2"
-									value={grp1Data.event2}
+									value={formData.event2 || ""}
 									onChange={handleChange}
 									className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"
 								>
@@ -126,6 +131,7 @@ export default function Step2({ previousStep, nextStep }) {
 							</div>
 						</div>
 
+						{/* Group event */}
 						<div className="rounded-2xl p-6 mt-8 w-full sm:w-10/12 mx-auto bg-gray-100 shadow-lg border border-gray-300 overflow-x-auto flex flex-col gap-5 md:gap-0">
 							<h2 className="text-xl text-black text-left">
 								Pick to register for group events (optional)
@@ -133,7 +139,7 @@ export default function Step2({ previousStep, nextStep }) {
 							<div className="flex flex-col gap-2">
 								<select
 									name="grpsinging"
-									value={grp1Data.grpsinging}
+									value={formData.grpsinging || ""}
 									onChange={handleChange}
 									className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"
 								>
@@ -147,9 +153,15 @@ export default function Step2({ previousStep, nextStep }) {
 										Devotional Singing (Girls)
 									</option>
 								</select>
+								{error.grpsinging && (
+									<span className="text-red-500 text-sm">
+										{error.grpsinging}
+									</span>
+								)}
 							</div>
 						</div>
 
+						{/* Navigation buttons */}
 						<div className="flex justify-between items-center w-full px-6 sm:px-20">
 							<button
 								onClick={handlePrevious21}

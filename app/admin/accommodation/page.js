@@ -1,10 +1,10 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import secureLocalStorage from "react-secure-storage";
 import { getRegistrationData } from "@/app/_util/data";
 import { convertAMPMTo24HourDate, time24hrTo12hr } from "@/app/_util/helper";
 import { auth } from "@/app/_util/initApp";
+import secureLocalStorage from "@/app/_util/secureLocalStorage";
 
 export default function DistrictStats() {
 	const router = useRouter();
@@ -141,139 +141,140 @@ export default function DistrictStats() {
 		});
 	}, [router]);
 
-	return user && data.length
-		? <div className="flex flex-col justify-center w-fit mx-auto">
-				<div className="rounded-2xl p-4 m-4 bg-white border flex flex-row justify-between">
-					<div>
-						<h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
-						<p className="text-gray-700">{user.email}</p>
-					</div>
-
-					<div className="flex flex-row">
-						<button
-							className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
-							onClick={() => router.push("/admin")}
-						>
-							Dashboard
-						</button>
-						<button
-							className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
-							onClick={() => {
-								auth.signOut();
-								secureLocalStorage.clear();
-								router.push("/");
-							}}
-						>
-							Logout
-						</button>
-					</div>
+	return user && data.length ? (
+		<div className="flex flex-col justify-center w-fit mx-auto">
+			<div className="rounded-2xl p-4 m-4 bg-white border flex flex-row justify-between">
+				<div>
+					<h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
+					<p className="text-gray-700">{user.email}</p>
 				</div>
 
-				<div className="flex flex-wrap gap-2 my-4">
-					{uniqueDates.map((date, idx) => (
-						<button
-							key={idx}
-							className={`px-4 py-2 rounded-xl ${
-								filterDate === date ? "bg-blue-500 text-white" : "bg-gray-200"
-							}`}
-							onClick={() => setFilterDate(date)}
-						>
-							{date}
-						</button>
-					))}
-				</div>
-
-				<div className="mb-4">
-					<h1 className="text-xl font-bold text-gray-800 mb-2">
-						Check-In Date: {filterDate}
-					</h1>
-					<div className="flex flex-col gap-4">
-						{filteredData[uniqueDates.indexOf(filterDate)].rows.map((g, i1) => (
-							<div key={i1} className="bg-white p-4 rounded-2xl border">
-								<p className="text-sm font-bold">
-									Time: {time24hrTo12hr(g.checkInTime)}
-								</p>
-								{g.rows.map((r, i2) => (
-									<div key={i2}>
-										<p className="text-lg font-semibold text-gray-500">
-											{r.district}
-										</p>
-										<div className="flex justify-around gap-3">
-											<div className="pt-2">
-												<p className="text-sm font-bold">Male</p>
-												<p className="text-4xl font-bold">
-													{r.rows.reduce(
-														(acc, row) =>
-															acc +
-															((row.needsAccommodation === "Yes" ||
-																parseInt(
-																	row.numMaleAccompanyingNeedAccommodation,
-																) > 0) &&
-															row.gender === "Male"
-																? 1
-																: 0) +
-															(parseInt(
-																row.numMaleAccompanyingNeedAccommodation,
-															) || 0),
-														0,
-													)}
-												</p>
-											</div>
-											<div className="pt-2">
-												<p className="text-sm font-bold">Female</p>
-												<p className="text-4xl font-bold">
-													{r.rows.reduce(
-														(acc, row) =>
-															acc +
-															((row.needsAccommodation === "Yes" ||
-																parseInt(
-																	row.numFemaleAccompanyingNeedAccommodation,
-																) > 0) &&
-															row.gender === "Female"
-																? 1
-																: 0) +
-															(parseInt(
-																row.numFemaleAccompanyingNeedAccommodation,
-															) || 0),
-														0,
-													)}
-												</p>
-											</div>
-											<div className="pt-2 bg-gray-100 p-2 px-8 rounded-2xl">
-												<p className="text-sm font-bold">Total</p>
-												<p className="text-4xl font-bold">
-													{r.rows.reduce(
-														(acc, row) =>
-															acc +
-															(row.needsAccommodation === "Yes" ||
-															parseInt(
-																row.numMaleAccompanyingNeedAccommodation,
-															) > 0 ||
-															parseInt(
-																row.numFemaleAccompanyingNeedAccommodation,
-															) > 0
-																? 1
-																: 0) +
-															(parseInt(
-																row.numMaleAccompanyingNeedAccommodation,
-															) || 0) +
-															(parseInt(
-																row.numFemaleAccompanyingNeedAccommodation,
-															) || 0),
-														0,
-													)}
-												</p>
-											</div>
-										</div>
-										{i2 == g.rows.length - 1 ? null : <hr className="my-4" />}
-									</div>
-								))}
-							</div>
-						))}
-					</div>
+				<div className="flex flex-row">
+					<button
+						className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
+						onClick={() => router.push("/admin")}
+					>
+						Dashboard
+					</button>
+					<button
+						className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
+						onClick={() => {
+							auth.signOut();
+							secureLocalStorage.clear();
+							router.push("/");
+						}}
+					>
+						Logout
+					</button>
 				</div>
 			</div>
-		: <div className="flex h-screen items-center justify-center">
-				<p className="text-2xl font-semibold">Loading...</p>
-			</div>;
+
+			<div className="flex flex-wrap gap-2 my-4">
+				{uniqueDates.map((date, idx) => (
+					<button
+						key={idx}
+						className={`px-4 py-2 rounded-xl ${
+							filterDate === date ? "bg-blue-500 text-white" : "bg-gray-200"
+						}`}
+						onClick={() => setFilterDate(date)}
+					>
+						{date}
+					</button>
+				))}
+			</div>
+
+			<div className="mb-4">
+				<h1 className="text-xl font-bold text-gray-800 mb-2">
+					Check-In Date: {filterDate}
+				</h1>
+				<div className="flex flex-col gap-4">
+					{filteredData[uniqueDates.indexOf(filterDate)].rows.map((g, i1) => (
+						<div key={i1} className="bg-white p-4 rounded-2xl border">
+							<p className="text-sm font-bold">
+								Time: {time24hrTo12hr(g.checkInTime)}
+							</p>
+							{g.rows.map((r, i2) => (
+								<div key={i2}>
+									<p className="text-lg font-semibold text-gray-500">
+										{r.district}
+									</p>
+									<div className="flex justify-around gap-3">
+										<div className="pt-2">
+											<p className="text-sm font-bold">Male</p>
+											<p className="text-4xl font-bold">
+												{r.rows.reduce(
+													(acc, row) =>
+														acc +
+														((row.needsAccommodation === "Yes" ||
+															parseInt(
+																row.numMaleAccompanyingNeedAccommodation,
+															) > 0) &&
+														row.gender === "Male"
+															? 1
+															: 0) +
+														(parseInt(
+															row.numMaleAccompanyingNeedAccommodation,
+														) || 0),
+													0,
+												)}
+											</p>
+										</div>
+										<div className="pt-2">
+											<p className="text-sm font-bold">Female</p>
+											<p className="text-4xl font-bold">
+												{r.rows.reduce(
+													(acc, row) =>
+														acc +
+														((row.needsAccommodation === "Yes" ||
+															parseInt(
+																row.numFemaleAccompanyingNeedAccommodation,
+															) > 0) &&
+														row.gender === "Female"
+															? 1
+															: 0) +
+														(parseInt(
+															row.numFemaleAccompanyingNeedAccommodation,
+														) || 0),
+													0,
+												)}
+											</p>
+										</div>
+										<div className="pt-2 bg-gray-100 p-2 px-8 rounded-2xl">
+											<p className="text-sm font-bold">Total</p>
+											<p className="text-4xl font-bold">
+												{r.rows.reduce(
+													(acc, row) =>
+														acc +
+														(row.needsAccommodation === "Yes" ||
+														parseInt(row.numMaleAccompanyingNeedAccommodation) >
+															0 ||
+														parseInt(
+															row.numFemaleAccompanyingNeedAccommodation,
+														) > 0
+															? 1
+															: 0) +
+														(parseInt(
+															row.numMaleAccompanyingNeedAccommodation,
+														) || 0) +
+														(parseInt(
+															row.numFemaleAccompanyingNeedAccommodation,
+														) || 0),
+													0,
+												)}
+											</p>
+										</div>
+									</div>
+									{i2 == g.rows.length - 1 ? null : <hr className="my-4" />}
+								</div>
+							))}
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
+	) : (
+		<div className="flex h-screen items-center justify-center">
+			<p className="text-2xl font-semibold">Loading...</p>
+		</div>
+	);
 }

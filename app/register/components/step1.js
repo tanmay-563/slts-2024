@@ -2,23 +2,30 @@
 
 import { useState } from "react";
 
-export default function Step1({ nextStep, setSelectedGroup, setGuru }) {
-	const [formData, setFormData] = useState({
-		group: "",
-		fullName: "",
-		dob: "",
-		gender: "",
-		district: "",
-		samithiName: "",
-		yoj: "",
-		guru: "",
-		doj: "",
-	});
-
+export default function Step1({
+	nextStep,
+	setSelectedGroup,
+	setGuru,
+	formData,
+	setFormData,
+}) {
 	const [errors, setErrors] = useState({});
 
 	const handleChange = (e) => {
-		setFormData({ ...formData, [e.target.name]: e.target.value });
+		const { name, value } = e.target;
+
+		setFormData((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+
+		if (name === "group") {
+			setSelectedGroup(value);
+		}
+
+		if (name === "guru") {
+			setGuru(value);
+		}
 	};
 
 	const parseDate = (dateStr) => {
