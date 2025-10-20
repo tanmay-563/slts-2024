@@ -41,21 +41,23 @@ export default function JudgePage() {
 	const [gender, setGender] = useState("");
 
 	const handleInputChange = (e, field) => {
+		const value = e.target.value || ""; // ensure value is never undefined
+
 		switch (field) {
 			case "studentId":
-				setStudentId(e.target.value.toString().toUpperCase());
+				setStudentId(value.toString().toUpperCase()); // safe now
 				break;
 			case "groupNumber":
-				setGroupNumber(e.target.value);
+				setGroupNumber(value);
 				break;
 			case "dob":
-				setDob(e.target.value);
+				setDob(value);
 				break;
 			case "gender":
-				setGender(e.target.value);
+				setGender(value);
 				break;
 			case "name":
-				setStudentName(e.target.value);
+				setStudentName(value);
 				break;
 			default:
 				break;

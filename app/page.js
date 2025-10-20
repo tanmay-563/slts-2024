@@ -6,39 +6,40 @@ import { useEffect, useState } from "react";
 import { getUserData } from "@/app/_util/data";
 import { auth } from "@/app/_util/initApp";
 import { reverseDistrictCode } from "@/app/_util/maps";
-import secureStorage from "./_util/secureLocalStorage";
+import secureStorage from "@/app/_util/secureLocalStorage";
 
 export default function Home() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [showPassword, setShowPassword] = useState(false); // toggle password visibility
+	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 
 	const router = useRouter();
 
-	// Auto login on mount
+	// Auto login on client only
 	useEffect(() => {
-		// Prevent running on server where secureStorage or localStorage is undefined
-		if (!secureStorage) {
+		if (typeof window === "undefined" || !secureStorage?.getItem) {
 			setIsLoading(false);
 			return;
 		}
 
 		const user = secureStorage.getItem("user");
 		if (user) {
-			const data = JSON.parse(user);
-			if (data.role === "admin") {
-				router.push("/admin");
-			} else if (data.role === "judge") {
-				data.event.includes("GROUP")
-					? router.push("/judge/group")
-					: router.push("/judge/individual");
-			} else if (
-				Object.keys(reverseDistrictCode).indexOf(
-					data.role.toString().toUpperCase(),
-				) !== -1
-			) {
-				router.push("/district");
+			try {
+				const data = JSON.parse(user);
+				const role = (data.role || "").toString().toUpperCase();
+
+				if (role === "ADMIN") {
+					router.push("/admin");
+				} else if (role === "JUDGE") {
+					data.event?.includes("GROUP")
+						? router.push("/judge/group")
+						: router.push("/judge/individual");
+				} else if (Object.keys(reverseDistrictCode).includes(role)) {
+					router.push("/district");
+				}
+			} catch (e) {
+				console.error("Failed to parse user data", e);
 			}
 		}
 
@@ -49,29 +50,25 @@ export default function Home() {
 		e.preventDefault();
 		if (!email || !password) return;
 
-		// normalize email before login
-		setEmail(email.toString().toLowerCase().trim());
+		const normalizedEmail = email.toLowerCase().trim();
+		setEmail(normalizedEmail);
 
 		try {
-			await signInWithEmailAndPassword(auth, email, password);
+			await signInWithEmailAndPassword(auth, normalizedEmail, password);
 			const data = await getUserData();
+			const role = (data.role || "").toString().toUpperCase();
 
-			if (!secureStorage) return; // safety check
+			if (!secureStorage?.setItem) return;
 
-			if (data.role === "admin") {
-				secureStorage.setItem("user", JSON.stringify(data));
+			secureStorage.setItem("user", JSON.stringify(data));
+
+			if (role === "ADMIN") {
 				router.push("/admin");
-			} else if (data.role === "judge") {
-				secureStorage.setItem("user", JSON.stringify(data));
-				data.event.includes("GROUP")
+			} else if (role === "JUDGE") {
+				data.event?.includes("GROUP")
 					? router.push("/judge/group")
 					: router.push("/judge/individual");
-			} else if (
-				Object.keys(reverseDistrictCode).indexOf(
-					data.role.toString().toUpperCase(),
-				) !== -1
-			) {
-				secureStorage.setItem("user", JSON.stringify(data));
+			} else if (Object.keys(reverseDistrictCode).includes(role)) {
 				router.push("/district");
 			}
 		} catch (error) {
@@ -88,6 +85,7 @@ export default function Home() {
 			<h1 className="absolute top-4 left-4 text-[24px] font-bold">
 				SLBTS.2024
 			</h1>
+
 			{isLoading ? (
 				<div className="flex h-screen items-center justify-center">
 					<p className="text-xl font-semibold">Loading....</p>

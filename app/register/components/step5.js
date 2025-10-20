@@ -74,7 +74,7 @@ export default function Step5({
 					<div className="rounded-2xl p-6 mt-8 mb-8 w-11/12 sm:w-8/12 mx-auto bg-gray-200 shadow-lg border border-gray-300 flex flex-col gap-4">
 						{/* Guru Name */}
 						<div className="rounded-2xl p-6 mt-8 bg-gray-100 shadow-lg border border-gray-300 flex flex-col gap-5">
-							<h2 className="text-xl text-black text-left">Guru's Name</h2>
+							<h2 className="text-xl text-black text-left">Guru&apos;s Name</h2>
 							<input
 								type="text"
 								name="guruName"
@@ -92,7 +92,9 @@ export default function Step5({
 
 						{/* Guru Gender */}
 						<div className="rounded-2xl p-6 mt-8 bg-gray-100 shadow-lg border border-gray-300 flex flex-col gap-5">
-							<h2 className="text-xl text-black text-left">Guru's Gender</h2>
+							<h2 className="text-xl text-black text-left">
+								Guru&apos;s Gender
+							</h2>
 							<div className="flex flex-col gap-2">
 								<label className="flex items-center gap-2">
 									<input
@@ -118,6 +120,7 @@ export default function Step5({
 									/>
 									<span className="text-xl text-gray-700">Female</span>
 								</label>
+
 								{step5Error.guruGender && (
 									<span className="text-red-500 text-sm">
 										{step5Error.guruGender}
@@ -129,7 +132,7 @@ export default function Step5({
 						{/* Guru Mobile */}
 						<div className="rounded-2xl p-6 mt-8 bg-gray-100 shadow-lg border border-gray-300 flex flex-col gap-5">
 							<h2 className="text-xl text-black text-left">
-								Guru's Mobile Number
+								Guru&apos;s Mobile Number
 							</h2>
 							<input
 								type="text"
@@ -148,7 +151,9 @@ export default function Step5({
 
 						{/* Guru Email */}
 						<div className="rounded-2xl p-6 mt-8 bg-gray-100 shadow-lg border border-gray-300 flex flex-col gap-5">
-							<h2 className="text-xl text-black text-left">Guru's Email ID</h2>
+							<h2 className="text-xl text-black text-left">
+								Guru&apos;s Email ID
+							</h2>
 							<input
 								type="email"
 								name="guruMail"

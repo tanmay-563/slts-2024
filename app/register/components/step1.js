@@ -199,11 +199,11 @@ export default function Step1({
 									type="text"
 									name="fullName"
 									placeholder="Student's Full Name"
-									value={formData.fullName.toUpperCase()}
+									value={(formData.fullName || "").toUpperCase()} // <-- safe access
 									onChange={handleChange}
 									required
 									className="text-xl text-gray-700 border border-gray-500 p-4 mt-2 rounded-2xl w-full sm:w-auto"
-								></input>
+								/>
 								{errors.fullName && (
 									<span className="text-red-500 text-sm">
 										{errors.fullName}

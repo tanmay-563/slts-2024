@@ -19,21 +19,22 @@ const RegisterPage = () => {
 	const [guru, setGuru] = useState("");
 	const [formData, setFormData] = useState({});
 
-	// Load saved form data on mount
+	// Only access secureStorage on client
 	useEffect(() => {
-		const savedData = secureStorage?.getItem("registrationData");
-		if (savedData) {
-			try {
-				setFormData(JSON.parse(savedData));
-			} catch (e) {
-				console.error("Error loading saved form data", e);
+		if (typeof window !== "undefined" && secureStorage?.getItem) {
+			const savedData = secureStorage.getItem("registrationData");
+			if (savedData) {
+				try {
+					setFormData(JSON.parse(savedData));
+				} catch (e) {
+					console.error("Error loading saved form data", e);
+				}
 			}
 		}
 	}, []);
 
-	// Save form data on every change
 	useEffect(() => {
-		if (Object.keys(formData).length > 0) {
+		if (typeof window !== "undefined" && Object.keys(formData).length > 0) {
 			secureStorage?.setItem("registrationData", JSON.stringify(formData));
 		}
 	}, [formData]);
@@ -45,9 +46,7 @@ const RegisterPage = () => {
 		setStep(step + 1);
 	};
 
-	const previousStep = () => {
-		setStep(step - 1);
-	};
+	const previousStep = () => setStep(step - 1);
 
 	const steps = [
 		{ id: 1, name: "Section 1" },
@@ -59,8 +58,8 @@ const RegisterPage = () => {
 	];
 
 	return (
-		<>
-			<div className="bg-gray-200 rounded-2xl p-4 mt-4 w-11/12 sm:w-8/12 mx-auto shadow-lg border border-gray-300 overflow-x-auto justify-center flex flex-col md:flex-row gap-4 md:gap-0">
+		<div className="flex flex-col items-center">
+			<div className="bg-gray-200 rounded-2xl p-4 mt-4 w-11/12 sm:w-8/12 mx-auto shadow-lg border border-gray-300 overflow-x-auto flex justify-center">
 				<h1 className="text-2xl sm:text-3xl font-bold text-center text-black">
 					SLTS Registration Form
 				</h1>
@@ -75,9 +74,13 @@ const RegisterPage = () => {
 							disabled={!completedSteps.includes(s.id)}
 							className={`${
 								step === s.id
-									? "rounded-2xl text-xl px-4 py-2 font-bold transition-all bg-gray-500 text-white font-bold"
+									? "rounded-2xl text-xl px-4 py-2 font-bold transition-all bg-gray-500 text-white"
 									: "text-xl px-4 py-2 transition-all text-black"
-							}${!completedSteps.includes(s.id) ? "opacity-50 cursor-not-allowed text-gray-500" : ""}`}
+							}${
+								!completedSteps.includes(s.id)
+									? " opacity-50 cursor-not-allowed text-gray-500"
+									: ""
+							}`}
 						>
 							{s.name}
 						</button>
@@ -85,7 +88,7 @@ const RegisterPage = () => {
 				</div>
 			</div>
 
-			<div>
+			<div className="w-11/12 sm:w-8/12 mx-auto">
 				{step === 1 && (
 					<Step1
 						nextStep={nextStep}
@@ -95,38 +98,36 @@ const RegisterPage = () => {
 						setFormData={setFormData}
 					/>
 				)}
-				{step === 2 && selectedGroup === "Group 1" && (
-					<Step2
-						nextStep={nextStep}
-						previousStep={previousStep}
-						formData={formData}
-						setFormData={setFormData}
-					/>
-				)}
-				{step === 2 && selectedGroup === "Group 2" && (
-					<Grp2Step2
-						nextStep={nextStep}
-						previousStep={previousStep}
-						formData={formData}
-						setFormData={setFormData}
-					/>
-				)}
-				{step === 2 && selectedGroup === "Group 3" && (
-					<Grp3Step2
-						nextStep={nextStep}
-						previousStep={previousStep}
-						formData={formData}
-						setFormData={setFormData}
-					/>
-				)}
-				{step === 2 && selectedGroup === "General Category" && (
-					<GeneralStep2
-						nextStep={nextStep}
-						previousStep={previousStep}
-						formData={formData}
-						setFormData={setFormData}
-					/>
-				)}
+				{step === 2 &&
+					(selectedGroup === "Group 1" ? (
+						<Step2
+							nextStep={nextStep}
+							previousStep={previousStep}
+							formData={formData}
+							setFormData={setFormData}
+						/>
+					) : selectedGroup === "Group 2" ? (
+						<Grp2Step2
+							nextStep={nextStep}
+							previousStep={previousStep}
+							formData={formData}
+							setFormData={setFormData}
+						/>
+					) : selectedGroup === "Group 3" ? (
+						<Grp3Step2
+							nextStep={nextStep}
+							previousStep={previousStep}
+							formData={formData}
+							setFormData={setFormData}
+						/>
+					) : selectedGroup === "General Category" ? (
+						<GeneralStep2
+							nextStep={nextStep}
+							previousStep={previousStep}
+							formData={formData}
+							setFormData={setFormData}
+						/>
+					) : null)}
 				{step === 3 && (
 					<Step3
 						nextStep={nextStep}
@@ -147,7 +148,7 @@ const RegisterPage = () => {
 					<Step5
 						nextStep={nextStep}
 						previousStep={previousStep}
-						guru={guru}
+						guru={guru || ""} // make sure guru is never undefined
 						formData={formData}
 						setFormData={setFormData}
 					/>
@@ -161,7 +162,7 @@ const RegisterPage = () => {
 					/>
 				)}
 			</div>
-		</>
+		</div>
 	);
 };
 
