@@ -2,9 +2,9 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import secureLocalStorage from "react-secure-storage";
 import { getJudgeEventData } from "@/app/_util/data";
 import { auth } from "@/app/_util/initApp";
+import secureLocalStorage from "@/app/_util/secureLocalStorage";
 
 export default function EventLeaderboardIndiPage() {
 	const router = useRouter();
@@ -105,227 +105,224 @@ export default function EventLeaderboardIndiPage() {
 		user &&
 		eventMetadata &&
 		participants &&
-		filteredParticipants
-		? <>
-				<div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
-					<div className="rounded-2xl p-4 m-2 bg-white border overflow-x-auto justify-between flex flex-row">
-						<div>
-							<h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
-							<p className="text-gray-700 mt-2">{user.email}</p>
-						</div>
-						<div className="flex flex-row">
-							<button
-								className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
-								onClick={() => router.push("/admin/event")}
-							>
-								Events
-							</button>
-							<button
-								className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
-								onClick={() => router.push("/admin")}
-							>
-								Dashboard
-							</button>
-							<button
-								className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
-								onClick={() => {
-									auth.signOut();
-									secureLocalStorage.clear();
-									router.push("/");
-								}}
-							>
-								Logout
-							</button>
-						</div>
+		filteredParticipants ? (
+		<>
+			<div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
+				<div className="rounded-2xl p-4 m-2 bg-white border overflow-x-auto justify-between flex flex-row">
+					<div>
+						<h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
+						<p className="text-gray-700 mt-2">{user.email}</p>
 					</div>
-
-					<div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
-						<div className="rounded-2xl p-4 bg-white border overflow-x-auto">
-							<h1 className="text-2xl font-bold">{eventMetadata.name}</h1>
-							<p className="text-md">{participants.length} Participants</p>
-							<div className="flex flex-row flex-wrap gap-1 mt-1">
-								{eventMetadata.group.map((group, index) => (
-									<p
-										key={index}
-										className="bg-gray-200 text-gray-800 font-semibold px-2 py-1 rounded-xl w-fit"
-									>
-										{group}
-									</p>
-								))}
-							</div>
-
-							{/* Evaluation Criteria */}
-							<h2 className="text-xl font-bold mt-6">Evaluation Criteria</h2>
-							<table className="table-auto w-full">
-								<thead>
-									<tr>
-										<th className="border px-4 py-2">Criteria</th>
-										<th className="border px-4 py-2">Max Marks</th>
-									</tr>
-								</thead>
-								<tbody>
-									{Object.entries(eventMetadata.evalCriteria).map(
-										([key, value], index) => (
-											<tr key={index}>
-												<td className="border px-4 py-2">{key}</td>
-												<td className="border px-4 py-2">{value}</td>
-											</tr>
-										),
-									)}
-									<tr>
-										<td className="border px-4 py-2 font-semibold">Total</td>
-										<td className="border px-4 py-2 font-semibold">
-											{Object.values(eventMetadata.evalCriteria).reduce(
-												(a, b) => a + b,
-												0,
-											)}
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-
-					<div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
-						<div className="rounded-2xl p-4 my-4 bg-white border overflow-x-auto">
-							<h1 className="text-2xl font-bold">Leaderboard</h1>
-							<table className="table-auto w-full mt-4">
-								<thead>
-									<tr>
-										<th className="border px-4 py-2">Student</th>
-										<th className="border px-4 py-2">Balvikas</th>
-										{eventMetadata.evalCriteria &&
-											Object.keys(eventMetadata.evalCriteria).map(
-												(criteria, index) => (
-													<th key={index} className="border px-4 py-2">
-														{criteria}
-													</th>
-												),
-											)}
-										<th className="border px-4 py-2">Judge Wise Total</th>
-										<th className="border px-4 py-2">Avg Total</th>
-										<th className="border px-4 py-2">Comments</th>
-									</tr>
-								</thead>
-								<tbody>
-									{filteredParticipants.map((row, index) => (
-										<tr key={index}>
-											<td
-												className={
-													"px-4 py-2 border max-w-[160px]" +
-													(row.substitute && row.substitute[eventMetadata.name]
-														? " bg-[#ffcece]"
-														: "")
-												}
-											>
-												{row.substitute && row.substitute[eventMetadata.name]
-													? <div>
-															<p className="text-xs font-semibold text-[#32350b] rounded-2xl w-fit">
-																Substituted Student - Original{" "}
-																<span className="font-bold">
-																	{row.studentId}
-																</span>
-															</p>
-															<p className="font-bold">
-																{
-																	row.substitute[eventMetadata.name]
-																		.newStudentName
-																}
-															</p>
-															<p className="text-xs">
-																{row.substitute[eventMetadata.name]
-																	.newStudentGender ?? "-"}{" "}
-																-{" "}
-																{row.substitute[eventMetadata.name]
-																	.newStudentDOB ?? "-"}
-															</p>
-															<p className="text-xs mt-2 font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
-																{row.substitute[eventMetadata.name]
-																	.newStudentGroup ?? "-"}
-															</p>
-														</div>
-													: <div>
-															<p className="font-bold">
-																{row.studentFullName ?? "-"}
-															</p>
-															<p className="text-xs">
-																{row.gender ?? "-"} - {row.dateOfBirth ?? "-"}
-															</p>
-															<div className="flex flex-wrap gap-1">
-																<p className="text-xs font-bold bg-[#c4ffc2] text-[#07210d] p-1 px-2 rounded-2xl w-fit">
-																	{row.studentId ?? "-"}
-																</p>
-																<p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
-																	{row.studentGroup ?? "-"}
-																</p>
-															</div>
-														</div>}
-											</td>
-											<td className="px-4 py-2 border max-w-[200px]">
-												<p className="font-bold">{row.district ?? "-"}</p>
-												<p className="text-xs">{row.samithiName ?? "-"}</p>
-												{row.studentGroup === "Group 3" && (
-													<p className="text-xs">
-														Passed group 2: {row.hasPassedGroup2Exam ?? "-"}
-													</p>
-												)}
-												<div className="flex flex-wrap mt-2 gap-1">
-													{row.registeredEvents.map((event, index) => (
-														<p
-															key={index}
-															className="text-xs bg-green-200 text-green-800 font-bold rounded-xl p-1 px-2 w-fit"
-														>
-															{event ?? "-"}
-														</p>
-													))}
-												</div>
-											</td>
-											{eventMetadata.evalCriteria &&
-												Object.keys(eventMetadata.evalCriteria).map(
-													(criteria, i1) => (
-														<td key={i1} className="px-4 py-2 border">
-															{eventMetadata.judgeIdList.map((judgeId, i2) => (
-																<p key={i2} className="text-xs">
-																	{row.score[eventName][judgeId][criteria]}
-																</p>
-															))}
-														</td>
-													),
-												)}
-											<td className="px-4 py-2 border font-bold">
-												{Object.values(row.judgeWiseTotal).map(
-													(total, index) => (
-														<p key={index} className="text-xs">
-															{total}
-														</p>
-													),
-												)}
-											</td>
-											<td className="px-4 py-2 border font-bold">
-												{row.overallTotal}
-											</td>
-											<td className="px-4 py-2 border">
-												<div className="flex flex-col">
-													{eventMetadata.judgeIdList.map((judgeId, i) => (
-														<div key={i} className="flex flex-col">
-															<p className="text-xs">
-																{row.comment[eventName][judgeId] == ""
-																	? "-"
-																	: row.comment[eventName][judgeId]}
-															</p>
-														</div>
-													))}
-												</div>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
+					<div className="flex flex-row">
+						<button
+							className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
+							onClick={() => router.push("/admin/event")}
+						>
+							Events
+						</button>
+						<button
+							className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
+							onClick={() => router.push("/admin")}
+						>
+							Dashboard
+						</button>
+						<button
+							className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
+							onClick={() => {
+								auth.signOut();
+								secureLocalStorage.clear();
+								router.push("/");
+							}}
+						>
+							Logout
+						</button>
 					</div>
 				</div>
-			</>
-		: <div className="flex h-screen items-center justify-center">
-				<p className="text-xl font-semibold">Loading...</p>
-			</div>;
+
+				<div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
+					<div className="rounded-2xl p-4 bg-white border overflow-x-auto">
+						<h1 className="text-2xl font-bold">{eventMetadata.name}</h1>
+						<p className="text-md">{participants.length} Participants</p>
+						<div className="flex flex-row flex-wrap gap-1 mt-1">
+							{eventMetadata.group.map((group, index) => (
+								<p
+									key={index}
+									className="bg-gray-200 text-gray-800 font-semibold px-2 py-1 rounded-xl w-fit"
+								>
+									{group}
+								</p>
+							))}
+						</div>
+
+						{/* Evaluation Criteria */}
+						<h2 className="text-xl font-bold mt-6">Evaluation Criteria</h2>
+						<table className="table-auto w-full">
+							<thead>
+								<tr>
+									<th className="border px-4 py-2">Criteria</th>
+									<th className="border px-4 py-2">Max Marks</th>
+								</tr>
+							</thead>
+							<tbody>
+								{Object.entries(eventMetadata.evalCriteria).map(
+									([key, value], index) => (
+										<tr key={index}>
+											<td className="border px-4 py-2">{key}</td>
+											<td className="border px-4 py-2">{value}</td>
+										</tr>
+									),
+								)}
+								<tr>
+									<td className="border px-4 py-2 font-semibold">Total</td>
+									<td className="border px-4 py-2 font-semibold">
+										{Object.values(eventMetadata.evalCriteria).reduce(
+											(a, b) => a + b,
+											0,
+										)}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
+					<div className="rounded-2xl p-4 my-4 bg-white border overflow-x-auto">
+						<h1 className="text-2xl font-bold">Leaderboard</h1>
+						<table className="table-auto w-full mt-4">
+							<thead>
+								<tr>
+									<th className="border px-4 py-2">Student</th>
+									<th className="border px-4 py-2">Balvikas</th>
+									{eventMetadata.evalCriteria &&
+										Object.keys(eventMetadata.evalCriteria).map(
+											(criteria, index) => (
+												<th key={index} className="border px-4 py-2">
+													{criteria}
+												</th>
+											),
+										)}
+									<th className="border px-4 py-2">Judge Wise Total</th>
+									<th className="border px-4 py-2">Avg Total</th>
+									<th className="border px-4 py-2">Comments</th>
+								</tr>
+							</thead>
+							<tbody>
+								{filteredParticipants.map((row, index) => (
+									<tr key={index}>
+										<td
+											className={
+												"px-4 py-2 border max-w-[160px]" +
+												(row.substitute && row.substitute[eventMetadata.name]
+													? " bg-[#ffcece]"
+													: "")
+											}
+										>
+											{row.substitute && row.substitute[eventMetadata.name] ? (
+												<div>
+													<p className="text-xs font-semibold text-[#32350b] rounded-2xl w-fit">
+														Substituted Student - Original{" "}
+														<span className="font-bold">{row.studentId}</span>
+													</p>
+													<p className="font-bold">
+														{row.substitute[eventMetadata.name].newStudentName}
+													</p>
+													<p className="text-xs">
+														{row.substitute[eventMetadata.name]
+															.newStudentGender ?? "-"}{" "}
+														-{" "}
+														{row.substitute[eventMetadata.name].newStudentDOB ??
+															"-"}
+													</p>
+													<p className="text-xs mt-2 font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
+														{row.substitute[eventMetadata.name]
+															.newStudentGroup ?? "-"}
+													</p>
+												</div>
+											) : (
+												<div>
+													<p className="font-bold">
+														{row.studentFullName ?? "-"}
+													</p>
+													<p className="text-xs">
+														{row.gender ?? "-"} - {row.dateOfBirth ?? "-"}
+													</p>
+													<div className="flex flex-wrap gap-1">
+														<p className="text-xs font-bold bg-[#c4ffc2] text-[#07210d] p-1 px-2 rounded-2xl w-fit">
+															{row.studentId ?? "-"}
+														</p>
+														<p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
+															{row.studentGroup ?? "-"}
+														</p>
+													</div>
+												</div>
+											)}
+										</td>
+										<td className="px-4 py-2 border max-w-[200px]">
+											<p className="font-bold">{row.district ?? "-"}</p>
+											<p className="text-xs">{row.samithiName ?? "-"}</p>
+											{row.studentGroup === "Group 3" && (
+												<p className="text-xs">
+													Passed group 2: {row.hasPassedGroup2Exam ?? "-"}
+												</p>
+											)}
+											<div className="flex flex-wrap mt-2 gap-1">
+												{row.registeredEvents.map((event, index) => (
+													<p
+														key={index}
+														className="text-xs bg-green-200 text-green-800 font-bold rounded-xl p-1 px-2 w-fit"
+													>
+														{event ?? "-"}
+													</p>
+												))}
+											</div>
+										</td>
+										{eventMetadata.evalCriteria &&
+											Object.keys(eventMetadata.evalCriteria).map(
+												(criteria, i1) => (
+													<td key={i1} className="px-4 py-2 border">
+														{eventMetadata.judgeIdList.map((judgeId, i2) => (
+															<p key={i2} className="text-xs">
+																{row.score[eventName][judgeId][criteria]}
+															</p>
+														))}
+													</td>
+												),
+											)}
+										<td className="px-4 py-2 border font-bold">
+											{Object.values(row.judgeWiseTotal).map((total, index) => (
+												<p key={index} className="text-xs">
+													{total}
+												</p>
+											))}
+										</td>
+										<td className="px-4 py-2 border font-bold">
+											{row.overallTotal}
+										</td>
+										<td className="px-4 py-2 border">
+											<div className="flex flex-col">
+												{eventMetadata.judgeIdList.map((judgeId, i) => (
+													<div key={i} className="flex flex-col">
+														<p className="text-xs">
+															{row.comment[eventName][judgeId] == ""
+																? "-"
+																: row.comment[eventName][judgeId]}
+														</p>
+													</div>
+												))}
+											</div>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</>
+	) : (
+		<div className="flex h-screen items-center justify-center">
+			<p className="text-xl font-semibold">Loading...</p>
+		</div>
+	);
 }
